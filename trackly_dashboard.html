@@ -696,10 +696,6 @@ body::after {
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/></svg>
     AI Assistant
   </a>
-  <a href="#" class="nav-item" data-page="fileviewer">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M6 6h4M6 9h4M6 12h2"/></svg>
-    File Viewer
-  </a>
   <a href="#" class="nav-item" data-page="export">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1v9M5 7l3 3 3-3"/><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
     Export
@@ -1394,69 +1390,6 @@ body::after {
         <button class="btn-submit" id="export-snapshot-json" style="margin-top:10px">Download Snapshot JSON</button>
       </div>
     </div>
-    
-    <div id="page-fileviewer" style="display:none">
-      <div class="panel" style="height: calc(100vh - 200px); display: flex; flex-direction: column;">
-        <div class="panel-title" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <path d="M16 13H8M16 17H8M10 9H8"/>
-            </svg>
-            Universal File Viewer
-          </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="file" id="fileViewerInput" multiple accept="*/*" style="display: none;">
-            <button class="action-btn" onclick="document.getElementById('fileViewerInput').click()">
-              📁 Choose Files
-            </button>
-            <input type="url" id="urlViewerInput" placeholder="Enter file URL" style="background: var(--s2); border: 1px solid var(--border); color: var(--text); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; width: 200px;">
-            <button class="action-btn" onclick="loadFileFromUrl()">Load URL</button>
-          </div>
-        </div>
-        
-        <div style="display: flex; flex: 1; gap: 16px; overflow: hidden;">
-          <!-- File List Sidebar -->
-          <div style="width: 250px; background: var(--s2); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
-            <div style="padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted2);">
-              Files
-            </div>
-            <div id="fileViewerList" style="flex: 1; overflow-y: auto; padding: 8px;">
-              <div style="text-align: center; padding: 32px 16px; color: var(--muted2);">
-                <div style="font-size: 2rem; margin-bottom: 8px;">📄</div>
-                <div style="font-size: 0.7rem;">No files loaded</div>
-                <div style="font-size: 0.6rem; margin-top: 4px;">Choose files or enter a URL</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- File Content Viewer -->
-          <div style="flex: 1; background: var(--s2); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
-            <div id="fileViewerHeader" style="display: none; padding: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <div id="fileViewerName" style="font-size: 0.8rem; font-weight: 600;"></div>
-                <div id="fileViewerMeta" style="font-size: 0.65rem; color: var(--muted2); margin-top: 2px;"></div>
-              </div>
-              <div style="display: flex; gap: 4px;">
-                <button class="action-btn" onclick="downloadCurrentFile()" id="downloadFileBtn" style="font-size: 0.7rem; padding: 4px 8px;">⬇️ Download</button>
-                <button class="action-btn" onclick="copyFileContent()" id="copyFileBtn" style="font-size: 0.7rem; padding: 4px 8px;">📋 Copy</button>
-              </div>
-            </div>
-            
-            <div id="fileViewerContent" style="flex: 1; overflow: auto; padding: 16px;">
-              <div style="text-align: center; padding: 48px 16px; color: var(--muted2);">
-                <div style="font-size: 3rem; margin-bottom: 12px;">👁️</div>
-                <div style="font-size: 0.9rem; margin-bottom: 8px;">Select a file to view its contents</div>
-                <div style="font-size: 0.7rem; line-height: 1.4; max-width: 300px; margin: 0 auto;">
-                  Supports images, videos, audio, PDFs, text files, code files with syntax highlighting, JSON, and more
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 
@@ -1584,6 +1517,34 @@ body::after {
       <button class="profile-btn" id="profile-export-btn">Export</button>
       <button class="profile-btn" id="profile-close-btn">Close</button>
       <button class="profile-btn signout" id="profile-signout-btn">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIVERSAL FILE VIEWER MODAL -->
+<div class="modal-overlay" id="file-viewer-modal" style="align-items: center;">
+  <div class="modal" style="max-width: 90vw; max-height: 90vh; border-radius: 16px; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+    <!-- Header -->
+    <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--s2);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="font-size: 1.5rem;">📄</div>
+        <div>
+          <div id="viewer-file-name" style="font-size: 0.9rem; font-weight: 600;">File Viewer</div>
+          <div id="viewer-file-meta" style="font-size: 0.7rem; color: var(--muted2); margin-top: 2px;"></div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="action-btn" onclick="downloadViewerFile()" id="viewer-download-btn" style="font-size: 0.75rem; padding: 6px 12px;">⬇️ Download</button>
+        <button class="action-btn" onclick="closeFileViewer()" style="font-size: 0.75rem; padding: 6px 12px;">✕ Close</button>
+      </div>
+    </div>
+    
+    <!-- Content -->
+    <div id="viewer-content" style="flex: 1; overflow: auto; padding: 24px; background: var(--bg);">
+      <div style="text-align: center; padding: 48px; color: var(--muted2);">
+        <div style="font-size: 3rem; margin-bottom: 16px;">👁️</div>
+        <div style="font-size: 1rem;">Loading file...</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2598,7 +2559,7 @@ function renderReceiptsPage() {
   }
   
   el.innerHTML = receipts.map((r) => {
-    const link = r.image_url ? `<a href="${escapeHtml(r.image_url)}" target="_blank" rel="noopener noreferrer" class="panel-link">View</a>` : "";
+    const link = r.image_url ? `<a href="javascript:void(0)" onclick="openFileViewer('${escapeHtml(r.image_url)}', '${escapeHtml(r.type || 'receipt')}.jpg', 'image/jpeg')" class="panel-link">👁️ View</a>` : "";
     const created = r.created_at ? dateLabel(r.created_at) : "—";
     const extracted = r.extracted_data;
     
@@ -4481,7 +4442,7 @@ function buildTransactionExpandedContent(transaction, receipt) {
   const receiptSection = receipt ? `
     <div class="txn-receipt-section">
       <div class="txn-detail-label">Receipt</div>
-      ${receipt.image_url ? `<img src="${receipt.image_url}" class="txn-receipt-img" alt="Receipt">` : ''}
+      ${receipt.image_url ? `<img src="${receipt.image_url}" class="txn-receipt-img" alt="Receipt" onclick="openFileViewer('${receipt.image_url}', 'Receipt', 'image/jpeg')" style="cursor: pointer;" title="Click to view full size">` : ''}
       ${receipt.extracted_data ? `
         <div class="txn-ai-data">
           <div class="txn-ai-label">🤖 AI Extracted Data</div>
@@ -4932,331 +4893,123 @@ console.log("💰 Transactions:", transactions?.length || 0);
 console.log("🧾 Receipts:", receipts?.length || 0);
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// FILE VIEWER FUNCTIONALITY
+// UNIVERSAL FILE VIEWER MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
 
-let currentViewerFiles = [];
-let currentViewerFile = null;
-let currentViewerContent = null;
+let viewerCurrentFile = null;
 
-// File type icons
-const VIEWER_FILE_ICONS = {
-  // Images
-  'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'svg': '🖼️', 'webp': '🖼️', 'bmp': '🖼️', 'ico': '🖼️',
-  // Documents
-  'pdf': '📄', 'doc': '📝', 'docx': '📝', 'txt': '📄', 'rtf': '📝', 'odt': '📝',
-  // Spreadsheets
-  'xls': '📊', 'xlsx': '📊', 'csv': '📊', 'ods': '📊',
-  // Code
-  'js': '📜', 'ts': '📜', 'html': '🌐', 'css': '🎨', 'json': '📋', 'xml': '📋', 'yaml': '📋', 'yml': '📋',
-  'py': '🐍', 'java': '☕', 'cpp': '⚙️', 'c': '⚙️', 'cs': '⚙️', 'php': '🐘', 'rb': '💎', 'go': '🐹', 'rs': '🦀',
-  'sql': '🗃️', 'sh': '💻', 'bat': '💻', 'ps1': '💻',
-  // Media
-  'mp4': '🎬', 'avi': '🎬', 'mov': '🎬', 'wmv': '🎬', 'flv': '🎬', 'webm': '🎬',
-  'mp3': '🎵', 'wav': '🎵', 'flac': '🎵', 'aac': '🎵', 'ogg': '🎵',
-  // Other
-  'md': '📖', 'log': '📋', 'ini': '⚙️', 'cfg': '⚙️', 'conf': '⚙️'
-};
-
-// Initialize file viewer when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  const fileInput = document.getElementById('fileViewerInput');
-  if (fileInput) {
-    fileInput.addEventListener('change', handleViewerFileSelect);
-  }
-  
-  const urlInput = document.getElementById('urlViewerInput');
-  if (urlInput) {
-    urlInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') loadFileFromUrl();
-    });
-  }
-});
-
-function handleViewerFileSelect(event) {
-  const files = Array.from(event.target.files);
-  currentViewerFiles = files.map(file => ({
-    name: file.name,
-    size: file.size,
-    type: file.type,
-    lastModified: file.lastModified,
-    file: file,
-    source: 'local'
-  }));
-  
-  renderViewerFileList();
-  if (currentViewerFiles.length > 0) {
-    selectViewerFile(0);
-  }
-}
-
-async function loadFileFromUrl() {
-  const url = document.getElementById('urlViewerInput').value.trim();
-  if (!url) return;
-
-  try {
-    const fileName = url.split('/').pop() || 'remote-file';
-    const fileItem = {
-      name: fileName,
-      url: url,
-      source: 'url'
-    };
-
-    currentViewerFiles.push(fileItem);
-    renderViewerFileList();
-    selectViewerFile(currentViewerFiles.length - 1);
-  } catch (error) {
-    showViewerError('Failed to load URL: ' + error.message);
-  }
-}
-
-function renderViewerFileList() {
-  const fileList = document.getElementById('fileViewerList');
-  
-  if (currentViewerFiles.length === 0) {
-    fileList.innerHTML = `
-      <div style="text-align: center; padding: 32px 16px; color: var(--muted2);">
-        <div style="font-size: 2rem; margin-bottom: 8px;">📄</div>
-        <div style="font-size: 0.7rem;">No files loaded</div>
-        <div style="font-size: 0.6rem; margin-top: 4px;">Choose files or enter a URL</div>
-      </div>
-    `;
-    return;
-  }
-
-  fileList.innerHTML = currentViewerFiles.map((file, index) => {
-    const ext = file.name.split('.').pop()?.toLowerCase() || '';
-    const icon = VIEWER_FILE_ICONS[ext] || '📄';
-    
-    return `
-      <div class="file-item ${index === 0 ? 'active' : ''}" onclick="selectViewerFile(${index})" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; margin-bottom: 2px; ${index === 0 ? 'background: var(--gold); color: #000;' : ''}">
-        <span style="font-size: 1rem; flex-shrink: 0;">${icon}</span>
-        <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${file.name}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-async function selectViewerFile(index) {
-  if (index < 0 || index >= currentViewerFiles.length) return;
-
-  // Update active state
-  document.querySelectorAll('#fileViewerList .file-item').forEach((item, i) => {
-    if (i === index) {
-      item.style.background = 'var(--gold)';
-      item.style.color = '#000';
-    } else {
-      item.style.background = '';
-      item.style.color = '';
-    }
-  });
-
-  currentViewerFile = currentViewerFiles[index];
+// Open file viewer with a file URL or blob
+function openFileViewer(fileUrl, fileName, fileType, fileSize) {
+  viewerCurrentFile = { url: fileUrl, name: fileName, type: fileType, size: fileSize };
   
   // Update header
-  document.getElementById('fileViewerHeader').style.display = 'flex';
-  document.getElementById('fileViewerName').textContent = currentViewerFile.name;
-  
+  document.getElementById('viewer-file-name').textContent = fileName || 'File';
   let metaText = '';
-  if (currentViewerFile.size) {
-    metaText += formatViewerFileSize(currentViewerFile.size);
-  }
-  if (currentViewerFile.type) {
-    metaText += metaText ? ' • ' + currentViewerFile.type : currentViewerFile.type;
-  }
-  document.getElementById('fileViewerMeta').textContent = metaText;
-
-  // Show loading
-  showViewerLoading();
-
-  try {
-    await loadViewerFileContent();
-    renderViewerFileContent();
-  } catch (error) {
-    showViewerError('Failed to load file: ' + error.message);
-  }
-}
-
-async function loadViewerFileContent() {
-  if (currentViewerFile.source === 'local') {
-    const file = currentViewerFile.file;
-    const ext = file.name.split('.').pop()?.toLowerCase() || '';
-    
-    if (isViewerImageFile(ext)) {
-      currentViewerContent = {
-        type: 'image',
-        data: URL.createObjectURL(file)
-      };
-    } else if (isViewerVideoFile(ext)) {
-      currentViewerContent = {
-        type: 'video',
-        data: URL.createObjectURL(file)
-      };
-    } else if (isViewerAudioFile(ext)) {
-      currentViewerContent = {
-        type: 'audio',
-        data: URL.createObjectURL(file)
-      };
-    } else if (ext === 'pdf') {
-      currentViewerContent = {
-        type: 'pdf',
-        data: URL.createObjectURL(file)
-      };
-    } else {
-      // Text-based files
-      const text = await file.text();
-      currentViewerContent = {
-        type: 'text',
-        data: text,
-        extension: ext
-      };
-    }
-  } else if (currentViewerFile.source === 'url') {
-    const response = await fetch(currentViewerFile.url);
-    const contentType = response.headers.get('content-type') || '';
-    const ext = currentViewerFile.name.split('.').pop()?.toLowerCase() || '';
-    
-    if (contentType.startsWith('image/') || isViewerImageFile(ext)) {
-      currentViewerContent = {
-        type: 'image',
-        data: currentViewerFile.url
-      };
-    } else if (contentType.startsWith('video/') || isViewerVideoFile(ext)) {
-      currentViewerContent = {
-        type: 'video',
-        data: currentViewerFile.url
-      };
-    } else if (contentType.startsWith('audio/') || isViewerAudioFile(ext)) {
-      currentViewerContent = {
-        type: 'audio',
-        data: currentViewerFile.url
-      };
-    } else if (contentType === 'application/pdf' || ext === 'pdf') {
-      currentViewerContent = {
-        type: 'pdf',
-        data: currentViewerFile.url
-      };
-    } else {
-      // Text-based files
-      const text = await response.text();
-      currentViewerContent = {
-        type: 'text',
-        data: text,
-        extension: ext
-      };
-    }
-  }
-}
-
-function renderViewerFileContent() {
-  const viewer = document.getElementById('fileViewerContent');
+  if (fileType) metaText += fileType;
+  if (fileSize) metaText += (metaText ? ' • ' : '') + formatViewerFileSize(fileSize);
+  document.getElementById('viewer-file-meta').textContent = metaText;
   
-  if (!currentViewerContent) {
-    showViewerError('No content to display');
-    return;
-  }
+  // Render content
+  renderViewerContent(fileUrl, fileName, fileType);
+  
+  // Show modal
+  document.getElementById('file-viewer-modal').classList.add('open');
+}
 
-  switch (currentViewerContent.type) {
-    case 'image':
-      viewer.innerHTML = `
-        <div style="text-align: center;">
-          <img src="${currentViewerContent.data}" alt="${currentViewerFile.name}" style="max-width: 100%; max-height: 70vh; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" onload="this.style.opacity=1" style="opacity:0;transition:opacity 0.3s">
+function renderViewerContent(url, name, type) {
+  const viewer = document.getElementById('viewer-content');
+  const ext = name?.split('.').pop()?.toLowerCase() || '';
+  
+  // Determine file type
+  if (type?.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext)) {
+    // Image
+    viewer.innerHTML = `
+      <div style="text-align: center;">
+        <img src="${url}" alt="${name}" style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" onload="this.style.opacity=1" style="opacity:0;transition:opacity 0.3s">
+      </div>
+    `;
+  } else if (type?.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'webm', 'mkv'].includes(ext)) {
+    // Video
+    viewer.innerHTML = `
+      <div style="text-align: center;">
+        <video controls style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+          <source src="${url}" type="${type || 'video/mp4'}">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    `;
+  } else if (type?.startsWith('audio/') || ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext)) {
+    // Audio
+    viewer.innerHTML = `
+      <div style="text-align: center; padding: 48px;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🎵</div>
+        <h3 style="margin-bottom: 24px; font-size: 1.1rem;">${name}</h3>
+        <audio controls style="width: 100%; max-width: 500px;">
+          <source src="${url}" type="${type || 'audio/mpeg'}">
+          Your browser does not support the audio tag.
+        </audio>
+      </div>
+    `;
+  } else if (type === 'application/pdf' || ext === 'pdf') {
+    // PDF
+    viewer.innerHTML = `
+      <iframe src="${url}" style="width: 100%; height: 70vh; border: 1px solid var(--border); border-radius: 12px;" frameborder="0">
+        <p>Your browser does not support PDFs. <a href="${url}" target="_blank" style="color: var(--gold);">Download the PDF</a>.</p>
+      </iframe>
+    `;
+  } else if (type?.startsWith('text/') || ['txt', 'md', 'log', 'csv', 'json', 'xml', 'yaml', 'yml', 'js', 'ts', 'html', 'css', 'py', 'java', 'cpp', 'c', 'php', 'rb', 'go', 'rs', 'sql', 'sh'].includes(ext)) {
+    // Text file - fetch and display
+    fetch(url)
+      .then(r => r.text())
+      .then(text => {
+        let content = text;
+        if (ext === 'json') {
+          try {
+            content = JSON.stringify(JSON.parse(text), null, 2);
+          } catch (e) {}
+        }
+        viewer.innerHTML = `
+          <pre style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; background: var(--code-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 70vh;">${escapeViewerHtml(content)}</pre>
+        `;
+      })
+      .catch(err => {
+        viewer.innerHTML = `
+          <div style="text-align: center; padding: 48px; color: var(--error);">
+            <div style="font-size: 2rem; margin-bottom: 12px;">❌</div>
+            <div>Failed to load file content</div>
+          </div>
+        `;
+      });
+  } else {
+    // Unknown type - show download option
+    viewer.innerHTML = `
+      <div style="text-align: center; padding: 48px;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">📄</div>
+        <div style="font-size: 1.1rem; margin-bottom: 8px;">${name}</div>
+        <div style="font-size: 0.85rem; color: var(--muted2); margin-bottom: 24px;">
+          This file type cannot be previewed in the browser
         </div>
-      `;
-      break;
-
-    case 'video':
-      viewer.innerHTML = `
-        <div style="text-align: center;">
-          <video controls style="max-width: 100%; max-height: 70vh; border-radius: 8px;">
-            <source src="${currentViewerContent.data}" type="${currentViewerFile.type || 'video/mp4'}">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      `;
-      break;
-
-    case 'audio':
-      viewer.innerHTML = `
-        <div style="text-align: center; padding: 32px;">
-          <h3 style="margin-bottom: 16px; font-size: 1rem;">🎵 ${currentViewerFile.name}</h3>
-          <audio controls style="width: 100%; max-width: 400px;">
-            <source src="${currentViewerContent.data}" type="${currentViewerFile.type || 'audio/mpeg'}">
-            Your browser does not support the audio tag.
-          </audio>
-        </div>
-      `;
-      break;
-
-    case 'pdf':
-      viewer.innerHTML = `
-        <iframe src="${currentViewerContent.data}" style="width: 100%; height: 70vh; border: 1px solid var(--border); border-radius: 8px;" frameborder="0">
-          <p>Your browser does not support PDFs. <a href="${currentViewerContent.data}" target="_blank">Download the PDF</a>.</p>
-        </iframe>
-      `;
-      break;
-
-    case 'text':
-      renderViewerTextContent();
-      break;
-
-    default:
-      showViewerError('Unsupported file type');
+        <button class="btn-submit" onclick="downloadViewerFile()">⬇️ Download File</button>
+      </div>
+    `;
   }
 }
 
-function renderViewerTextContent() {
-  const viewer = document.getElementById('fileViewerContent');
-  const ext = currentViewerContent.extension;
-  let content = currentViewerContent.data;
-
-  // Handle JSON
-  if (ext === 'json') {
-    try {
-      const parsed = JSON.parse(content);
-      content = JSON.stringify(parsed, null, 2);
-    } catch (e) {
-      // Fall through to regular text handling
-    }
-  }
-
-  // Create text viewer with monospace font
-  viewer.innerHTML = `
-    <pre style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.75rem; line-height: 1.6; white-space: pre-wrap; background: var(--code-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border); overflow: auto; max-height: 70vh;">${escapeViewerHtml(content)}</pre>
-  `;
+function closeFileViewer() {
+  document.getElementById('file-viewer-modal').classList.remove('open');
+  viewerCurrentFile = null;
 }
 
-function showViewerLoading() {
-  document.getElementById('fileViewerContent').innerHTML = `
-    <div style="text-align: center; padding: 32px; color: var(--muted2);">
-      <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 50%; border-top-color: var(--gold); animation: spin 1s ease-in-out infinite; margin-bottom: 8px;"></div>
-      <div>Loading file...</div>
-    </div>
-  `;
-}
-
-function showViewerError(message) {
-  document.getElementById('fileViewerContent').innerHTML = `
-    <div style="background: var(--s2); border: 1px solid var(--error); color: var(--error); padding: 16px; border-radius: 8px; text-align: center;">
-      ❌ ${message}
-    </div>
-  `;
-}
-
-// Utility functions for file viewer
-function isViewerImageFile(ext) {
-  return ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext);
-}
-
-function isViewerVideoFile(ext) {
-  return ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(ext);
-}
-
-function isViewerAudioFile(ext) {
-  return ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext);
+function downloadViewerFile() {
+  if (!viewerCurrentFile) return;
+  const a = document.createElement('a');
+  a.href = viewerCurrentFile.url;
+  a.download = viewerCurrentFile.name || 'download';
+  a.click();
 }
 
 function formatViewerFileSize(bytes) {
+  if (!bytes) return '';
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -5270,47 +5023,15 @@ function escapeViewerHtml(text) {
   return div.innerHTML;
 }
 
-// Action functions for file viewer
-function downloadCurrentFile() {
-  if (!currentViewerFile) return;
-  
-  if (currentViewerFile.source === 'local') {
-    const url = URL.createObjectURL(currentViewerFile.file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = currentViewerFile.name;
-    a.click();
-    URL.revokeObjectURL(url);
-  } else {
-    window.open(currentViewerFile.url, '_blank');
-  }
-}
-
-function copyFileContent() {
-  if (!currentViewerContent) return;
-  
-  if (currentViewerContent.type === 'text') {
-    navigator.clipboard.writeText(currentViewerContent.data).then(() => {
-      // Show feedback
-      const btn = document.getElementById('copyFileBtn');
-      const originalText = btn.textContent;
-      btn.textContent = '✅ Copied!';
-      setTimeout(() => {
-        btn.textContent = originalText;
-      }, 2000);
-    });
-  } else {
-    // Copy file URL or blob URL
-    const url = currentViewerContent.data;
-    navigator.clipboard.writeText(url);
-  }
-}
+// Close modal when clicking outside
+document.getElementById('file-viewer-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeFileViewer();
+});
 
 // Make functions globally available
-window.selectViewerFile = selectViewerFile;
-window.loadFileFromUrl = loadFileFromUrl;
-window.downloadCurrentFile = downloadCurrentFile;
-window.copyFileContent = copyFileContent;
+window.openFileViewer = openFileViewer;
+window.closeFileViewer = closeFileViewer;
+window.downloadViewerFile = downloadViewerFile;
 
 </script>
 </body>
