@@ -1,0 +1,55 @@
+╔════════════════════════════════════════════════════════════╗
+║                  TRACKLY - QUICK START                     ║
+╚════════════════════════════════════════════════════════════╝
+
+🚀 START SERVER & NGROK
+   Double-click: start-server.bat
+
+🛑 STOP SERVERS
+   Double-click: stop-server.bat
+
+🌐 YOUR PUBLIC URL
+   https://secondarily-lipogrammatic-lesly.ngrok-free.dev
+
+📊 NGROK DASHBOARD
+   http://127.0.0.1:4040
+
+📱 LOCAL ACCESS
+   http://localhost:8000
+
+📚 FULL DOCUMENTATION
+   See: plan/NGROK_SETUP.md
+
+╔════════════════════════════════════════════════════════════╗
+║                    CURRENT STATUS                          ║
+╚════════════════════════════════════════════════════════════╝
+
+✅ Python HTTP Server - Running on port 8000
+✅ Ngrok Tunnel - Active and forwarding
+✅ Public URL - Ready to share
+✅ HTTPS - Enabled (via ngrok)
+✅ PWA - Can be installed
+✅ CACHE FIXED - Updated content served
+
+╔════════════════════════════════════════════════════════════╗
+║                   RECENT UPDATES                           ║
+╚════════════════════════════════════════════════════════════╝
+
+✅ Scheduled page upgraded with modern interface
+✅ Shopping list mobile optimization
+✅ Accounts, Transactions & Receipts pages upgraded
+✅ Cache-busting headers added to prevent old content
+✅ Servers restarted with fresh content
+
+╔════════════════════════════════════════════════════════════╗
+║                   IMPORTANT NOTES                          ║
+╚════════════════════════════════════════════════════════════╝
+
+⚠️  URL changes every time you restart (free plan)
+⚠️  Keep ngrok running to maintain access
+⚠️  Don't share URL publicly (security)
+✅  Firebase Auth protects user data
+✅  Works on mobile devices
+🔄  Hard refresh (Ctrl+Shift+R) if you see old content
+
+╔════════════════════════════════════════════════════════════╝

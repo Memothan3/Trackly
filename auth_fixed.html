@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trackly - Sign In</title>
+
+<!-- Favicon and App Icons -->
+<link rel="icon" type="image/png" href="logo-icon.png">
+<link rel="apple-touch-icon" href="logo-icon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Configuration -->
+<script src="config.js"></script>
+<!-- Firebase SDK v12 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+  
+  const firebaseConfig = window.TRACKLY_CONFIG?.FIREBASE_CONFIG || {
+    apiKey: "AIzaSyBx4p7qeMrVMkcTGCCleWszuc7T6Vd1_1Q",
+    authDomain: "rubys-3ca51.firebaseapp.com",
+    databaseURL: "https://rubys-3ca51-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "rubys-3ca51",
+    storageBucket: "rubys-3ca51.firebasestorage.app",
+    messagingSenderId: "185377540674",
+    appId: "1:185377540674:web:ff7fa3c28018519615bbdb",
+    measurementId: "G-8ETP2RL6V2"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+  
+  // Make Firebase available globally
+  window.firebaseAuth = auth;
+  window.firebaseGoogleProvider = googleProvider;
+  window.firebaseCreateUser = createUserWithEmailAndPassword;
+  window.firebaseSignIn = signInWithEmailAndPassword;
+  window.firebaseSignInWithPopup = signInWithPopup;
+  window.firebaseSendEmailVerification = sendEmailVerification;
+  window.firebaseSendPasswordReset = sendPasswordResetEmail;
+  window.firebaseOnAuthStateChanged = onAuthStateChanged;
+  
+  // Dispatch event when Firebase is ready
+  window.dispatchEvent(new Event('firebase-ready'));
+  console.log("🔥 Firebase initialized and ready");
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --background: oklch(1.0000 0 0); --foreground: oklch(0.2686 0 0);
+  --card: oklch(1.0000 0 0); --primary: oklch(0.7686 0.1647 70.0804);
+  --muted: oklch(0.9846 0.0017 247.8389); --muted-foreground: oklch(0.5510 0.0234 264.3637);
+  --accent-foreground: oklch(0.4732 0.1247 46.2007); --destructive: oklch(0.6368 0.2078 25.3313);
+  --border: oklch(0.9276 0.0058 264.5313);
+  --bg: var(--background); --s1: var(--card); --s2: var(--muted);
+  --border2: color-mix(in oklab, var(--border) 70%, var(--foreground));
+  --gold: var(--primary); --text: var(--foreground); --muted2: var(--muted-foreground);
+  --error: var(--destructive); --success: oklch(0.74 0.14 151);
+}
+.dark {
+  --background: oklch(0.2046 0 0); --foreground: oklch(0.9219 0 0);
+  --card: oklch(0.2686 0 0); --primary: oklch(0.7686 0.1647 70.0804);
+  --muted: oklch(0.2393 0 0); --muted-foreground: oklch(0.7155 0 0);
+  --accent-foreground: oklch(0.9243 0.1151 95.7459); --destructive: oklch(0.6368 0.2078 25.3313);
+  --border: oklch(0.3715 0 0);
+}
+body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9998; }
+.bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.orb { position: absolute; border-radius: 999px; filter: blur(40px); opacity: 0.2; animation: floatOrb 14s ease-in-out infinite; }
+.orb-1 { width: 280px; height: 280px; background: var(--primary); top: -60px; right: -60px; }
+.orb-2 { width: 340px; height: 340px; background: var(--accent-foreground); bottom: -120px; left: -80px; animation-delay: 2s; }
+@keyframes floatOrb { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(0,-16px) scale(1.05)} }
+.left-panel { background: var(--s1); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 48px; position: relative; overflow: hidden; }
+.left-glow { position: absolute; bottom: -50px; left: -50px; width: 500px; height: 400px; background: radial-gradient(ellipse at bottom left, rgba(232,115,74,0.15) 0%, rgba(201,151,74,0.08) 40%, transparent 70%); pointer-events: none; }
+.currency-float { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.currency { position: absolute; color: color-mix(in oklab, var(--primary) 45%, transparent); opacity: 0.38; font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3.2vw, 2.9rem); font-weight: 600; text-shadow: 0 0 12px color-mix(in oklab, var(--primary) 45%, transparent); animation: currencyDrift 11s linear infinite; user-select: none; }
+.currency.c1{left:10%;top:80%;animation-delay:0s}.currency.c2{left:30%;top:88%;animation-delay:1.2s}.currency.c3{left:48%;top:86%;animation-delay:2.4s}.currency.c4{left:66%;top:90%;animation-delay:3.6s}.currency.c5{left:82%;top:84%;animation-delay:4.8s}.currency.c6{left:22%;top:92%;animation-delay:6s}
+@keyframes currencyDrift { 0%{transform:translateY(0) rotate(0deg);opacity:0} 10%{opacity:0.4} 50%{transform:translateY(-44vh) translateX(10px) rotate(8deg);opacity:0.48} 100%{transform:translateY(-82vh) translateX(-8px) rotate(-6deg);opacity:0} }
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; text-decoration: none; color: var(--text); }
+.logo span { color: var(--gold); font-style: italic; }
+.left-title { font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; font-weight: 300; line-height: 1.1; margin-bottom: 20px; }
+.left-title em { font-style: italic; color: var(--gold); display: block; }
+.left-sub { font-size: 0.65rem; line-height: 1.9; color: var(--muted-foreground); max-width: 320px; }
+.left-features { display: flex; flex-direction: column; gap: 12px; }
+.left-feat { display: flex; align-items: center; gap: 12px; font-size: 0.62rem; color: var(--muted-foreground); }
+.feat-check { width: 18px; height: 18px; border-radius: 5px; background: rgba(201,151,74,0.12); border: 1px solid rgba(201,151,74,0.3); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 0.65rem; flex-shrink: 0; }
+.left-main, .left-features, .logo { position: relative; z-index: 1; }
+.right-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; position: relative; overflow-y: auto; min-height: 100vh; }
+.theme-toggle { position: absolute; top: 24px; right: 24px; border: 1px solid var(--border); background: var(--s1); color: var(--text); border-radius: 999px; padding: 8px 12px; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; font-family: 'JetBrains Mono', monospace; z-index: 10; }
+.back-link { position: absolute; top: 32px; left: 48px; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); text-decoration: none; z-index: 10; }
+.auth-box { width: 100%; max-width: 400px; position: relative; z-index: 1; }
+.auth-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; margin-bottom: 6px; }
+.auth-sub { font-size: 0.63rem; color: var(--muted-foreground); margin-bottom: 28px; line-height: 1.6; }
+.tabs { display: flex; background: var(--s2); border: 1px solid var(--border); border-radius: 8px; padding: 4px; margin-bottom: 24px; gap: 4px; }
+.tab { flex: 1; padding: 8px; background: none; border: none; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); cursor: pointer; border-radius: 5px; transition: all 0.18s; }
+.tab.active { background: var(--s1); color: var(--text); border: 1px solid var(--border2); }
+.oauth-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.oauth-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 14px; background: var(--s2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.06em; cursor: pointer; width: 100%; transition: all 0.18s; }
+.oauth-btn:hover { background: var(--s1); border-color: color-mix(in oklab, var(--gold) 30%, var(--border)); }
+.oauth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.form { display: flex; flex-direction: column; gap: 13px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 0.57rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-foreground); }
+.field input { background: var(--s2); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 11px 14px; outline: none; width: 100%; transition: border-color 0.18s; }
+.field input:focus { border-color: var(--gold); }
+.field input::placeholder { color: var(--muted2); opacity: 0.6; }
+.forgot { text-align: right; margin-top: -4px; }
+.forgot a { font-size: 0.57rem; color: var(--muted-foreground); text-decoration: none; letter-spacing: 0.08em; }
+.forgot a:hover { color: var(--gold); }
+.btn-primary { background: var(--gold); border: none; border-radius: 8px; color: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 13px 14px; cursor: pointer; width: 100%; transition: opacity 0.2s, transform 0.15s; margin-top: 2px; }
+.btn-primary:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-ghost { background: var(--s2); color: var(--muted2); border: 1px solid var(--border); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 11px 14px; cursor: pointer; width: 100%; transition: all 0.18s; margin-top: 6px; }
+.btn-ghost:hover:not(:disabled) { background: var(--s1); color: var(--text); }
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+.msg-box { padding: 11px 14px; border-radius: 7px; font-size: 0.63rem; line-height: 1.6; margin-bottom: 16px; display: none; }
+.msg-box.error { background: rgba(201,80,80,0.1); border: 1px solid rgba(201,80,80,0.3); color: var(--error); display: block; }
+.msg-box.success { background: rgba(80,180,120,0.1); border: 1px solid rgba(80,180,120,0.3); color: var(--success); display: block; }
+.msg-box.info { background: color-mix(in oklab, var(--primary) 12%, var(--card)); border: 1px solid color-mix(in oklab, var(--primary) 30%, var(--border)); color: var(--muted-foreground); display: block; }
+.otp-big { font-size: 1.8rem !important; letter-spacing: 0.5em !important; text-align: center !important; padding: 14px !important; font-weight: 300 !important; }
+.spinner { display: inline-block; width: 11px; height: 11px; border: 1.5px solid rgba(0,0,0,0.25); border-top-color: #000; border-radius: 50%; animation: spin 0.65s linear infinite; margin-right: 6px; vertical-align: middle; }
+.spinner.light { border-color: rgba(255,255,255,0.25); border-top-color: #fff; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) { body { grid-template-columns: 1fr; } .left-panel { display: none; } .right-panel { padding: 80px 24px 40px; justify-content: flex-start; } .back-link { left: 24px; } }
+</style>
+</head>
+<body>
+<div class="bg-orbs" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-glow"></div>
+  <div class="currency-float" aria-hidden="true">
+    <span class="currency c1">$</span><span class="currency c2">€</span>
+    <span class="currency c3">£</span><span class="currency c4">¥</span>
+    <span class="currency c5">₹</span><span class="currency c6">₿</span>
+  </div>
+  <a href="index.html" class="logo">Track<span>ly</span></a>
+  <div class="left-main">
+    <h2 class="left-title">Your money,<br><em>starts here.</em></h2>
+    <p class="left-sub">Join Trackly and build a clear financial life with smarter tracking and AI-powered insights.</p>
+  </div>
+  <div class="left-features">
+    <div class="left-feat"><div class="feat-check">✓</div>All accounts and wallets in one place</div>
+    <div class="left-feat"><div class="feat-check">✓</div>Reason-based transaction tracking</div>
+    <div class="left-feat"><div class="feat-check">✓</div>Receipt extraction with Gemini Flash</div>
+    <div class="left-feat"><div class="feat-check">✓</div>Scheduled income and expense reminders</div>
+    <div class="left-feat"><div class="feat-check">✓</div>Synced across all your devices</div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <button id="theme-toggle" class="theme-toggle" type="button">Light</button>
+  <a href="index.html" class="back-link">← Back</a>
+
+  <div class="auth-box">
+    <h1 class="auth-title" id="auth-title">Welcome back</h1>
+    <p class="auth-sub" id="auth-sub">Sign in to your Trackly account.</p>
+
+    <div class="tabs" id="tabs-row">
+      <button class="tab active" id="tab-signin" type="button">Sign In</button>
+      <button class="tab" id="tab-signup" type="button">Sign Up</button>
+    </div>
+
+    <div class="msg-box" id="msg-box" role="alert" aria-live="polite"></div>
+
+    <!-- OAUTH -->
+    <div id="oauth-row" class="oauth-row">
+      <button class="oauth-btn" id="google-btn" type="button">
+        <svg width="15" height="15" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.7 0 6.7 5.4 2.9 13.3l7.8 6C12.4 13.3 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.5 2.8-2.1 5.2-4.5 6.8l7 5.5C43.6 36.8 46.5 31.1 46.5 24.5z"/><path fill="#FBBC05" d="M10.7 28.7A14.7 14.7 0 019.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 000 24c0 3.8.9 7.5 2.6 10.7l8.1-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7-5.5c-2.1 1.4-4.8 2.2-8.2 2.2-6.2 0-11.5-3.8-13.3-9.2l-8 6.2C6.6 42.6 14.7 48 24 48z"/></svg>
+        Continue with Google
+      </button>
+    </div>
+    <div class="divider" id="divider-row">or continue with email</div>
+
+    <!-- ── SIGN IN ── -->
+    <div id="signin-form">
+      <div class="form">
+        <div class="field">
+          <label for="si-email">Email or Username</label>
+          <input type="text" id="si-email" placeholder="you@example.com or username" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="si-pass">Password</label>
+          <input type="password" id="si-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="forgot"><a href="#" id="goto-reset">Forgot password?</a></div>
+        <button class="btn-primary" id="si-btn" type="button">Sign In</button>
+      </div>
+    </div>
+
+    <!-- ── SIGN UP ── -->
+    <div id="signup-form" style="display:none">
+      <div class="form">
+        <div class="field">
+          <label for="su-name">Full Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="su-name" placeholder="Mohammed" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="su-username">Username <span style="color:var(--error)">*</span></label>
+          <input type="text" id="su-username" placeholder="mohammed123" autocomplete="username" style="text-transform:lowercase">
+        </div>
+        <div class="field">
+          <label for="su-email">Email <span style="color:var(--error)">*</span></label>
+          <input type="email" id="su-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="su-phone">Phone</label>
+          <input type="tel" id="su-phone" placeholder="+251 9xx xxx xxx" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="su-country">Country</label>
+          <input type="text" id="su-country" placeholder="Ethiopia">
+        </div>
+        <div class="field">
+          <label for="su-currency">Default Currency</label>
+          <input type="text" id="su-currency" placeholder="USD" maxlength="5" style="text-transform:uppercase">
+        </div>
+        <div class="field">
+          <label for="su-pass">Password <span style="color:var(--error)">*</span></label>
+          <input type="password" id="su-pass" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+        <button class="btn-primary" id="su-btn" type="button">Create Account</button>
+      </div>
+    </div>
+
+    <!-- ── EMAIL CONFIRMATION ── -->
+    <div id="email-confirm-form" style="display:none">
+      <div class="form">
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="width:64px; height:64px; margin:0 auto 16px; background:color-mix(in oklab, var(--gold) 12%, var(--s1)); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gold)">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:400; margin-bottom:8px;">Check your email</h3>
+          <p style="font-size:0.65rem; color:var(--muted2); line-height:1.6;">
+            We sent a confirmation link to<br>
+            <strong id="confirm-email-target" style="color:var(--gold)"></strong>
+          </p>
+        </div>
+        
+        <div class="msg-box info" style="display:block; margin-bottom:16px;">
+          Click the link in the email to confirm your account and sign in.
+        </div>
+
+        <div style="font-size:0.6rem; color:var(--muted2); text-align:center; margin-bottom:16px; line-height:1.6;">
+          Didn't receive the email? Check your spam folder or click below to resend.
+        </div>
+
+        <button class="btn-ghost" id="email-resend-btn" type="button">Resend Confirmation Email</button>
+        <button class="btn-ghost" id="email-back-btn" type="button">← Back to Sign In</button>
+      </div>
+    </div>
+
+    <!-- ── RESET PASSWORD ── -->
+    <div id="reset-form" style="display:none">
+      <div class="form">
+        <div class="field">
+          <label for="rs-email">Email address</label>
+          <input type="email" id="rs-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="btn-primary" id="rs-btn" type="button">Send Reset Link</button>
+        <button class="btn-ghost" id="reset-back-btn" type="button">← Back to Sign In</button>
+      </div>
+    </div>
+
+    <!-- ── GOOGLE PROFILE COMPLETION ── -->
+    <div id="google-profile-form" style="display:none">
+      <div class="form">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div style="width:64px; height:64px; margin:0 auto 12px; background:color-mix(in oklab, var(--gold) 12%, var(--s1)); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <svg width="32" height="32" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.7 0 6.7 5.4 2.9 13.3l7.8 6C12.4 13.3 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.5 2.8-2.1 5.2-4.5 6.8l7 5.5C43.6 36.8 46.5 31.1 46.5 24.5z"/><path fill="#FBBC05" d="M10.7 28.7A14.7 14.7 0 019.5 24c0-1.6.3-3.2.8-4.7l-7.8-6A23.9 23.9 0 000 24c0 3.8.9 7.5 2.6 10.7l8.1-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7-5.5c-2.1 1.4-4.8 2.2-8.2 2.2-6.2 0-11.5-3.8-13.3-9.2l-8 6.2C6.6 42.6 14.7 48 24 48z"/></svg>
+          </div>
+          <h3 style="font-size:1.1rem; font-weight:400; margin-bottom:6px;">Complete Your Profile</h3>
+          <p style="font-size:0.6rem; color:var(--muted2); line-height:1.6;">
+            Signed in as <strong id="google-email-display" style="color:var(--gold)"></strong>
+          </p>
+        </div>
+
+        <div class="msg-box info" style="display:block; margin-bottom:16px; font-size:0.58rem;">
+          Please complete your profile to continue. This information helps personalize your experience.
+        </div>
+
+        <div class="field">
+          <label for="gp-username">Username <span style="color:var(--error)">*</span></label>
+          <input type="text" id="gp-username" placeholder="username123" autocomplete="username" style="text-transform:lowercase">
+        </div>
+        <div class="field">
+          <label for="gp-phone">Phone Number</label>
+          <input type="tel" id="gp-phone" placeholder="+251 9xx xxx xxx" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="gp-country">Country</label>
+          <input type="text" id="gp-country" placeholder="Ethiopia">
+        </div>
+        <div class="field">
+          <label for="gp-currency">Default Currency</label>
+          <input type="text" id="gp-currency" placeholder="USD" maxlength="5" style="text-transform:uppercase">
+        </div>
+        <button class="btn-primary" id="gp-btn" type="button">Complete Profile & Continue</button>
+        <button class="btn-ghost" id="google-back-btn" type="button">← Cancel</button>
+      </div>
+    </div>
+
+  </div><!-- /auth-box -->
+</div><!-- /right-panel -->
+
+<script>
+const SUPABASE_URL  = window.TRACKLY_CONFIG?.SUPABASE_URL || "https://kkokfrkfffxlousawivj.supabase.co";
+const SUPABASE_KEY  = window.TRACKLY_CONFIG?.SUPABASE_ANON_KEY || "sb_publishable_ci4FPaMp4BhuoTMftaTgBQ_H00cny3I";
+const DASHBOARD     = "trackly_dashboard.html";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let pendingGoogleUser = null; // Store Google user temporarilylet pendingEmail = "";
+let resendTimer  = null;
+
+/* ── helpers ── */
+const el = id => document.getElementById(id);
+
+function msg(text, type = "info") {
+  const b = el("msg-box");
+  b.textContent = text;
+  b.className = "msg-box " + type;
+}
+function clearMsg() { const b = el("msg-box"); b.className = "msg-box"; b.textContent = ""; }
+
+function busy(id, yes, label) {
+  const b = el(id);
+  if (!b) return;
+  b.disabled = yes;
+  if (yes) { b.dataset.lbl = b.textContent; b.innerHTML = `<span class="spinner"></span>${label || "Please wait…"}`; }
+  else      { b.textContent = b.dataset.lbl || b.textContent; }
+}
+
+function go(url) { window.location.href = url; }
+
+/* ── Sync Firebase user to Supabase (Client-Side) ── */
+async function syncUserToSupabase(firebaseUser, additionalData = {}) {
+  console.log("🔄 Syncing Firebase user to Supabase...", firebaseUser.uid);
+  
+  try {
+    // Step 1: Check if profile exists
+    console.log("🔍 Checking if profile exists...");
+    
+    const { data: existingProfile, error: checkError } = await sb
+      .from("profiles")
+      .select("*")
+      .eq("id", firebaseUser.uid)
+      .single();
+    
+    if (checkError && checkError.code !== 'PGRST116') {
+      // PGRST116 means "no rows found" which is fine for new users
+      console.error("❌ Error checking profile:", checkError);
+      return {
+        success: false,
+        error: checkError,
+        userMessage: `Database error: ${checkError.message}`
+      };
+    }
+    
+    if (existingProfile) {
+      // Profile already exists
+      console.log("✅ Profile already exists in Supabase");
+      return { success: true, profile: existingProfile };
+    }
+    
+    // Step 2: Create new profile
+    const profileData = {
+      id: firebaseUser.uid,
+      username: additionalData.username || firebaseUser.email.split('@')[0].toLowerCase(),
+      full_name: additionalData.full_name || firebaseUser.displayName || firebaseUser.email.split('@')[0],
+      phone: additionalData.phone || null,
+      country: additionalData.country || null,
+      currency: additionalData.currency || 'USD',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    console.log("📝 Creating new profile:", profileData);
+    
+    const { data, error } = await sb
+      .from("profiles")
+      .insert([profileData])
+      .select()
+      .single();
+    
+    if (error) {
+      console.error("❌ Profile creation failed:", error);
+      
+      if (error.message.includes('duplicate') || error.message.includes('unique')) {
+        return {
+          success: false,
+          error,
+          userMessage: "Username already exists. Please choose a different username."
+        };
+      }
+      
+      return {
+        success: false,
+        error,
+        userMessage: `Failed to create profile: ${error.message}`
+      };
+    }
+    
+    console.log("✅ Profile created successfully!");
+    return { success: true, profile: data };
+    
+  } catch (err) {
+    console.error("❌ Sync error:", err);
+    return {
+      success: false,
+      error: err,
+      userMessage: `Connection error: ${err.message}`
+    };
+  }
+}
+
+/* ── Helper function for handling sync errors ── */
+function handleSyncError(result) {
+  if (!result.success) {
+    console.error("Sync failed:", result.error);
+    msg(result.userMessage || "Failed to sync profile. Please try again.", "error");
+    return false;
+  }
+  return true;
+}
+
+/* ── view switching ── */
+function showView(v) {
+  ["signin-form","signup-form","email-confirm-form","reset-form","google-profile-form"].forEach(id => el(id).style.display = "none");
+  const showOAuth = v === "signin" || v === "signup";
+  el("oauth-row").style.display   = showOAuth ? "flex"   : "none";
+  el("divider-row").style.display = showOAuth ? "flex"   : "none";
+  el("tabs-row").style.display    = showOAuth ? "flex"   : "none";
+  clearMsg();
+
+  const cfg = {
+    signin:  { form:"signin-form",  title:"Welcome back",      sub:"Sign in to your Trackly account.",     activeTab:"tab-signin"  },
+    signup:  { form:"signup-form",  title:"Create account",    sub:"Start your Trackly journey today.",    activeTab:"tab-signup"  },
+    confirm: { form:"email-confirm-form", title:"Confirm your email", sub:"One more step to get started." },
+    reset:   { form:"reset-form",   title:"Reset password",    sub:"We'll send a reset link to your inbox." },
+    googleProfile: { form:"google-profile-form", title:"Complete Your Profile", sub:"Just a few more details to get started." },
+  }[v];
+
+  if (!cfg) return;
+  el(cfg.form).style.display = "block";
+  el("auth-title").textContent = cfg.title;
+  el("auth-sub").textContent   = cfg.sub;
+  if (cfg.activeTab) {
+    ["tab-signin","tab-signup"].forEach(t => el(t).classList.toggle("active", t === cfg.activeTab));
+  }
+  if (v === "confirm") { 
+    el("confirm-email-target").textContent = pendingEmail;
+  }
+}
+
+/* ── SIGN IN (Firebase) ── */
+async function doSignIn() {
+  const emailOrUsername = el("si-email").value.trim();
+  const pass  = el("si-pass").value;
+  if (!emailOrUsername) return msg("Enter your email or username.", "error");
+  if (!pass)  return msg("Enter your password.", "error");
+
+  busy("si-btn", true, "Signing in…");
+  
+  let email = emailOrUsername;
+  
+  // Check if input is username (no @ symbol)
+  if (!emailOrUsername.includes("@")) {
+    console.log("🔍 Looking up username:", emailOrUsername);
+    
+    // Look up email by username from Supabase
+    const { data: profile } = await sb
+      .from("profiles")
+      .select("id")
+      .eq("username", emailOrUsername.toLowerCase())
+      .single();
+    
+    if (!profile) {
+      busy("si-btn", false);
+      return msg("Username not found. Please check your username or use your email.", "error");
+    }
+    
+    // Get email from Firebase (we'll need to store it or use a different approach)
+    // For now, show error and ask for email
+    busy("si-btn", false);
+    return msg("Please use your email address to sign in.", "info");
+  }
+  
+  try {
+    // Sign in with Firebase
+    const userCredential = await window.firebaseSignIn(window.firebaseAuth, email, pass);
+    const user = userCredential.user;
+    
+    console.log("✅ Firebase sign in successful:", user.uid);
+    
+    // Check if email is verified
+    if (!user.emailVerified) {
+      busy("si-btn", false);
+      pendingEmail = email;
+      showView("confirm");
+      msg("Please verify your email address. Check your inbox for the verification link.", "info");
+      return;
+    }
+    
+    // Sync to Supabase
+    const syncResult = await syncUserToSupabase(user);
+    
+    if (!handleSyncError(syncResult)) {
+      busy("si-btn", false);
+      return; // Stop here if sync failed
+    }
+    
+    busy("si-btn", false);
+    
+    // Store Firebase token for dashboard
+    localStorage.setItem("firebase-uid", user.uid);
+    localStorage.setItem("firebase-email", user.email);
+    
+    go(DASHBOARD);
+  } catch (error) {
+    busy("si-btn", false);
+    console.error("❌ Sign in error:", error);
+    
+    const errorCode = error.code;
+    if (errorCode === "auth/invalid-credential" || errorCode === "auth/wrong-password" || errorCode === "auth/user-not-found") {
+      msg("Incorrect email or password.", "error");
+    } else if (errorCode === "auth/too-many-requests") {
+      msg("Too many failed attempts. Please try again later.", "error");
+    } else {
+      msg(error.message, "error");
+    }
+  }
+}
+
+/* ── SIGN UP ── */
+async function doSignUp() {
+  const name     = el("su-name").value.trim();
+  const username = el("su-username").value.trim().toLowerCase();
+  const email    = el("su-email").value.trim();
+  const phone    = el("su-phone").value.trim();
+  const country  = el("su-country").value.trim();
+  const currency = (el("su-currency").value.trim().toUpperCase() || "USD").slice(0, 5);
+  const pass     = el("su-pass").value;
+
+  if (!name)              return msg("Full name is required.", "error");
+  if (!username)          return msg("Username is required.", "error");
+  if (username.length < 3) return msg("Username must be at least 3 characters.", "error");
+  if (!/^[a-z0-9_]+$/.test(username)) return msg("Username can only contain lowercase letters, numbers, and underscores.", "error");
+  if (!email)             return msg("Email is required.", "error");
+  if (!pass || pass.length < 6) return msg("Password must be at least 6 characters.", "error");
+
+  busy("su-btn", true, "Creating account…");
+
+  // Check if username is already taken in Supabase
+  const { data: existingUser, error: checkError } = await sb
+    .from("profiles")
+    .select("username")
+    .eq("username", username)
+    .single();
+
+  if (existingUser) {
+    busy("su-btn", false);
+    return msg("Username is already taken. Please choose another.", "error");
+  }
+
+  try {
+    // Create user in Firebase
+    const userCredential = await window.firebaseCreateUser(window.firebaseAuth, email, pass);
+    const user = userCredential.user;
+    
+    console.log("✅ Firebase user created:", user.uid);
+    
+    // Send email verification
+    await window.firebaseSendEmailVerification(user);
+    console.log("📧 Verification email sent");
+    
+    // Sync to Supabase with additional data
+    const syncResult = await syncUserToSupabase(user, {
+      username,
+      full_name: name,
+      phone,
+      country,
+      currency
+    });
+    
+    if (!handleSyncError(syncResult)) {
+      busy("su-btn", false);
+      return; // Stop here if sync failed, but Firebase account is created
+    }
+    
+    busy("su-btn", false);
+    
+    // Show email confirmation screen
+    pendingEmail = email;
+    showView("confirm");
+    msg("Account created! Check your email for the verification link.", "success");
+    
+  } catch (error) {
+    busy("su-btn", false);
+    console.error("❌ Sign up error:", error);
+    
+    const errorCode = error.code;
+    if (errorCode === "auth/email-already-in-use") {
+      msg("An account with this email already exists. Try signing in.", "error");
+    } else if (errorCode === "auth/invalid-email") {
+      msg("Invalid email address.", "error");
+    } else if (errorCode === "auth/weak-password") {
+      msg("Password is too weak. Use at least 6 characters.", "error");
+    } else {
+      msg(error.message, "error");
+    }
+  }
+}
+
+/* ── RESEND CONFIRMATION EMAIL ── */
+async function doResendConfirmation() {
+  if (!pendingEmail) return msg("No email to resend to.", "error");
+  
+  busy("email-resend-btn", true, "Sending…");
+  const { error } = await sb.auth.resend({ 
+    type: "signup", 
+    email: pendingEmail,
+    options: {
+      emailRedirectTo: window.location.origin + "/" + DASHBOARD
+    }
+  });
+  busy("email-resend-btn", false);
+  
+  if (error) {
+    msg("Failed to resend email: " + error.message, "error");
+    return;
+  }
+  
+  msg("Confirmation email sent! Check your inbox.", "success");
+  startResendCooldown();
+}
+
+function startResendCooldown(secs = 60) {
+  const btn = el("email-resend-btn");
+  if (!btn) return;
+  if (resendTimer) clearInterval(resendTimer);
+  let t = secs;
+  btn.disabled = true;
+  btn.textContent = `Resend Email (${t}s)`;
+  resendTimer = setInterval(() => {
+    t--;
+    if (t <= 0) { 
+      clearInterval(resendTimer); 
+      resendTimer = null; 
+      btn.disabled = false; 
+      btn.textContent = "Resend Confirmation Email"; 
+      return; 
+    }
+    btn.textContent = `Resend Email (${t}s)`;
+  }, 1000);
+}
+
+/* ── RESET PASSWORD (Firebase) ── */
+async function doReset() {
+  const email = el("rs-email").value.trim();
+  if (!email) return msg("Enter your email address.", "error");
+  
+  busy("rs-btn", true, "Sending…");
+  
+  try {
+    await window.firebaseSendPasswordReset(window.firebaseAuth, email);
+    busy("rs-btn", false);
+    msg("Reset link sent! Check your inbox (and spam folder).", "success");
+  } catch (error) {
+    busy("rs-btn", false);
+    console.error("❌ Password reset error:", error);
+    
+    const errorCode = error.code;
+    if (errorCode === "auth/user-not-found") {
+      msg("No account found with this email.", "error");
+    } else {
+      msg(error.message, "error");
+    }
+  }
+}
+
+/* ── GOOGLE OAUTH (Firebase) ── */
+async function doGoogle() {
+  busy("google-btn", true, "Redirecting to Google…");
+  try {
+    const result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseGoogleProvider);
+    const user = result.user;
+    
+    console.log("✅ Google sign in successful:", user.uid);
+    busy("google-btn", false);
+    
+    // Check if user already has a profile in Supabase
+    const { data: existingProfile } = await sb
+      .from("profiles")
+      .select("*")
+      .eq("id", user.uid)
+      .single();
+    
+    if (existingProfile) {
+      console.log("✅ Existing profile found, signing in...");
+      // User already has profile, proceed to dashboard
+      localStorage.setItem("firebase-uid", user.uid);
+      localStorage.setItem("firebase-email", user.email);
+      go(DASHBOARD);
+    } else {
+      console.log("ℹ️ New Google user, showing profile completion form...");
+      // New user, show profile completion form
+      pendingGoogleUser = user;
+      el("google-email-display").textContent = user.email;
+      
+      // Pre-fill name from Google account
+      const displayName = user.displayName || user.email.split('@')[0];
+      
+      // Auto-generate username from email
+      const autoUsername = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '');
+      el("gp-username").value = autoUsername;
+      
+      showView("googleProfile");
+    }
+  } catch (error) {
+    console.error("❌ Google OAuth error:", error);
+    busy("google-btn", false);
+    
+    const errorCode = error.code;
+    if (errorCode === "auth/popup-closed-by-user") {
+      msg("Sign in cancelled.", "info");
+    } else if (errorCode === "auth/popup-blocked") {
+      msg("Popup blocked. Please allow popups for this site.", "error");
+    } else {
+      msg("Google sign-in failed: " + error.message, "error");
+    }
+  }
+}
+
+/* ── COMPLETE GOOGLE PROFILE ── */
+async function completeGoogleProfile() {
+  if (!pendingGoogleUser) {
+    msg("Session expired. Please sign in again.", "error");
+    showView("signin");
+    return;
+  }
+
+  const username = el("gp-username").value.trim().toLowerCase();
+  const phone    = el("gp-phone").value.trim();
+  const country  = el("gp-country").value.trim();
+  const currency = (el("gp-currency").value.trim().toUpperCase() || "USD").slice(0, 5);
+
+  if (!username) return msg("Username is required.", "error");
+  if (username.length < 3) return msg("Username must be at least 3 characters.", "error");
+  if (!/^[a-z0-9_]+$/.test(username)) return msg("Username can only contain lowercase letters, numbers, and underscores.", "error");
+
+  busy("gp-btn", true, "Creating profile…");
+
+  // Check if username is already taken
+  const { data: existingUser } = await sb
+    .from("profiles")
+    .select("username")
+    .eq("username", username)
+    .single();
+
+  if (existingUser) {
+    busy("gp-btn", false);
+    return msg("Username is already taken. Please choose another.", "error");
+  }
+
+  try {
+    // Sync to Supabase with complete profile data
+    const syncResult = await syncUserToSupabase(pendingGoogleUser, {
+      username,
+      full_name: pendingGoogleUser.displayName || pendingGoogleUser.email.split('@')[0],
+      phone,
+      country,
+      currency
+    });
+
+    if (!handleSyncError(syncResult)) {
+      busy("gp-btn", false);
+      return; // Stop here if sync failed
+    }
+
+    console.log("✅ Google profile completed and synced to Supabase");
+    
+    // Store Firebase token
+    localStorage.setItem("firebase-uid", pendingGoogleUser.uid);
+    localStorage.setItem("firebase-email", pendingGoogleUser.email);
+    
+    busy("gp-btn", false);
+    
+    // Clear pending user
+    pendingGoogleUser = null;
+    
+    // Redirect to dashboard
+    go(DASHBOARD);
+  } catch (error) {
+    busy("gp-btn", false);
+    console.error("❌ Profile completion error:", error);
+    msg("Failed to complete profile: " + error.message, "error");
+  }
+}
+
+/* ── EVENTS ── */
+function attachEventListeners() {
+  el("tab-signin").addEventListener("click", () => showView("signin"));
+  el("tab-signup").addEventListener("click", () => showView("signup"));
+  el("si-btn").addEventListener("click", doSignIn);
+  el("su-btn").addEventListener("click", doSignUp);
+  el("google-btn").addEventListener("click", doGoogle);
+  el("email-resend-btn").addEventListener("click", doResendConfirmation);
+  el("email-back-btn").addEventListener("click", () => showView("signin"));
+  el("rs-btn").addEventListener("click", doReset);
+  el("goto-reset").addEventListener("click", e => { e.preventDefault(); showView("reset"); });
+  el("reset-back-btn").addEventListener("click", () => showView("signin"));
+  el("gp-btn").addEventListener("click", completeGoogleProfile);
+  el("google-back-btn").addEventListener("click", async () => {
+    // Sign out the pending Google user
+    if (pendingGoogleUser) {
+      await window.firebaseSignOut(window.firebaseAuth);
+      pendingGoogleUser = null;
+    }
+    showView("signin");
+  });
+
+  // Username validation and formatting (Sign Up)
+  el("su-username").addEventListener("input", e => {
+    // Auto-convert to lowercase and remove invalid characters
+    let val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+    e.target.value = val;
+    
+    // Clear any previous validation messages
+    const existingMsg = e.target.parentElement.querySelector(".username-msg");
+    if (existingMsg) existingMsg.remove();
+    
+    if (val.length > 0 && val.length < 3) {
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--muted2); margin-top:4px;";
+      msgEl.textContent = "Username must be at least 3 characters";
+      e.target.parentElement.appendChild(msgEl);
+    }
+  });
+
+  // Check username availability on blur (Sign Up)
+  el("su-username").addEventListener("blur", async e => {
+    const username = e.target.value.trim();
+    if (username.length < 3) return;
+    
+    const existingMsg = e.target.parentElement.querySelector(".username-msg");
+    if (existingMsg) existingMsg.remove();
+    
+    const { data, error } = await sb
+      .from("profiles")
+      .select("username")
+      .eq("username", username)
+      .single();
+    
+    if (data) {
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--error); margin-top:4px;";
+      msgEl.textContent = "❌ Username is already taken";
+      e.target.parentElement.appendChild(msgEl);
+    } else if (!error || error.code === "PGRST116") {
+      // PGRST116 means no rows found, which is good
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--success); margin-top:4px;";
+      msgEl.textContent = "✓ Username is available";
+      e.target.parentElement.appendChild(msgEl);
+    }
+  });
+
+  // Username validation and formatting (Google Profile)
+  el("gp-username").addEventListener("input", e => {
+    // Auto-convert to lowercase and remove invalid characters
+    let val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+    e.target.value = val;
+    
+    // Clear any previous validation messages
+    const existingMsg = e.target.parentElement.querySelector(".username-msg");
+    if (existingMsg) existingMsg.remove();
+    
+    if (val.length > 0 && val.length < 3) {
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--muted2); margin-top:4px;";
+      msgEl.textContent = "Username must be at least 3 characters";
+      e.target.parentElement.appendChild(msgEl);
+    }
+  });
+
+  // Check username availability on blur (Google Profile)
+  el("gp-username").addEventListener("blur", async e => {
+    const username = e.target.value.trim();
+    if (username.length < 3) return;
+    
+    const existingMsg = e.target.parentElement.querySelector(".username-msg");
+    if (existingMsg) existingMsg.remove();
+    
+    const { data, error } = await sb
+      .from("profiles")
+      .select("username")
+      .eq("username", username)
+      .single();
+    
+    if (data) {
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--error); margin-top:4px;";
+      msgEl.textContent = "❌ Username is already taken";
+      e.target.parentElement.appendChild(msgEl);
+    } else if (!error || error.code === "PGRST116") {
+      // PGRST116 means no rows found, which is good
+      const msgEl = document.createElement("div");
+      msgEl.className = "username-msg";
+      msgEl.style.cssText = "font-size:0.55rem; color:var(--success); margin-top:4px;";
+      msgEl.textContent = "✓ Username is available";
+      e.target.parentElement.appendChild(msgEl);
+    }
+  });
+
+  // Enter key submits active form
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.shiftKey) return;
+    const active = ["signin-form","signup-form","email-confirm-form","reset-form","google-profile-form"].find(id => el(id).style.display !== "none");
+    if (active === "signin-form")  doSignIn();
+    if (active === "signup-form")  doSignUp();
+    if (active === "email-confirm-form") doResendConfirmation();
+    if (active === "reset-form")   doReset();
+    if (active === "google-profile-form") completeGoogleProfile();
+  });
+  
+  console.log("✅ Event listeners attached");
+}
+
+/* ── THEME ── */
+function applyTheme(t) {
+  document.documentElement.classList.toggle("dark", t !== "light");
+  el("theme-toggle").textContent = t !== "light" ? "Light" : "Dark";
+}
+el("theme-toggle").addEventListener("click", () => {
+  const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+  localStorage.setItem("trackly-theme", next);
+  applyTheme(next);
+});
+applyTheme(localStorage.getItem("trackly-theme") || "dark");
+
+/* ── INIT ── */
+window.addEventListener("load", async () => {
+  console.log("🚀 Page loaded, waiting for Firebase...");
+  
+  // Attach event listeners first
+  attachEventListeners();
+  
+  // Wait for Firebase ready event
+  await new Promise(resolve => {
+    if (window.firebaseAuth) {
+      console.log("✅ Firebase already ready");
+      resolve();
+    } else {
+      window.addEventListener('firebase-ready', () => {
+        console.log("✅ Firebase ready event received");
+        resolve();
+      }, { once: true });
+      
+      // Fallback timeout
+      setTimeout(() => {
+        console.log("⏱️ Firebase timeout, checking anyway...");
+        resolve();
+      }, 2000);
+    }
+  });
+  
+  if (!window.firebaseAuth) {
+    console.error("❌ Firebase not initialized after waiting");
+    msg("Authentication system not ready. Please refresh the page.", "error");
+    return;
+  }
+  
+  console.log("✅ Firebase confirmed ready");
+  console.log("🔍 Checking Firebase auth state...");
+  
+  // Check if user is already signed in with Firebase
+  window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
+    if (user) {
+      console.log("✅ User already signed in:", user.uid);
+      
+      // For email/password users, check if email is verified
+      if (user.providerData[0]?.providerId === "password" && !user.emailVerified) {
+        console.log("⚠️ Email not verified");
+        return;
+      }
+      
+      // Check if user has a complete profile in Supabase
+      const { data: existingProfile } = await sb
+        .from("profiles")
+        .select("*")
+        .eq("id", user.uid)
+        .single();
+      
+      if (existingProfile) {
+        console.log("✅ Profile exists, redirecting to dashboard...");
+        // Store Firebase token
+        localStorage.setItem("firebase-uid", user.uid);
+        localStorage.setItem("firebase-email", user.email);
+        // Redirect to dashboard
+        go(DASHBOARD);
+      } else {
+        console.log("ℹ️ No profile found - user needs to complete profile");
+        // Don't redirect - let them complete profile or sign in
+      }
+    } else {
+      console.log("ℹ️ No user signed in");
+    }
+  });
+
+  const tab = new URLSearchParams(window.location.search).get("tab");
+  showView(tab === "signup" ? "signup" : "signin");
+  
+  console.log("✅ Initialization complete");
+});
+</script>
+</body>
+</html>

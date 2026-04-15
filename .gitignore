@@ -1,0 +1,71 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+*.key
+*.pem
+config.js
+
+# Project documentation (keep local, don't deploy)
+plan/
+backend/
+archive/
+Craft/
+
+# Node modules and dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.tgz
+*.tar.gz
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Firebase cache
+.firebase/
+firebase-debug.log
+
+# Temporary files
+tmp/
+temp/
+
+# Kiro workspace files (keep only essential ones)
+.kiro/settings/
+.kiro/cache/
+.kiro/logs/
+
+# Keep these Kiro files for project documentation
+# .kiro/specs/
+# .kiro/steering/

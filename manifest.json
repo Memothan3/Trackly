@@ -1,0 +1,35 @@
+{
+  "name": "Trackly - Finance Tracker",
+  "short_name": "Trackly",
+  "description": "Track your finances with ease - expenses, income, budgets, and projects",
+  "start_url": "/trackly_dashboard.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity", "business"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Add Transaction",
+      "short_name": "Add",
+      "description": "Quickly add a new transaction",
+      "url": "/trackly_dashboard.html?action=add",
+      "icons": [{ "src": "logo-icon.png", "sizes": "96x96" }]
+    }
+  ]
+}
