@@ -1,0 +1,71 @@
+🔄 FORCE BROWSER REFRESH - IMMEDIATE UPDATE COMMANDS
+
+========================================
+  INSTANT CACHE CLEAR METHODS
+========================================
+
+🚀 METHOD 1: HARD REFRESH (RECOMMENDED)
+   Press: Ctrl + Shift + R
+   Or: Ctrl + F5
+   Or: Shift + F5
+
+🚀 METHOD 2: DEVELOPER TOOLS REFRESH
+   1. Press F12 (open DevTools)
+   2. Right-click the refresh button
+   3. Select "Empty Cache and Hard Reload"
+
+🚀 METHOD 3: INCOGNITO/PRIVATE MODE
+   Press: Ctrl + Shift + N (Chrome)
+   Press: Ctrl + Shift + P (Firefox)
+   Then visit: http://localhost:8000
+
+🚀 METHOD 4: CLEAR BROWSER DATA
+   Chrome: Ctrl + Shift + Delete
+   Firefox: Ctrl + Shift + Delete
+   Select "Cached images and files"
+
+========================================
+  CURRENT SERVER STATUS
+========================================
+
+✅ Python HTTP Server: RUNNING on port 8000
+✅ Ngrok Tunnel: ACTIVE 
+✅ Cache Busters: ADDED (v1.2.0-20260415)
+✅ Force Refresh Timestamps: ADDED
+
+📱 LOCAL URLS:
+   http://localhost:8000/
+   http://localhost:8000/file-viewer.html
+   http://localhost:8000/trackly_dashboard.html
+
+🌐 PUBLIC URL:
+   https://secondarily-lipogrammatic-lesly.ngrok-free.dev/
+
+========================================
+  TROUBLESHOOTING
+========================================
+
+❌ Still seeing old content?
+   1. Close ALL browser tabs
+   2. Close browser completely
+   3. Reopen browser
+   4. Visit http://localhost:8000
+
+❌ File viewer not showing?
+   1. Hard refresh (Ctrl+Shift+R)
+   2. Check console for errors (F12)
+   3. Try incognito mode
+
+❌ Changes not appearing?
+   1. Check if you're on the right URL
+   2. Verify servers are running
+   3. Clear browser cache completely
+
+========================================
+
+⚡ QUICK TEST: 
+   Visit http://localhost:8000/file-viewer.html
+   You should see the new Universal File Viewer!
+
+🔥 The cache busters and timestamps have been added!
+   All files now force refresh automatically!

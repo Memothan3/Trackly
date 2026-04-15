@@ -30,6 +30,7 @@
 ✅ HTTPS - Enabled (via ngrok)
 ✅ PWA - Can be installed
 ✅ CACHE FIXED - Updated content served
+✅ FILE VIEWER - Universal file viewer added
 
 ╔════════════════════════════════════════════════════════════╗
 ║                   RECENT UPDATES                           ║
@@ -40,6 +41,21 @@
 ✅ Accounts, Transactions & Receipts pages upgraded
 ✅ Cache-busting headers added to prevent old content
 ✅ Servers restarted with fresh content
+✅ Universal File Viewer - View any file type in browser
+✅ GitHub deployment - Clean repository published
+
+╔════════════════════════════════════════════════════════════╗
+║                   QUICK ACCESS LINKS                        ║
+╚════════════════════════════════════════════════════════════╝
+
+🏠 Landing Page: http://localhost:8000/
+🔐 Authentication: http://localhost:8000/auth_fixed.html
+📊 Dashboard: http://localhost:8000/trackly_dashboard.html
+📁 File Viewer: http://localhost:8000/file-viewer.html
+
+🌐 Public URLs (via ngrok):
+🏠 https://secondarily-lipogrammatic-lesly.ngrok-free.dev/
+📁 https://secondarily-lipogrammatic-lesly.ngrok-free.dev/file-viewer.html
 
 ╔════════════════════════════════════════════════════════════╗
 ║                   IMPORTANT NOTES                          ║
@@ -51,5 +67,6 @@
 ✅  Firebase Auth protects user data
 ✅  Works on mobile devices
 🔄  Hard refresh (Ctrl+Shift+R) if you see old content
+📁  File Viewer supports 50+ file types with syntax highlighting
 
 ╔════════════════════════════════════════════════════════════╝
