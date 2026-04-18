@@ -514,13 +514,18 @@ async function doSignIn() {
     
     console.log("✅ Firebase sign in successful:", user.uid);
     
-    // Check if email is verified
-    if (!user.emailVerified) {
+    // Check if email is verified (bypass for admin users)
+    const isAdminUser = email === "memothan3@gmail.com"; // Admin email configured
+    if (!user.emailVerified && !isAdminUser) {
       busy("si-btn", false);
       pendingEmail = email;
       showView("confirm");
       msg("Please verify your email address. Check your inbox for the verification link.", "info");
       return;
+    }
+    
+    if (isAdminUser && !user.emailVerified) {
+      console.log("🔑 Admin user bypassing email verification");
     }
     
     // Sync to Supabase
@@ -1005,10 +1010,15 @@ window.addEventListener("load", async () => {
     if (user) {
       console.log("✅ User already signed in:", user.uid);
       
-      // For email/password users, check if email is verified
-      if (user.providerData[0]?.providerId === "password" && !user.emailVerified) {
+      // For email/password users, check if email is verified (bypass for admin)
+      const isAdminUser = user.email === "memothan3@gmail.com"; // Admin email configured
+      if (user.providerData[0]?.providerId === "password" && !user.emailVerified && !isAdminUser) {
         console.log("⚠️ Email not verified");
         return;
+      }
+      
+      if (isAdminUser && !user.emailVerified) {
+        console.log("🔑 Admin user bypassing email verification check");
       }
       
       // Check if user has a complete profile in Supabase
