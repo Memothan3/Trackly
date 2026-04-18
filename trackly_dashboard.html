@@ -2019,47 +2019,75 @@ function forceAdminMode() {
   console.log("🔧 Forcing admin mode...");
   isAdminMode = true;
   localStorage.setItem("admin-mode", "true");
+  console.log("✅ Admin mode flag set");
+  
+  // Apply UI immediately
   applyAdminUI();
+  
   console.log("✅ Admin mode forced on");
+  console.log("💡 Refresh the page if you don't see the admin panel");
+  
+  return "Admin mode activated! Check the header and sidebar.";
 }
 
 // Make it available globally for console access
 window.forceAdminMode = forceAdminMode;
 function applyAdminUI() {
-  // Add admin indicator to the header
-  const header = document.querySelector('.header');
-  if (header && !document.getElementById('admin-indicator')) {
-    const adminIndicator = document.createElement('div');
-    adminIndicator.id = 'admin-indicator';
-    adminIndicator.innerHTML = `
-      <div style="
-        background: linear-gradient(135deg, #dc2626, #ef4444);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      ">
-        <span style="font-size: 0.8rem;">👑</span>
-        Admin Mode
-      </div>
-    `;
-    header.appendChild(adminIndicator);
-  }
+  console.log("🎨 Applying admin UI...");
   
-  // Add admin panel to sidebar
-  addAdminPanel();
+  // Wait for DOM to be ready
+  const applyUI = () => {
+    // Add admin indicator to the header
+    const header = document.querySelector('.header');
+    console.log("Header element found:", !!header);
+    
+    if (header && !document.getElementById('admin-indicator')) {
+      const adminIndicator = document.createElement('div');
+      adminIndicator.id = 'admin-indicator';
+      adminIndicator.innerHTML = `
+        <div style="
+          background: linear-gradient(135deg, #dc2626, #ef4444);
+          color: white;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        ">
+          <span style="font-size: 0.8rem;">👑</span>
+          Admin Mode
+        </div>
+      `;
+      header.appendChild(adminIndicator);
+      console.log("✅ Admin indicator added to header");
+    } else if (document.getElementById('admin-indicator')) {
+      console.log("ℹ️ Admin indicator already exists");
+    }
+    
+    // Add admin panel to sidebar
+    addAdminPanel();
+  };
+  
+  // Try immediately
+  applyUI();
+  
+  // Also try after a short delay to ensure DOM is ready
+  setTimeout(applyUI, 500);
+  setTimeout(applyUI, 1000);
 }
 
 function addAdminPanel() {
+  console.log("🎨 Adding admin panel...");
+  
   const sidebar = document.getElementById('sidebar');
+  console.log("Sidebar element found:", !!sidebar);
+  
   if (sidebar && !document.getElementById('admin-panel')) {
     const adminPanel = document.createElement('div');
     adminPanel.id = 'admin-panel';
@@ -2116,11 +2144,13 @@ function addAdminPanel() {
       </div>
     `;
     
-    // Insert admin panel after the navigation menu
-    const navMenu = sidebar.querySelector('.nav-menu');
-    if (navMenu) {
-      navMenu.parentNode.insertBefore(adminPanel, navMenu.nextSibling);
-    }
+    // Insert admin panel at the top of sidebar
+    sidebar.insertBefore(adminPanel, sidebar.firstChild);
+    console.log("✅ Admin panel added to sidebar");
+  } else if (document.getElementById('admin-panel')) {
+    console.log("ℹ️ Admin panel already exists");
+  } else {
+    console.log("⚠️ Sidebar not found, will retry...");
   }
 }
 
