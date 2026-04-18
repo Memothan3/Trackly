@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="cache-buster" content="v1.2.0-20260415">
+<meta name="cache-buster" content="v2.2.0-20260415-2200">
 
 <!-- Favicon and App Icons -->
 <link rel="icon" type="image/png" href="logo-icon.png">
@@ -26,12 +26,16 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <!-- Configuration -->
-<script src="config.js?v=1.2.0"></script>
+<script src="config.js?v=2.1.0"></script>
 <!-- Firebase SDK -->
 <script type="module">
   // Force cache refresh
   const timestamp = new Date().getTime();
-  console.log('🔄 Force refresh timestamp:', timestamp);
+  console.log('🔄 POPUP VIEWER Force refresh timestamp:', timestamp);
+  console.log('🎯 FILE VIEWER MODAL: Enhanced popup with zoom v2.2.0');
+  console.log('📁 Multi-format support: Images, PDFs, Documents, Text files');
+  console.log('🔍 Zoom features: Pan, zoom, rotate, fullscreen');
+  console.log('📱 PWA: GitHub Pages compatibility mode enabled');
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
   
@@ -58,9 +62,20 @@
   
   // Register service worker for PWA
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
       .then(registration => {
         console.log('✅ Service Worker registered:', registration.scope);
+        
+        // Handle updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('🔄 New version available! Refreshing...');
+              window.location.reload();
+            }
+          });
+        });
       })
       .catch(error => {
         console.log('❌ Service Worker registration failed:', error);
@@ -467,6 +482,93 @@ body::after {
   color: var(--text) !important;
 }
 
+/* Enhanced File Viewer Styles */
+.viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+
+.viewer-btn {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.viewer-btn:hover {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+}
+
+.viewer-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zoom-info {
+  font-size: 0.65rem;
+  color: var(--muted2);
+  margin: 0 8px;
+}
+
+.viewer-image-container {
+  position: relative;
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  cursor: grab;
+}
+
+.viewer-image-container:active {
+  cursor: grabbing;
+}
+
+.viewer-image {
+  max-width: none;
+  max-height: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.viewer-pdf-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-pdf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px;
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+
+.pdf-page-info {
+  font-size: 0.7rem;
+  color: var(--muted2);
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -723,6 +825,7 @@ body::after {
       <h1 class="page-title" id="page-title">Dashboard</h1>
     </div>
     <div class="topbar-right">
+      <div style="font-size: 0.5rem; color: var(--muted2); margin-right: 8px; cursor: pointer;" onclick="testFileViewer()" title="Click to test enhanced file viewer with zoom">v2.2.0 📁🔍</div>
       <div class="mode-badge"><div class="mode-dot"></div><span id="mode-label">Personal</span></div>
       <div class="notif-btn" id="notif-btn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 1.5C4.8 1.5 3 3.3 3 5.5v3L1.5 10h11L11 8.5v-3C11 3.3 9.2 1.5 7 1.5z"/><path d="M5.5 10.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5"/></svg><div class="notif-dot" id="notif-dot" style="display:none"></div></div>
       <button class="btn-add" id="add-txn-btn">
@@ -1076,7 +1179,7 @@ body::after {
               </svg>
               Receipt Image
             </label>
-            <input class="form-input" id="receipt-file-input" type="file" accept="image/*">
+            <input class="form-input" id="receipt-file-input" type="file" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.json">
           </div>
           <div class="form-field">
             <label class="form-label">
@@ -1334,7 +1437,7 @@ body::after {
           </div>
         </div>
         <div class="chat-input-bar">
-          <input type="file" id="chat-file-input" accept="image/*,.jpg,.jpeg,.heic,.heif,.pdf,.json,.csv" style="display:none">
+          <input type="file" id="chat-file-input" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.json,.zip,.rar" style="display:none">
           <button class="chat-attach-btn" id="chat-attach-btn" aria-label="Attach file">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
               <path d="M12 6.5L6.5 12A3.5 3.5 0 012 7.5l5-5A2 2 0 0110.5 5l-4.5 4.5A.5.5 0 015 9l4-4"/>
@@ -1437,8 +1540,8 @@ body::after {
     </div>
     <div class="form-field">
       <div class="receipt-upload" id="receipt-upload-area">
-        <input type="file" id="txn-receipt-input" accept="image/*" style="display: none;">
-        <div class="receipt-label" id="receipt-upload-label">📎 Attach Receipt (optional)</div>
+        <input type="file" id="txn-receipt-input" accept="image/*,.pdf,.doc,.docx,.txt,.csv,.json" style="display: none;">
+        <div class="receipt-label" id="receipt-upload-label">📎 Attach File (Receipt, Invoice, Document)</div>
         <div id="receipt-preview" style="display: none; margin-top: 8px;">
           <img id="receipt-preview-img" style="max-width: 100px; max-height: 100px; border-radius: 6px; object-fit: cover;">
           <button type="button" id="receipt-remove-btn" style="margin-left: 8px; background: none; border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px; font-size: 0.5rem; color: var(--muted2); cursor: pointer;">Remove</button>
@@ -1523,11 +1626,11 @@ body::after {
 
 <!-- UNIVERSAL FILE VIEWER MODAL -->
 <div class="modal-overlay" id="file-viewer-modal" style="align-items: center;">
-  <div class="modal" style="max-width: 90vw; max-height: 90vh; border-radius: 16px; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+  <div class="modal" style="max-width: 95vw; max-height: 95vh; border-radius: 16px; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
     <!-- Header -->
     <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--s2);">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="font-size: 1.5rem;">📄</div>
+        <div id="viewer-file-icon" style="font-size: 1.5rem;">📄</div>
         <div>
           <div id="viewer-file-name" style="font-size: 0.9rem; font-weight: 600;">File Viewer</div>
           <div id="viewer-file-meta" style="font-size: 0.7rem; color: var(--muted2); margin-top: 2px;"></div>
@@ -1539,8 +1642,21 @@ body::after {
       </div>
     </div>
     
+    <!-- Toolbar for zoom and controls -->
+    <div class="viewer-toolbar" id="viewer-toolbar" style="display: none;">
+      <button class="viewer-btn" onclick="zoomOut()" id="zoom-out-btn">🔍➖ Zoom Out</button>
+      <button class="viewer-btn" onclick="zoomIn()" id="zoom-in-btn">🔍➕ Zoom In</button>
+      <button class="viewer-btn" onclick="resetZoom()" id="reset-zoom-btn">🔄 Reset</button>
+      <button class="viewer-btn" onclick="fitToScreen()" id="fit-screen-btn">📐 Fit Screen</button>
+      <div class="zoom-info" id="zoom-info">100%</div>
+      <div style="flex: 1;"></div>
+      <button class="viewer-btn" onclick="rotateImage(-90)" id="rotate-left-btn" style="display: none;">↺ Rotate Left</button>
+      <button class="viewer-btn" onclick="rotateImage(90)" id="rotate-right-btn" style="display: none;">↻ Rotate Right</button>
+      <button class="viewer-btn" onclick="toggleFullscreen()" id="fullscreen-btn">⛶ Fullscreen</button>
+    </div>
+    
     <!-- Content -->
-    <div id="viewer-content" style="flex: 1; overflow: auto; padding: 24px; background: var(--bg);">
+    <div id="viewer-content" style="flex: 1; overflow: hidden; background: var(--bg); position: relative;">
       <div style="text-align: center; padding: 48px; color: var(--muted2);">
         <div style="font-size: 3rem; margin-bottom: 16px;">👁️</div>
         <div style="font-size: 1rem;">Loading file...</div>
@@ -1559,8 +1675,16 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null, userProfile = null;
 let accounts = [], transactions = [], categories = [], scheduledItems = [], budgets = [], receipts = [], projects = [];
 let notifications = []; // Store all notifications
-let chatHistory = []; // { role: 'user'|'ai', text, time, imageUrl?, fileName? }
-let pendingAttachment = null; // { base64, mimeType, name, previewUrl, kind: 'image'|'data' }
+let chatHistory = [];
+let pendingAttachment = null;
+let isAdminMode = false; // Admin mode flag
+
+// Admin configuration
+const ADMIN_CONFIG = {
+  email: "memothan3@gmail.com", // Admin email configured
+  bypassEmailVerification: true, // Allow admin to login without email verification
+};
+
 let currentProject = null; // Currently viewing project
 let currentType = "expense";
 let flowChart = null;
@@ -1840,6 +1964,18 @@ function switchPage(p) {
     // File viewer page loaded - initialize if needed
     console.log("📁 File Viewer page loaded");
   }
+  
+  // Handle PWA shortcuts and URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('action') === 'add') {
+    setTimeout(() => openTxnModal(), 500);
+  }
+  if (urlParams.get('page')) {
+    const targetPage = urlParams.get('page');
+    if (targetPage !== p) {
+      setTimeout(() => switchPage(targetPage), 100);
+    }
+  }
 }
 
 // Expose to global scope for HTML onclick
@@ -1852,6 +1988,806 @@ document.querySelectorAll(".nav-item").forEach(a => {
     if (window.innerWidth <= 900) document.getElementById("sidebar").classList.remove("open");
   });
 });
+
+// ── ADMIN MODE FUNCTIONS ──
+function checkAdminMode(firebaseUser) {
+  // Check if the user's email matches the admin email
+  if (firebaseUser.email === ADMIN_CONFIG.email) {
+    isAdminMode = true;
+    console.log("🔑 Admin mode activated for:", firebaseUser.email);
+    
+    // Store admin status
+    localStorage.setItem("admin-mode", "true");
+    
+    // Apply admin UI changes
+    applyAdminUI();
+  } else {
+    isAdminMode = false;
+    localStorage.removeItem("admin-mode");
+    console.log("👤 Regular user mode for:", firebaseUser.email);
+  }
+}
+
+function applyAdminUI() {
+  // Add admin indicator to the header
+  const header = document.querySelector('.header');
+  if (header && !document.getElementById('admin-indicator')) {
+    const adminIndicator = document.createElement('div');
+    adminIndicator.id = 'admin-indicator';
+    adminIndicator.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      ">
+        <span style="font-size: 0.8rem;">👑</span>
+        Admin Mode
+      </div>
+    `;
+    header.appendChild(adminIndicator);
+  }
+  
+  // Add admin panel to sidebar
+  addAdminPanel();
+}
+
+function addAdminPanel() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar && !document.getElementById('admin-panel')) {
+    const adminPanel = document.createElement('div');
+    adminPanel.id = 'admin-panel';
+    adminPanel.innerHTML = `
+      <div style="
+        margin: 20px 0;
+        padding: 16px;
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      ">
+        <div style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2rem;">👑</span>
+          Admin Panel
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="showAllUsers()" style="
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+            👥 View All Users
+          </button>
+          <button onclick="showSystemStats()" style="
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+            📊 System Statistics
+          </button>
+          <button onclick="showDatabaseTools()" style="
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+            🛠️ Database Tools
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Insert admin panel after the navigation menu
+    const navMenu = sidebar.querySelector('.nav-menu');
+    if (navMenu) {
+      navMenu.parentNode.insertBefore(adminPanel, navMenu.nextSibling);
+    }
+  }
+}
+
+// Admin functions
+async function showAllUsers() {
+  try {
+    const { data: users, error } = await sb
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    const modal = createAdminModal('User Management', `
+      <div style="margin-bottom: 16px; display: flex; gap: 12px; align-items: center;">
+        <button onclick="refreshUserList()" style="
+          padding: 8px 16px;
+          background: var(--primary);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.85rem;
+        ">🔄 Refresh</button>
+        <button onclick="showOnlineUsers()" style="
+          padding: 8px 16px;
+          background: var(--secondary);
+          color: var(--foreground);
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.85rem;
+        ">👥 Online Users</button>
+        <span style="color: var(--muted-foreground); font-size: 0.85rem;">
+          Total: ${users.length} users
+        </span>
+      </div>
+      <div id="user-list-container" style="max-height: 500px; overflow-y: auto;">
+        ${generateUserTable(users)}
+      </div>
+    `);
+    
+    document.body.appendChild(modal);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    toast('Error fetching users: ' + error.message, true);
+  }
+}
+
+function generateUserTable(users) {
+  return `
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+      <thead>
+        <tr style="background: var(--muted); border-bottom: 2px solid var(--border);">
+          <th style="padding: 12px 8px; text-align: left; font-weight: 600;">User</th>
+          <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Contact</th>
+          <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Status</th>
+          <th style="padding: 12px 8px; text-align: center; font-weight: 600;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${users.map(user => `
+          <tr style="border-bottom: 1px solid var(--border); hover:background-color: var(--muted);" 
+              onmouseover="this.style.backgroundColor='var(--muted)'" 
+              onmouseout="this.style.backgroundColor='transparent'">
+            <td style="padding: 12px 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="
+                  width: 32px; height: 32px; 
+                  border-radius: 50%; 
+                  background: var(--primary); 
+                  color: white; 
+                  display: flex; 
+                  align-items: center; 
+                  justify-content: center; 
+                  font-weight: 600; 
+                  font-size: 0.8rem;
+                ">
+                  ${(user.full_name || user.username || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style="font-weight: 500;">${user.full_name || 'No name'}</div>
+                  <div style="font-size: 0.8rem; color: var(--muted-foreground);">@${user.username || 'no-username'}</div>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 12px 8px;">
+              <div>${user.email || 'No email'}</div>
+              <div style="font-size: 0.8rem; color: var(--muted-foreground);">
+                ${user.phone || 'No phone'} • ${user.country || 'No country'}
+              </div>
+            </td>
+            <td style="padding: 12px 8px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="
+                  padding: 2px 8px; 
+                  border-radius: 12px; 
+                  font-size: 0.75rem; 
+                  font-weight: 500;
+                  background: ${isUserOnline(user.id) ? 'var(--primary)' : 'var(--muted)'};
+                  color: ${isUserOnline(user.id) ? 'white' : 'var(--muted-foreground)'};
+                  display: inline-block;
+                ">
+                  ${isUserOnline(user.id) ? '🟢 Online' : '⚫ Offline'}
+                </span>
+                <span style="font-size: 0.75rem; color: var(--muted-foreground);">
+                  Joined ${new Date(user.created_at).toLocaleDateString()}
+                </span>
+              </div>
+            </td>
+            <td style="padding: 12px 8px; text-align: center;">
+              <div style="display: flex; gap: 4px; justify-content: center;">
+                <button onclick="editUser('${user.id}')" style="
+                  padding: 4px 8px;
+                  background: var(--primary);
+                  color: white;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                  font-size: 0.75rem;
+                " title="Edit User">✏️</button>
+                <button onclick="viewUserData('${user.id}')" style="
+                  padding: 4px 8px;
+                  background: var(--secondary);
+                  color: var(--foreground);
+                  border: 1px solid var(--border);
+                  border-radius: 4px;
+                  cursor: pointer;
+                  font-size: 0.75rem;
+                " title="View Data">👁️</button>
+                <button onclick="deleteUser('${user.id}', '${user.username}')" style="
+                  padding: 4px 8px;
+                  background: var(--destructive);
+                  color: white;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                  font-size: 0.75rem;
+                " title="Delete User">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function isUserOnline(userId) {
+  // Simple online detection based on recent activity
+  // In a real app, you'd use WebSocket connections or heartbeat system
+  const lastSeen = localStorage.getItem(`user_${userId}_last_seen`);
+  if (!lastSeen) return false;
+  
+  const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+  return parseInt(lastSeen) > fiveMinutesAgo;
+}
+
+async function showOnlineUsers() {
+  try {
+    const { data: users, error } = await sb
+      .from('profiles')
+      .select('*')
+      .order('updated_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    // Filter for "online" users (updated in last 10 minutes)
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const onlineUsers = users.filter(user => 
+      user.updated_at > tenMinutesAgo || isUserOnline(user.id)
+    );
+    
+    const modal = createAdminModal('Online Users', `
+      <div style="margin-bottom: 16px;">
+        <span style="color: var(--muted-foreground);">
+          ${onlineUsers.length} users active in the last 10 minutes
+        </span>
+      </div>
+      <div style="max-height: 400px; overflow-y: auto;">
+        ${onlineUsers.length > 0 ? generateUserTable(onlineUsers) : 
+          '<div style="text-align: center; padding: 40px; color: var(--muted-foreground);">No users currently online</div>'}
+      </div>
+    `);
+    
+    document.body.appendChild(modal);
+  } catch (error) {
+    console.error('Error fetching online users:', error);
+    toast('Error fetching online users: ' + error.message, true);
+  }
+}
+
+async function editUser(userId) {
+  try {
+    const { data: user, error } = await sb
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) throw error;
+    
+    const modal = createAdminModal('Edit User', `
+      <form id="edit-user-form" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Full Name</label>
+            <input type="text" id="edit-full-name" value="${user.full_name || ''}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Username</label>
+            <input type="text" id="edit-username" value="${user.username || ''}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Email</label>
+            <input type="email" id="edit-email" value="${user.email || ''}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Phone</label>
+            <input type="text" id="edit-phone" value="${user.phone || ''}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Country</label>
+            <input type="text" id="edit-country" value="${user.country || ''}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Currency</label>
+            <input type="text" id="edit-currency" value="${user.currency || 'USD'}" style="
+              width: 100%; padding: 8px 12px; border: 1px solid var(--border); 
+              border-radius: 6px; background: var(--background);
+            ">
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" onclick="this.closest('[style*=\"position: fixed\"]').remove()" style="
+            padding: 8px 16px; background: var(--muted); color: var(--foreground);
+            border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+          ">Cancel</button>
+          <button type="submit" style="
+            padding: 8px 16px; background: var(--primary); color: white;
+            border: none; border-radius: 6px; cursor: pointer; font-weight: 500;
+          ">Save Changes</button>
+        </div>
+      </form>
+    `);
+    
+    document.body.appendChild(modal);
+    
+    // Handle form submission
+    document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const updatedData = {
+        full_name: document.getElementById('edit-full-name').value.trim(),
+        username: document.getElementById('edit-username').value.trim().toLowerCase(),
+        email: document.getElementById('edit-email').value.trim(),
+        phone: document.getElementById('edit-phone').value.trim(),
+        country: document.getElementById('edit-country').value.trim(),
+        currency: document.getElementById('edit-currency').value.trim().toUpperCase(),
+        updated_at: new Date().toISOString()
+      };
+      
+      try {
+        const { error } = await sb
+          .from('profiles')
+          .update(updatedData)
+          .eq('id', userId);
+        
+        if (error) throw error;
+        
+        toast('User updated successfully!');
+        modal.remove();
+        
+        // Refresh user list if it's open
+        const userListContainer = document.getElementById('user-list-container');
+        if (userListContainer) {
+          refreshUserList();
+        }
+      } catch (error) {
+        console.error('Error updating user:', error);
+        toast('Error updating user: ' + error.message, true);
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error fetching user for edit:', error);
+    toast('Error loading user data: ' + error.message, true);
+  }
+}
+
+async function viewUserData(userId) {
+  try {
+    const [profileResult, accountsResult, transactionsResult] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', userId).single(),
+      sb.from('accounts').select('*').eq('user_id', userId),
+      sb.from('transactions').select('*').eq('user_id', userId).order('date', { ascending: false }).limit(10)
+    ]);
+    
+    const user = profileResult.data;
+    const accounts = accountsResult.data || [];
+    const transactions = transactionsResult.data || [];
+    
+    const totalBalance = accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
+    const totalTransactions = transactions.length;
+    
+    const modal = createAdminModal(`User Data: ${user.full_name || user.username}`, `
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">${accounts.length}</div>
+          <div style="color: var(--muted-foreground);">Accounts</div>
+        </div>
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">$${totalBalance.toFixed(2)}</div>
+          <div style="color: var(--muted-foreground);">Total Balance</div>
+        </div>
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">${totalTransactions}</div>
+          <div style="color: var(--muted-foreground);">Recent Transactions</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <h4 style="margin-bottom: 12px;">Accounts</h4>
+        ${accounts.length > 0 ? `
+          <div style="max-height: 200px; overflow-y: auto;">
+            ${accounts.map(acc => `
+              <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;">
+                <span>${acc.name}</span>
+                <span style="font-weight: 500; color: ${acc.balance >= 0 ? 'var(--primary)' : 'var(--destructive)'};">
+                  $${acc.balance?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        ` : '<div style="color: var(--muted-foreground); text-align: center; padding: 20px;">No accounts found</div>'}
+      </div>
+      
+      <div>
+        <h4 style="margin-bottom: 12px;">Recent Transactions</h4>
+        ${transactions.length > 0 ? `
+          <div style="max-height: 250px; overflow-y: auto;">
+            ${transactions.map(txn => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;">
+                <div>
+                  <div style="font-weight: 500;">${txn.description || 'No description'}</div>
+                  <div style="font-size: 0.8rem; color: var(--muted-foreground);">${new Date(txn.date).toLocaleDateString()}</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 500; color: ${txn.amount >= 0 ? 'var(--primary)' : 'var(--destructive)'};">
+                    ${txn.amount >= 0 ? '+' : ''}$${txn.amount?.toFixed(2) || '0.00'}
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--muted-foreground);">${txn.category || 'Uncategorized'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        ` : '<div style="color: var(--muted-foreground); text-align: center; padding: 20px;">No transactions found</div>'}
+      </div>
+      
+      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+        <button onclick="exportUserData('${userId}')" style="
+          padding: 8px 16px; background: var(--secondary); color: var(--foreground);
+          border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+        ">📥 Export Data</button>
+        <button onclick="editUser('${userId}')" style="
+          padding: 8px 16px; background: var(--primary); color: white;
+          border: none; border-radius: 6px; cursor: pointer; font-weight: 500;
+        ">✏️ Edit User</button>
+      </div>
+    `);
+    
+    document.body.appendChild(modal);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    toast('Error loading user data: ' + error.message, true);
+  }
+}
+
+async function deleteUser(userId, username) {
+  if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone and will delete all their data including accounts, transactions, and projects.`)) {
+    return;
+  }
+  
+  const secondConfirm = prompt(`Type "${username}" to confirm deletion:`);
+  if (secondConfirm !== username) {
+    toast('Deletion cancelled - username did not match.', true);
+    return;
+  }
+  
+  try {
+    // Delete in order: transactions, accounts, then profile
+    const { error: txnError } = await sb.from('transactions').delete().eq('user_id', userId);
+    if (txnError) throw txnError;
+    
+    const { error: accError } = await sb.from('accounts').delete().eq('user_id', userId);
+    if (accError) throw accError;
+    
+    const { error: projError } = await sb.from('projects').delete().eq('user_id', userId);
+    if (projError) throw projError;
+    
+    const { error: profileError } = await sb.from('profiles').delete().eq('id', userId);
+    if (profileError) throw profileError;
+    
+    toast(`User "${username}" and all associated data deleted successfully.`);
+    
+    // Refresh user list if it's open
+    const userListContainer = document.getElementById('user-list-container');
+    if (userListContainer) {
+      refreshUserList();
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    toast('Error deleting user: ' + error.message, true);
+  }
+}
+
+async function refreshUserList() {
+  const container = document.getElementById('user-list-container');
+  if (!container) return;
+  
+  try {
+    const { data: users, error } = await sb
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    container.innerHTML = generateUserTable(users);
+  } catch (error) {
+    console.error('Error refreshing user list:', error);
+    toast('Error refreshing user list: ' + error.message, true);
+  }
+}
+
+async function exportUserData(userId) {
+  try {
+    const [profile, accounts, transactions, projects] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', userId).single(),
+      sb.from('accounts').select('*').eq('user_id', userId),
+      sb.from('transactions').select('*').eq('user_id', userId),
+      sb.from('projects').select('*').eq('user_id', userId)
+    ]);
+    
+    const exportData = {
+      profile: profile.data,
+      accounts: accounts.data,
+      transactions: transactions.data,
+      projects: projects.data,
+      exportDate: new Date().toISOString(),
+      exportedBy: currentUser.email
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `user-${profile.data.username}-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast('User data exported successfully!');
+  } catch (error) {
+    console.error('Error exporting user data:', error);
+    toast('Error exporting user data: ' + error.message, true);
+  }
+}
+
+async function showSystemStats() {
+  try {
+    const [usersResult, transactionsResult, accountsResult] = await Promise.all([
+      sb.from('profiles').select('id', { count: 'exact' }),
+      sb.from('transactions').select('id', { count: 'exact' }),
+      sb.from('accounts').select('id', { count: 'exact' })
+    ]);
+    
+    const modal = createAdminModal('System Statistics', `
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${usersResult.count || 0}</div>
+          <div style="color: var(--muted-foreground);">Total Users</div>
+        </div>
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${transactionsResult.count || 0}</div>
+          <div style="color: var(--muted-foreground);">Total Transactions</div>
+        </div>
+        <div style="padding: 16px; background: var(--muted); border-radius: 8px; text-align: center;">
+          <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${accountsResult.count || 0}</div>
+          <div style="color: var(--muted-foreground);">Total Accounts</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; padding: 16px; background: var(--accent); border-radius: 8px;">
+        <h4 style="margin-bottom: 8px;">System Information</h4>
+        <div><strong>Admin Email:</strong> ${ADMIN_CONFIG.email}</div>
+        <div><strong>Current User:</strong> ${currentUser?.email}</div>
+        <div><strong>Database:</strong> Supabase PostgreSQL</div>
+        <div><strong>Authentication:</strong> Firebase Auth</div>
+      </div>
+    `);
+    
+    document.body.appendChild(modal);
+  } catch (error) {
+    console.error('Error fetching system stats:', error);
+    toast('Error fetching system statistics: ' + error.message, true);
+  }
+}
+
+function showDatabaseTools() {
+  const modal = createAdminModal('Database Tools', `
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button onclick="runDatabaseQuery()" style="
+        padding: 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      ">
+        🔍 Run Custom Query
+      </button>
+      <button onclick="exportAllData()" style="
+        padding: 12px;
+        background: var(--secondary);
+        color: var(--foreground);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      ">
+        📥 Export All Data
+      </button>
+      <button onclick="clearUserSessions()" style="
+        padding: 12px;
+        background: var(--destructive);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      ">
+        🚪 Clear All User Sessions
+      </button>
+    </div>
+    <div style="margin-top: 16px; padding: 12px; background: var(--muted); border-radius: 8px; font-size: 0.85rem; color: var(--muted-foreground);">
+      ⚠️ <strong>Warning:</strong> These tools have system-wide effects. Use with caution.
+    </div>
+  `);
+  
+  document.body.appendChild(modal);
+}
+
+function createAdminModal(title, content) {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+  
+  modal.innerHTML = `
+    <div style="
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+    ">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; color: var(--foreground);">${title}</h3>
+        <button onclick="this.closest('[style*=\"position: fixed\"]').remove()" style="
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: var(--muted-foreground);
+          padding: 4px;
+        ">×</button>
+      </div>
+      ${content}
+    </div>
+  `;
+  
+  // Close on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+  
+  return modal;
+}
+
+async function runDatabaseQuery() {
+  const query = prompt('Enter SQL query (SELECT statements only):');
+  if (!query || !query.trim().toLowerCase().startsWith('select')) {
+    toast('Only SELECT queries are allowed for security reasons.', true);
+    return;
+  }
+  
+  try {
+    const { data, error } = await sb.rpc('execute_sql', { query });
+    if (error) throw error;
+    
+    console.log('Query result:', data);
+    toast('Query executed successfully. Check console for results.');
+  } catch (error) {
+    console.error('Query error:', error);
+    toast('Query failed: ' + error.message, true);
+  }
+}
+
+async function exportAllData() {
+  try {
+    const [profiles, accounts, transactions, categories] = await Promise.all([
+      sb.from('profiles').select('*'),
+      sb.from('accounts').select('*'),
+      sb.from('transactions').select('*'),
+      sb.from('categories').select('*')
+    ]);
+    
+    const exportData = {
+      profiles: profiles.data,
+      accounts: accounts.data,
+      transactions: transactions.data,
+      categories: categories.data,
+      exportDate: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `trackly-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast('Data exported successfully!');
+  } catch (error) {
+    console.error('Export error:', error);
+    toast('Export failed: ' + error.message, true);
+  }
+}
+
+function clearUserSessions() {
+  if (confirm('Are you sure you want to clear all user sessions? This will log out all users.')) {
+    localStorage.clear();
+    sessionStorage.clear();
+    toast('All user sessions cleared. Users will need to log in again.');
+  }
+}
 
 // ── AUTH CHECK ──
 async function init() {
@@ -1872,6 +2808,15 @@ async function init() {
       }
       
       console.log("✅ Firebase user authenticated:", firebaseUser.uid);
+      
+      // Check for admin mode
+      checkAdminMode(firebaseUser);
+      
+      // Restore admin mode from localStorage if needed
+      if (localStorage.getItem("admin-mode") === "true" && firebaseUser.email === ADMIN_CONFIG.email) {
+        isAdminMode = true;
+        applyAdminUI();
+      }
       
       // Get Firebase ID token and set it in Supabase client
       try {
@@ -2559,7 +3504,7 @@ function renderReceiptsPage() {
   }
   
   el.innerHTML = receipts.map((r) => {
-    const link = r.image_url ? `<a href="javascript:void(0)" onclick="openFileViewer('${escapeHtml(r.image_url)}', '${escapeHtml(r.type || 'receipt')}.jpg', 'image/jpeg')" class="panel-link">👁️ View</a>` : "";
+    const link = r.image_url ? `<a href="javascript:void(0)" onclick="openFileViewer('${escapeHtml(r.image_url)}', '${escapeHtml(r.smart_name || r.original_name || r.type || 'receipt')}.${r.file_extension || 'jpg'}', '${r.file_type || 'image/jpeg'}')" class="panel-link">👁️ View</a>` : "";
     const created = r.created_at ? dateLabel(r.created_at) : "—";
     const extracted = r.extracted_data;
     
@@ -3994,35 +4939,83 @@ document.getElementById("txn-receipt-input").addEventListener("change", (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
   
-  // Check file size (limit to 2MB)
-  if (file.size > 2 * 1024 * 1024) {
-    toast("Image too large. Please use an image under 2MB.", false);
+  // Validate file size (10MB limit for all file types)
+  if (file.size > 10 * 1024 * 1024) {
+    toast("File too large. Maximum size is 10MB.", false);
+    return;
+  }
+  
+  // Validate file type
+  const allowedTypes = ['image/', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument', 'text/', 'application/json'];
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  const isAllowed = allowedTypes.some(type => file.type.startsWith(type)) || 
+                   ['txt', 'csv', 'json', 'pdf', 'doc', 'docx'].includes(ext);
+  
+  if (!isAllowed) {
+    toast("Unsupported file type. Please use images, PDFs, documents, or text files.", false);
     return;
   }
   
   const reader = new FileReader();
   reader.onload = (event) => {
     const base64Data = event.target.result;
-    transactionReceiptData = {
-      base64: base64Data,
-      fileName: file.name,
-      mimeType: file.type || "image/jpeg"
+    
+    // Get current transaction data for smart naming
+    const transactionData = {
+      amount: parseFloat(document.getElementById("txn-amount").value) || 0,
+      description: document.getElementById("txn-description").value || '',
+      category: document.getElementById("txn-category").value || '',
+      type: currentType || 'expense'
     };
     
-    // Show preview
+    // Generate smart filename
+    const smartFileName = generateSmartFileName(file.name, transactionData, file.type);
+    
+    // Create file metadata
+    const fileMetadata = createFileMetadata(file, transactionData, smartFileName);
+    
+    transactionReceiptData = {
+      base64: base64Data,
+      fileName: smartFileName, // Use smart filename
+      originalFileName: file.name, // Keep original for reference
+      mimeType: file.type || "application/octet-stream",
+      metadata: fileMetadata
+    };
+    
+    // Show preview based on file type
     const preview = document.getElementById("receipt-preview");
     const img = document.getElementById("receipt-preview-img");
     const label = document.getElementById("receipt-upload-label");
     
-    img.src = base64Data;
-    preview.style.display = "block";
-    label.textContent = `📎 Receipt: ${file.name}`;
+    if (file.type.startsWith('image/')) {
+      img.src = base64Data;
+      img.onclick = () => openFileViewer(base64Data, smartFileName, file.type, file.size);
+      img.style.cursor = 'pointer';
+      img.title = 'Click to view full size';
+      preview.style.display = "block";
+    } else {
+      // For non-images, show file info card
+      preview.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--s1); border-radius: 6px; border: 1px solid var(--border); cursor: pointer;" onclick="openFileViewer('${base64Data}', '${smartFileName}', '${file.type}', ${file.size})">
+          <div style="font-size: 1.5rem;">${getFileIcon(file.type, file.name)}</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${smartFileName}</div>
+            <div style="font-size: 0.6rem; color: var(--muted2);">${formatViewerFileSize(file.size)} • ${file.type || 'Unknown type'}</div>
+          </div>
+          <div style="font-size: 0.6rem; color: var(--gold);">👁️ View</div>
+        </div>
+      `;
+      preview.style.display = "block";
+    }
     
-    toast("Receipt attached to transaction.");
+    label.textContent = `📎 File: ${smartFileName}`;
+    
+    console.log('📎 Enhanced file attached:', fileMetadata);
+    toast(`File attached: ${smartFileName}`);
   };
   
   reader.onerror = () => {
-    toast("Failed to read image file.", false);
+    toast("Failed to read file.", false);
   };
   
   reader.readAsDataURL(file);
@@ -4033,8 +5026,8 @@ document.getElementById("receipt-remove-btn").addEventListener("click", (e) => {
   transactionReceiptData = null;
   document.getElementById("txn-receipt-input").value = "";
   document.getElementById("receipt-preview").style.display = "none";
-  document.getElementById("receipt-upload-label").textContent = "📎 Attach Receipt (optional)";
-  toast("Receipt removed.");
+  document.getElementById("receipt-upload-label").textContent = "📎 Attach File (Receipt, Invoice, Document)";
+  toast("File removed.");
 });
 
 // Clear receipt data when modal is closed
@@ -4042,7 +5035,7 @@ function clearTransactionReceipt() {
   transactionReceiptData = null;
   document.getElementById("txn-receipt-input").value = "";
   document.getElementById("receipt-preview").style.display = "none";
-  document.getElementById("receipt-upload-label").textContent = "📎 Attach Receipt (optional)";
+  document.getElementById("receipt-upload-label").textContent = "📎 Attach File (Receipt, Invoice, Document)";
 }
 
 // ── SHOPPING LIST FUNCTIONALITY ──
@@ -4442,7 +5435,7 @@ function buildTransactionExpandedContent(transaction, receipt) {
   const receiptSection = receipt ? `
     <div class="txn-receipt-section">
       <div class="txn-detail-label">Receipt</div>
-      ${receipt.image_url ? `<img src="${receipt.image_url}" class="txn-receipt-img" alt="Receipt" onclick="openFileViewer('${receipt.image_url}', 'Receipt', 'image/jpeg')" style="cursor: pointer;" title="Click to view full size">` : ''}
+      ${receipt.image_url ? `<img src="${receipt.image_url}" class="txn-receipt-img" alt="Receipt" onclick="openFileViewer('${receipt.image_url}', '${receipt.smart_name || receipt.original_name || 'Receipt'}', '${receipt.file_type || 'image/jpeg'}')" style="cursor: pointer;" title="Click to view full size">` : ''}
       ${receipt.extracted_data ? `
         <div class="txn-ai-data">
           <div class="txn-ai-label">🤖 AI Extracted Data</div>
@@ -4529,6 +5522,17 @@ async function restoreTransactionExpansion(transactionId) {
 // Use event delegation to handle transaction clicks
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🔧 Setting up transaction click handlers...');
+  console.log('🎯 ENHANCED FILE VIEWER: Initialization complete v2.2.0');
+  console.log('📁 Test enhanced viewer: Click version number in top-right');
+  console.log('🔍 Features: Zoom, pan, rotate, multi-format support, smart naming');
+  
+  // Verify file viewer modal exists
+  const modal = document.getElementById('file-viewer-modal');
+  if (modal) {
+    console.log('✅ FILE VIEWER MODAL: Found and ready');
+  } else {
+    console.error('❌ FILE VIEWER MODAL: Not found!');
+  }
   
   // Add click handler to document body for event delegation
   document.body.addEventListener('click', (e) => {
@@ -4630,7 +5634,130 @@ function saveMessage(idx) {
   toast("Saved as .txt");
 }
 
-// ── SMART FILE ANALYSIS PROMPTS ──
+// ── SMART FILE NAMING SYSTEM ──
+function generateSmartFileName(originalName, transactionData, fileType) {
+  const ext = originalName.split('.').pop()?.toLowerCase() || 'file';
+  const date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const time = new Date().toTimeString().split(' ')[0].replace(/:/g, ''); // HHMMSS
+  
+  // Get transaction context
+  const amount = transactionData?.amount ? Math.abs(transactionData.amount).toFixed(0) : '';
+  const merchant = transactionData?.description?.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 20) || 'transaction';
+  const category = transactionData?.category?.replace(/[^a-zA-Z0-9]/g, '_') || '';
+  const type = transactionData?.type || 'expense';
+  
+  // Build smart name components
+  let smartName = '';
+  
+  // Add date prefix
+  smartName += date;
+  
+  // Add transaction type
+  if (type) {
+    smartName += `_${type}`;
+  }
+  
+  // Add amount if available
+  if (amount) {
+    smartName += `_${amount}`;
+  }
+  
+  // Add merchant/description
+  if (merchant && merchant !== 'transaction') {
+    smartName += `_${merchant}`;
+  }
+  
+  // Add category if different from merchant
+  if (category && category !== merchant) {
+    smartName += `_${category}`;
+  }
+  
+  // Add file type indicator
+  const typeIndicator = getFileTypeIndicator(fileType, ext);
+  if (typeIndicator) {
+    smartName += `_${typeIndicator}`;
+  }
+  
+  // Add time to ensure uniqueness
+  smartName += `_${time}`;
+  
+  // Add extension
+  smartName += `.${ext}`;
+  
+  // Clean up and limit length
+  smartName = smartName.replace(/_{2,}/g, '_').substring(0, 100);
+  
+  console.log('📝 Smart filename generated:', { original: originalName, smart: smartName });
+  return smartName;
+}
+
+function getFileTypeIndicator(mimeType, extension) {
+  if (mimeType?.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)) {
+    return 'receipt';
+  } else if (mimeType === 'application/pdf' || extension === 'pdf') {
+    return 'invoice';
+  } else if (['doc', 'docx'].includes(extension)) {
+    return 'document';
+  } else if (['xls', 'xlsx', 'csv'].includes(extension)) {
+    return 'statement';
+  } else if (['txt', 'log'].includes(extension)) {
+    return 'note';
+  }
+  return 'attachment';
+}
+
+// Enhanced file metadata for better organization
+function createFileMetadata(file, transactionData, smartFileName) {
+  return {
+    originalName: file.name,
+    smartName: smartFileName,
+    size: file.size,
+    type: file.type,
+    uploadDate: new Date().toISOString(),
+    transactionId: transactionData?.id || null,
+    transactionAmount: transactionData?.amount || null,
+    transactionDescription: transactionData?.description || null,
+    transactionCategory: transactionData?.category || null,
+    fileHash: null, // Could add file hash for deduplication
+    tags: generateFileTags(file, transactionData)
+  };
+}
+
+function generateFileTags(file, transactionData) {
+  const tags = [];
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  
+  // File type tags
+  if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) {
+    tags.push('image', 'receipt');
+  } else if (ext === 'pdf') {
+    tags.push('pdf', 'document', 'invoice');
+  } else if (['doc', 'docx'].includes(ext)) {
+    tags.push('document', 'text');
+  } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
+    tags.push('spreadsheet', 'data', 'statement');
+  }
+  
+  // Transaction context tags
+  if (transactionData?.type) {
+    tags.push(transactionData.type);
+  }
+  
+  if (transactionData?.category) {
+    tags.push(transactionData.category.toLowerCase().replace(/\s+/g, '_'));
+  }
+  
+  // Amount-based tags
+  if (transactionData?.amount) {
+    const amount = Math.abs(transactionData.amount);
+    if (amount > 1000) tags.push('large_amount');
+    else if (amount > 100) tags.push('medium_amount');
+    else tags.push('small_amount');
+  }
+  
+  return tags;
+}
+
 function buildFileAnalysisPrompt(fileKind, fileName, userQuestion) {
   const baseQ = userQuestion?.trim();
   
@@ -4853,6 +5980,7 @@ document.getElementById("profile-signout-btn").addEventListener("click", async (
   // Clear localStorage
   localStorage.removeItem("firebase-uid");
   localStorage.removeItem("firebase-email");
+  localStorage.removeItem("admin-mode"); // Clear admin mode
   console.log("✅ Signed out from Firebase");
   window.location.href = "auth_fixed.html";
 });
@@ -4893,17 +6021,50 @@ console.log("💰 Transactions:", transactions?.length || 0);
 console.log("🧾 Receipts:", receipts?.length || 0);
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// UNIVERSAL FILE VIEWER MODAL
+// ENHANCED UNIVERSAL FILE VIEWER MODAL WITH ZOOM
 // ═══════════════════════════════════════════════════════════════════════════════
 
 let viewerCurrentFile = null;
+let viewerZoom = 1;
+let viewerRotation = 0;
+let viewerPanX = 0;
+let viewerPanY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
 
-// Open file viewer with a file URL or blob
+// File type icons
+const FILE_ICONS = {
+  'image': '🖼️',
+  'video': '🎬',
+  'audio': '🎵',
+  'pdf': '📄',
+  'text': '📝',
+  'code': '💻',
+  'archive': '📦',
+  'document': '📋',
+  'spreadsheet': '📊',
+  'presentation': '📈',
+  'default': '📄'
+};
+
+// Open file viewer with enhanced features
 function openFileViewer(fileUrl, fileName, fileType, fileSize) {
+  console.log('🎯 OPENING ENHANCED FILE VIEWER:', { fileUrl, fileName, fileType, fileSize });
+  
   viewerCurrentFile = { url: fileUrl, name: fileName, type: fileType, size: fileSize };
   
-  // Update header
+  // Reset viewer state
+  viewerZoom = 1;
+  viewerRotation = 0;
+  viewerPanX = 0;
+  viewerPanY = 0;
+  
+  // Update header with appropriate icon
+  const fileIcon = getFileIcon(fileType, fileName);
+  document.getElementById('viewer-file-icon').textContent = fileIcon;
   document.getElementById('viewer-file-name').textContent = fileName || 'File';
+  
   let metaText = '';
   if (fileType) metaText += fileType;
   if (fileSize) metaText += (metaText ? ' • ' : '') + formatViewerFileSize(fileSize);
@@ -4913,63 +6074,177 @@ function openFileViewer(fileUrl, fileName, fileType, fileSize) {
   renderViewerContent(fileUrl, fileName, fileType);
   
   // Show modal
-  document.getElementById('file-viewer-modal').classList.add('open');
+  const modal = document.getElementById('file-viewer-modal');
+  if (modal) {
+    modal.classList.add('open');
+    console.log('✅ ENHANCED FILE VIEWER MODAL OPENED');
+  } else {
+    console.error('❌ FILE VIEWER MODAL NOT FOUND');
+  }
+}
+
+function getFileIcon(type, name) {
+  const ext = name?.split('.').pop()?.toLowerCase() || '';
+  
+  if (type?.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext)) {
+    return FILE_ICONS.image;
+  } else if (type?.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'webm', 'mkv'].includes(ext)) {
+    return FILE_ICONS.video;
+  } else if (type?.startsWith('audio/') || ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext)) {
+    return FILE_ICONS.audio;
+  } else if (type === 'application/pdf' || ext === 'pdf') {
+    return FILE_ICONS.pdf;
+  } else if (['txt', 'md', 'log'].includes(ext)) {
+    return FILE_ICONS.text;
+  } else if (['js', 'ts', 'html', 'css', 'py', 'java', 'cpp', 'c', 'php', 'rb', 'go', 'rs', 'sql', 'sh', 'json', 'xml', 'yaml', 'yml'].includes(ext)) {
+    return FILE_ICONS.code;
+  } else if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+    return FILE_ICONS.archive;
+  } else if (['doc', 'docx', 'rtf'].includes(ext)) {
+    return FILE_ICONS.document;
+  } else if (['xls', 'xlsx', 'csv'].includes(ext)) {
+    return FILE_ICONS.spreadsheet;
+  } else if (['ppt', 'pptx'].includes(ext)) {
+    return FILE_ICONS.presentation;
+  }
+  
+  return FILE_ICONS.default;
 }
 
 function renderViewerContent(url, name, type) {
   const viewer = document.getElementById('viewer-content');
+  const toolbar = document.getElementById('viewer-toolbar');
   const ext = name?.split('.').pop()?.toLowerCase() || '';
   
-  // Determine file type
+  // Hide toolbar by default
+  toolbar.style.display = 'none';
+  
+  // Determine file type and render accordingly
   if (type?.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp', 'ico'].includes(ext)) {
-    // Image
+    // Enhanced Image Viewer with Zoom
+    toolbar.style.display = 'flex';
+    document.getElementById('rotate-left-btn').style.display = 'block';
+    document.getElementById('rotate-right-btn').style.display = 'block';
+    
     viewer.innerHTML = `
-      <div style="text-align: center;">
-        <img src="${url}" alt="${name}" style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" onload="this.style.opacity=1" style="opacity:0;transition:opacity 0.3s">
+      <div class="viewer-image-container" id="image-container">
+        <img id="viewer-image" class="viewer-image" src="${url}" alt="${name}" 
+             style="transform: scale(${viewerZoom}) rotate(${viewerRotation}deg) translate(${viewerPanX}px, ${viewerPanY}px);"
+             onload="fitToScreen(); updateZoomInfo();">
       </div>
     `;
+    
+    setupImagePanning();
+    
   } else if (type?.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'webm', 'mkv'].includes(ext)) {
-    // Video
+    // Enhanced Video Viewer
+    toolbar.style.display = 'flex';
+    document.getElementById('rotate-left-btn').style.display = 'none';
+    document.getElementById('rotate-right-btn').style.display = 'none';
+    
     viewer.innerHTML = `
-      <div style="text-align: center;">
-        <video controls style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px;">
+        <video id="viewer-video" controls style="max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
           <source src="${url}" type="${type || 'video/mp4'}">
           Your browser does not support the video tag.
         </video>
       </div>
     `;
+    
   } else if (type?.startsWith('audio/') || ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a'].includes(ext)) {
-    // Audio
+    // Enhanced Audio Player
     viewer.innerHTML = `
-      <div style="text-align: center; padding: 48px;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">🎵</div>
-        <h3 style="margin-bottom: 24px; font-size: 1.1rem;">${name}</h3>
-        <audio controls style="width: 100%; max-width: 500px;">
-          <source src="${url}" type="${type || 'audio/mpeg'}">
-          Your browser does not support the audio tag.
-        </audio>
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 48px; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 24px;">🎵</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.2rem; font-weight: 500;">${name}</h3>
+        <div style="font-size: 0.8rem; color: var(--muted2); margin-bottom: 32px;">${formatViewerFileSize(viewerCurrentFile?.size)}</div>
+        <div style="width: 100%; max-width: 500px; background: var(--s1); border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+          <audio controls style="width: 100%; margin-bottom: 16px;">
+            <source src="${url}" type="${type || 'audio/mpeg'}">
+            Your browser does not support the audio tag.
+          </audio>
+          <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted2);">
+            <span>Audio File</span>
+            <span>${type || 'Unknown format'}</span>
+          </div>
+        </div>
       </div>
     `;
+    
   } else if (type === 'application/pdf' || ext === 'pdf') {
-    // PDF
+    // Enhanced PDF Viewer
+    toolbar.style.display = 'flex';
+    document.getElementById('rotate-left-btn').style.display = 'none';
+    document.getElementById('rotate-right-btn').style.display = 'none';
+    
     viewer.innerHTML = `
-      <iframe src="${url}" style="width: 100%; height: 70vh; border: 1px solid var(--border); border-radius: 12px;" frameborder="0">
-        <p>Your browser does not support PDFs. <a href="${url}" target="_blank" style="color: var(--gold);">Download the PDF</a>.</p>
-      </iframe>
+      <div class="viewer-pdf-container">
+        <div class="viewer-pdf-toolbar">
+          <button class="viewer-btn" onclick="previousPdfPage()">⬅️ Previous</button>
+          <div class="pdf-page-info" id="pdf-page-info">Page 1 of 1</div>
+          <button class="viewer-btn" onclick="nextPdfPage()">➡️ Next</button>
+        </div>
+        <iframe id="pdf-frame" src="${url}" style="flex: 1; border: none; background: white;" frameborder="0">
+          <div style="text-align: center; padding: 48px;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">📄</div>
+            <p>Your browser does not support PDFs. <a href="${url}" target="_blank" style="color: var(--gold);">Download the PDF</a>.</p>
+          </div>
+        </iframe>
+      </div>
     `;
+    
   } else if (type?.startsWith('text/') || ['txt', 'md', 'log', 'csv', 'json', 'xml', 'yaml', 'yml', 'js', 'ts', 'html', 'css', 'py', 'java', 'cpp', 'c', 'php', 'rb', 'go', 'rs', 'sql', 'sh'].includes(ext)) {
-    // Text file - fetch and display
+    // Enhanced Text/Code Viewer
+    toolbar.style.display = 'flex';
+    document.getElementById('rotate-left-btn').style.display = 'none';
+    document.getElementById('rotate-right-btn').style.display = 'none';
+    
+    viewer.innerHTML = `
+      <div style="padding: 24px; height: 100%; overflow: auto;">
+        <div style="text-align: center; padding: 24px; color: var(--muted2);">
+          <div style="font-size: 2rem; margin-bottom: 12px;">📝</div>
+          <div>Loading file content...</div>
+        </div>
+      </div>
+    `;
+    
+    // Fetch and display text content
     fetch(url)
       .then(r => r.text())
       .then(text => {
         let content = text;
+        let language = '';
+        
+        // Format JSON
         if (ext === 'json') {
           try {
             content = JSON.stringify(JSON.parse(text), null, 2);
+            language = 'json';
           } catch (e) {}
+        } else if (['js', 'ts'].includes(ext)) {
+          language = 'javascript';
+        } else if (['html', 'xml'].includes(ext)) {
+          language = 'html';
+        } else if (ext === 'css') {
+          language = 'css';
+        } else if (['py'].includes(ext)) {
+          language = 'python';
+        } else if (['sql'].includes(ext)) {
+          language = 'sql';
         }
+        
         viewer.innerHTML = `
-          <pre style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; background: var(--code-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 70vh;">${escapeViewerHtml(content)}</pre>
+          <div style="padding: 24px; height: 100%; overflow: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+              <div style="font-size: 0.8rem; color: var(--muted2);">
+                ${content.split('\n').length} lines • ${formatViewerFileSize(new Blob([content]).size)}
+              </div>
+              <div style="font-size: 0.7rem; color: var(--gold); background: color-mix(in oklab, var(--gold) 10%, var(--s1)); padding: 4px 8px; border-radius: 4px;">
+                ${language || ext.toUpperCase()}
+              </div>
+            </div>
+            <pre style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.8rem; line-height: 1.6; white-space: pre-wrap; background: var(--s1); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin: 0; overflow: auto;">${escapeViewerHtml(content)}</pre>
+          </div>
         `;
       })
       .catch(err => {
@@ -4977,27 +6252,229 @@ function renderViewerContent(url, name, type) {
           <div style="text-align: center; padding: 48px; color: var(--error);">
             <div style="font-size: 2rem; margin-bottom: 12px;">❌</div>
             <div>Failed to load file content</div>
+            <div style="font-size: 0.8rem; margin-top: 8px; color: var(--muted2);">${err.message}</div>
           </div>
         `;
       });
+      
   } else {
-    // Unknown type - show download option
+    // Unknown file type - enhanced download view
     viewer.innerHTML = `
       <div style="text-align: center; padding: 48px;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">📄</div>
-        <div style="font-size: 1.1rem; margin-bottom: 8px;">${name}</div>
-        <div style="font-size: 0.85rem; color: var(--muted2); margin-bottom: 24px;">
-          This file type cannot be previewed in the browser
+        <div style="font-size: 4rem; margin-bottom: 24px;">${getFileIcon(type, name)}</div>
+        <div style="font-size: 1.2rem; margin-bottom: 8px; font-weight: 500;">${name}</div>
+        <div style="font-size: 0.85rem; color: var(--muted2); margin-bottom: 8px;">
+          ${type || 'Unknown file type'}
         </div>
-        <button class="btn-submit" onclick="downloadViewerFile()">⬇️ Download File</button>
+        <div style="font-size: 0.8rem; color: var(--muted2); margin-bottom: 32px;">
+          ${formatViewerFileSize(viewerCurrentFile?.size)} • This file type cannot be previewed
+        </div>
+        <button class="btn-submit" onclick="downloadViewerFile()" style="font-size: 0.9rem; padding: 12px 24px;">
+          ⬇️ Download File
+        </button>
       </div>
     `;
   }
 }
 
-function closeFileViewer() {
-  document.getElementById('file-viewer-modal').classList.remove('open');
-  viewerCurrentFile = null;
+// Zoom and Pan Functions
+function zoomIn() {
+  viewerZoom = Math.min(viewerZoom * 1.2, 5);
+  updateImageTransform();
+  updateZoomInfo();
+}
+
+function zoomOut() {
+  viewerZoom = Math.max(viewerZoom / 1.2, 0.1);
+  updateImageTransform();
+  updateZoomInfo();
+}
+
+function resetZoom() {
+  viewerZoom = 1;
+  viewerRotation = 0;
+  viewerPanX = 0;
+  viewerPanY = 0;
+  updateImageTransform();
+  updateZoomInfo();
+}
+
+function fitToScreen() {
+  const img = document.getElementById('viewer-image');
+  const container = document.getElementById('image-container');
+  
+  if (!img || !container) return;
+  
+  const containerRect = container.getBoundingClientRect();
+  const imgNaturalWidth = img.naturalWidth;
+  const imgNaturalHeight = img.naturalHeight;
+  
+  if (imgNaturalWidth && imgNaturalHeight) {
+    const scaleX = (containerRect.width - 48) / imgNaturalWidth;
+    const scaleY = (containerRect.height - 48) / imgNaturalHeight;
+    viewerZoom = Math.min(scaleX, scaleY, 1);
+    viewerPanX = 0;
+    viewerPanY = 0;
+    updateImageTransform();
+    updateZoomInfo();
+  }
+}
+
+function rotateImage(degrees) {
+  viewerRotation += degrees;
+  updateImageTransform();
+}
+
+function updateImageTransform() {
+  const img = document.getElementById('viewer-image');
+  if (img) {
+    img.style.transform = `scale(${viewerZoom}) rotate(${viewerRotation}deg) translate(${viewerPanX}px, ${viewerPanY}px)`;
+  }
+}
+
+function updateZoomInfo() {
+  const zoomInfo = document.getElementById('zoom-info');
+  if (zoomInfo) {
+    zoomInfo.textContent = `${Math.round(viewerZoom * 100)}%`;
+  }
+}
+
+function setupImagePanning() {
+  const container = document.getElementById('image-container');
+  if (!container) return;
+  
+  let startPanX = 0;
+  let startPanY = 0;
+  
+  container.addEventListener('mousedown', (e) => {
+    if (e.button === 0) { // Left mouse button
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      startPanX = viewerPanX;
+      startPanY = viewerPanY;
+      container.style.cursor = 'grabbing';
+    }
+  });
+  
+  container.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const deltaX = (e.clientX - dragStartX) / viewerZoom;
+      const deltaY = (e.clientY - dragStartY) / viewerZoom;
+      viewerPanX = startPanX + deltaX;
+      viewerPanY = startPanY + deltaY;
+      updateImageTransform();
+    }
+  });
+  
+  container.addEventListener('mouseup', () => {
+    isDragging = false;
+    container.style.cursor = 'grab';
+  });
+  
+  container.addEventListener('mouseleave', () => {
+    isDragging = false;
+    container.style.cursor = 'grab';
+  });
+  
+  // Mouse wheel zoom
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      zoomIn();
+    } else {
+      zoomOut();
+    }
+  });
+  
+  // Touch support for mobile
+  let touchStartDistance = 0;
+  let touchStartZoom = 1;
+  
+  container.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      touchStartDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      touchStartZoom = viewerZoom;
+    } else if (e.touches.length === 1) {
+      isDragging = true;
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      startPanX = viewerPanX;
+      startPanY = viewerPanY;
+    }
+  });
+  
+  container.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    
+    if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      if (touchStartDistance > 0) {
+        const scale = currentDistance / touchStartDistance;
+        viewerZoom = Math.max(0.1, Math.min(5, touchStartZoom * scale));
+        updateImageTransform();
+        updateZoomInfo();
+      }
+    } else if (e.touches.length === 1 && isDragging) {
+      const deltaX = (e.touches[0].clientX - dragStartX) / viewerZoom;
+      const deltaY = (e.touches[0].clientY - dragStartY) / viewerZoom;
+      viewerPanX = startPanX + deltaX;
+      viewerPanY = startPanY + deltaY;
+      updateImageTransform();
+    }
+  });
+  
+  container.addEventListener('touchend', () => {
+    isDragging = false;
+    touchStartDistance = 0;
+  });
+}
+
+function toggleFullscreen() {
+  const modal = document.getElementById('file-viewer-modal');
+  if (!document.fullscreenElement) {
+    modal.requestFullscreen().catch(err => {
+      console.log('Fullscreen error:', err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// PDF navigation functions
+let currentPdfPage = 1;
+let totalPdfPages = 1;
+
+function previousPdfPage() {
+  if (currentPdfPage > 1) {
+    currentPdfPage--;
+    updatePdfPage();
+  }
+}
+
+function nextPdfPage() {
+  if (currentPdfPage < totalPdfPages) {
+    currentPdfPage++;
+    updatePdfPage();
+  }
+}
+
+function updatePdfPage() {
+  const pageInfo = document.getElementById('pdf-page-info');
+  if (pageInfo) {
+    pageInfo.textContent = `Page ${currentPdfPage} of ${totalPdfPages}`;
+  }
 }
 
 function downloadViewerFile() {
@@ -5006,6 +6483,18 @@ function downloadViewerFile() {
   a.href = viewerCurrentFile.url;
   a.download = viewerCurrentFile.name || 'download';
   a.click();
+}
+
+function closeFileViewer() {
+  document.getElementById('file-viewer-modal').classList.remove('open');
+  viewerCurrentFile = null;
+  
+  // Reset viewer state
+  viewerZoom = 1;
+  viewerRotation = 0;
+  viewerPanX = 0;
+  viewerPanY = 0;
+  isDragging = false;
 }
 
 function formatViewerFileSize(bytes) {
@@ -5033,6 +6522,26 @@ window.openFileViewer = openFileViewer;
 window.closeFileViewer = closeFileViewer;
 window.downloadViewerFile = downloadViewerFile;
 
+// Test function for enhanced file viewer
+window.testFileViewer = function() {
+  console.log('🧪 TESTING ENHANCED FILE VIEWER WITH ZOOM');
+  const testImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmNTllMGI7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZWY0NDQ0O3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiLz48Y2lyY2xlIGN4PSI0MDAiIGN5PSIzMDAiIHI9IjEwMCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4yIi8+PHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMiIgZmlsbD0iIzAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVOSEFOQ0VEIEZJTEUgVklFV0VSPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNTUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMwMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5ONIEZVTU9OUyAmIFBBTiAmIFJPVEFURTwvdGV4dD48dGV4dCB4PSI1MCUiIHk9IjY1JSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VXNlIG1vdXNlIHdoZWVsIHRvIHpvb20gfCBEcmFnIHRvIHBhbiB8IFVzZSB0b29sYmFyIGJ1dHRvbnM8L3RleHQ+PC9zdmc+';
+  
+  // Generate smart filename for test
+  const testTransaction = {
+    amount: 25.99,
+    description: 'Coffee Shop Purchase',
+    category: 'Food & Dining',
+    type: 'expense'
+  };
+  
+  const smartName = generateSmartFileName('test-receipt.svg', testTransaction, 'image/svg+xml');
+  console.log('📝 Generated smart filename:', smartName);
+  
+  openFileViewer(testImageUrl, smartName, 'image/svg+xml', 2048);
+};
+
 </script>
 </body>
 </html>
+
