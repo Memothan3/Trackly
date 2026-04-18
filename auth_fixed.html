@@ -474,6 +474,42 @@ function showView(v) {
   }
 }
 
+/* ── ADMIN BYPASS FUNCTIONS ── */
+async function forceVerifyAdminUser() {
+  try {
+    const user = window.firebaseAuth.currentUser;
+    if (user && user.email === "memothan3@gmail.com") {
+      console.log("🔧 Attempting to force verify admin user...");
+      
+      // Try to reload user to get latest state
+      await user.reload();
+      
+      if (!user.emailVerified) {
+        console.log("⚠️ Admin user still not verified in Firebase");
+        console.log("💡 Proceeding anyway due to admin bypass");
+      }
+      
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error in force verify:", error);
+    return false;
+  }
+}
+
+// Make it globally available
+window.forceVerifyAdminUser = forceVerifyAdminUser;
+
+// Test function for admin bypass
+function testAdminBypass() {
+  const testEmail = "memothan3@gmail.com";
+  console.log("🧪 Testing admin bypass for:", testEmail);
+  console.log("✅ Admin bypass should work for this email");
+  return testEmail;
+}
+window.testAdminBypass = testAdminBypass;
+
 /* ── SIGN IN (Firebase) ── */
 async function doSignIn() {
   const emailOrUsername = el("si-email").value.trim();
@@ -516,6 +552,13 @@ async function doSignIn() {
     
     // Check if email is verified (bypass for admin users)
     const isAdminUser = email === "memothan3@gmail.com"; // Admin email configured
+    
+    console.log("🔍 Email verification check:");
+    console.log("- User email:", email);
+    console.log("- Is admin user:", isAdminUser);
+    console.log("- Email verified:", user.emailVerified);
+    console.log("- Should bypass:", isAdminUser);
+    
     if (!user.emailVerified && !isAdminUser) {
       busy("si-btn", false);
       pendingEmail = email;
@@ -524,8 +567,9 @@ async function doSignIn() {
       return;
     }
     
-    if (isAdminUser && !user.emailVerified) {
-      console.log("🔑 Admin user bypassing email verification");
+    if (isAdminUser) {
+      console.log("🔑 Admin user - bypassing email verification requirement");
+      // Force proceed even if email not verified
     }
     
     // Sync to Supabase
@@ -596,9 +640,16 @@ async function doSignUp() {
     
     console.log("✅ Firebase user created:", user.uid);
     
-    // Send email verification
-    await window.firebaseSendEmailVerification(user);
-    console.log("📧 Verification email sent");
+    // Check if this is admin user (bypass email verification)
+    const isAdminSignup = email === "memothan3@gmail.com";
+    
+    if (!isAdminSignup) {
+      // Send email verification for regular users
+      await window.firebaseSendEmailVerification(user);
+      console.log("📧 Verification email sent");
+    } else {
+      console.log("🔑 Admin user - skipping email verification");
+    }
     
     // Sync to Supabase with additional data
     const syncResult = await syncUserToSupabase(user, {
@@ -616,7 +667,19 @@ async function doSignUp() {
     
     busy("su-btn", false);
     
-    // Show email confirmation screen
+    // Check if admin user (bypass confirmation screen)
+    const isAdminComplete = email === "memothan3@gmail.com";
+    
+    if (isAdminComplete) {
+      console.log("🔑 Admin user - redirecting directly to dashboard");
+      // Store Firebase token for dashboard
+      localStorage.setItem("firebase-uid", user.uid);
+      localStorage.setItem("firebase-email", user.email);
+      go(DASHBOARD);
+      return;
+    }
+    
+    // Show email confirmation screen for regular users
     pendingEmail = email;
     showView("confirm");
     msg("Account created! Check your email for the verification link.", "success");
@@ -1012,13 +1075,20 @@ window.addEventListener("load", async () => {
       
       // For email/password users, check if email is verified (bypass for admin)
       const isAdminUser = user.email === "memothan3@gmail.com"; // Admin email configured
+      
+      console.log("🔍 Auth state email verification check:");
+      console.log("- User email:", user.email);
+      console.log("- Is admin user:", isAdminUser);
+      console.log("- Email verified:", user.emailVerified);
+      console.log("- Provider:", user.providerData[0]?.providerId);
+      
       if (user.providerData[0]?.providerId === "password" && !user.emailVerified && !isAdminUser) {
-        console.log("⚠️ Email not verified");
+        console.log("⚠️ Email not verified - blocking access");
         return;
       }
       
-      if (isAdminUser && !user.emailVerified) {
-        console.log("🔑 Admin user bypassing email verification check");
+      if (isAdminUser) {
+        console.log("🔑 Admin user - bypassing email verification in auth state check");
       }
       
       // Check if user has a complete profile in Supabase
