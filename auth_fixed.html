@@ -400,9 +400,30 @@ async function handleVerifyEmail(actionCode, applyActionCode) {
     await applyActionCode(window.firebaseAuth, actionCode);
     console.log("✅ Email verified successfully");
     
-    // Show success message
-    showView("signin");
-    msg("Email verified successfully! You can now sign in.", "success");
+    // Get the current user
+    const user = window.firebaseAuth.currentUser;
+    
+    if (user) {
+      // User is signed in, redirect to dashboard
+      console.log("🔄 Redirecting to dashboard...");
+      
+      // Store Firebase token for dashboard
+      localStorage.setItem("firebase-uid", user.uid);
+      localStorage.setItem("firebase-email", user.email);
+      
+      // Show success message briefly before redirect
+      showView("signin");
+      msg("Email verified successfully! Redirecting to dashboard...", "success");
+      
+      // Redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = DASHBOARD;
+      }, 1500);
+    } else {
+      // User is not signed in, show success and prompt to sign in
+      showView("signin");
+      msg("Email verified successfully! Please sign in to continue.", "success");
+    }
     
     // Clear URL parameters
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -473,11 +494,18 @@ async function handleResetPassword(actionCode, verifyPasswordResetCode, confirmP
         console.log("✅ Password reset successfully");
         
         busy("confirm-reset-btn", false);
-        showView("signin");
-        msg("Password reset successfully! You can now sign in with your new password.", "success");
+        
+        // Show success message
+        msg("Password reset successfully! Redirecting to sign in...", "success");
         
         // Clear URL parameters
         window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Redirect to sign in after 1.5 seconds
+        setTimeout(() => {
+          showView("signin");
+          msg("Password reset successfully! You can now sign in with your new password.", "success");
+        }, 1500);
       } catch (error) {
         busy("confirm-reset-btn", false);
         console.error("Password reset error:", error);

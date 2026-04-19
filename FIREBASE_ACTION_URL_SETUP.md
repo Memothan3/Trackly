@@ -29,13 +29,36 @@ This guide will help you configure Firebase to use your Vercel domain for all em
    - Click **Save**
    - This applies to ALL email templates automatically
 
-### Step 2: Verify It's Working
+### Step 2: Configure Authorized Domains (Important!)
+
+1. **Go to Firebase Console** → Authentication → Settings
+2. **Scroll to "Authorized domains"**
+3. **Add your Vercel domain:**
+   ```
+   trackly-neon.vercel.app
+   ```
+4. **Click "Add domain"**
+5. This allows Firebase to redirect to your Vercel domain
+
+### Step 3: Set Continue URL (Optional but Recommended)
+
+In Firebase Console → Authentication → Templates → Edit template:
+
+**Continue URL (optional):**
+```
+https://trackly-neon.vercel.app/trackly_dashboard.html
+```
+
+This is where users will be redirected after email actions if they're not already signed in.
+
+### Step 4: Verify It's Working
 
 1. **Test Email Verification:**
    - Sign up with a new email
    - Check the verification email
    - Click the link - it should go to your Vercel domain
-   - You should see "Email verified successfully!" message
+   - You should see "Email verified successfully! Redirecting to dashboard..."
+   - **Automatically redirects to dashboard** if you're signed in
 
 2. **Test Password Reset:**
    - Click "Forgot Password" on sign-in page
@@ -43,6 +66,29 @@ This guide will help you configure Firebase to use your Vercel domain for all em
    - Check the reset email
    - Click the link - it should go to your Vercel domain
    - You should see a form to enter new password
+   - After reset, redirects to sign-in page
+
+## 📋 Firebase Console Settings Summary
+
+### Action URL (Custom URL):
+```
+https://trackly-neon.vercel.app/auth_fixed.html
+```
+**Where to set:** Authentication → Templates → Any template → "Customize action URL"
+
+### Continue URL (Callback URL):
+```
+https://trackly-neon.vercel.app/trackly_dashboard.html
+```
+**Where to set:** Authentication → Templates → Edit template → "Continue URL" field (optional)
+
+### Authorized Domains:
+```
+trackly-neon.vercel.app
+```
+**Where to set:** Authentication → Settings → Authorized domains → Add domain
+
+**Note:** The Continue URL is optional. The code now handles automatic redirection to the dashboard after email verification.
 
 ## ✨ What This Does
 
