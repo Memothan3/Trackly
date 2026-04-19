@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trackly Email Templates</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .template-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .template-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .preview {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .instructions {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .instructions h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Trackly Email Templates</h1>
+            <p>Professional, beautiful email templates for Firebase Authentication</p>
+        </div>
+        
+        <div class="instructions">
+            <h2>📋 How to Use These Templates</h2>
+            <ol>
+                <li>Click the <strong>"Copy HTML"</strong> button on any template below</li>
+                <li>Go to your <strong>Firebase Console</strong> → Authentication → Templates</li>
+                <li>Select the email type (Email verification, Password reset, etc.)</li>
+                <li>Click <strong>"Edit template"</strong></li>
+                <li>Paste the HTML code into the template editor</li>
+                <li>Save and test!</li>
+            </ol>
+        </div>
+        
+        <div class="templates-grid">
+            <!-- Email Verification Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <div>
+                        <span class="tag">Email Verification</span>
+                        <h3 class="template-title">Welcome & Verify Email</h3>
+                    </div>
+                    <button class="copy-btn" onclick="copyTemplate('verification')">📋 Copy HTML</button>
+                </div>
+                <div class="preview">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 2rem;">💰 Trackly</h1>
+                        </div>
+                        <div style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin-bottom: 20px;">Welcome to Trackly!</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 30px;">
+                                Thanks for signing up! Please verify your email address to get started with tracking your finances.
+                            </p>
+                            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                Verify Email Address
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block" id="verification-code">
+<!-- Paste this into Firebase Email Verification Template -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">💰 Trackly</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">Your Personal Finance Tracker</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Welcome to Trackly! 🎉</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">
+                                Hi %DISPLAY_NAME%,
+                            </p>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
+                                Thanks for signing up! We're excited to help you take control of your finances. To get started, please verify your email address by clicking the button below.
+                            </p>
+                            <!-- Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <a href="%LINK%" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                                            ✓ Verify Email Address
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 30px 0 0 0; font-size: 14px;">
+                                Or copy and paste this link into your browser:<br>
+                                <a href="%LINK%" style="color: #f59e0b; word-break: break-all;">%LINK%</a>
+                            </p>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 20px 0 0 0; font-size: 14px;">
+                                This link will expire in 24 hours for security reasons.
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 14px;">
+                                If you didn't create a Trackly account, you can safely ignore this email.
+                            </p>
+                            <p style="color: #9ca3af; margin: 0; font-size: 12px;">
+                                © 2026 Trackly. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+                </div>
+            </div>
+            
+            <!-- Password Reset Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <div>
+                        <span class="tag">Password Reset</span>
+                        <h3 class="template-title">Reset Your Password</h3>
+                    </div>
+                    <button class="copy-btn" onclick="copyTemplate('password')">📋 Copy HTML</button>
+                </div>
+                <div class="preview">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 2rem;">🔐 Trackly</h1>
+                        </div>
+                        <div style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin-bottom: 20px;">Reset Your Password</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 30px;">
+                                We received a request to reset your password. Click the button below to create a new password.
+                            </p>
+                            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                Reset Password
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block" id="password-code">
+<!-- Paste this into Firebase Password Reset Template -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">🔐 Trackly</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">Password Reset Request</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Reset Your Password 🔑</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">
+                                Hi %DISPLAY_NAME%,
+                            </p>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
+                                We received a request to reset your password for your Trackly account. Click the button below to create a new password.
+                            </p>
+                            <!-- Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <a href="%LINK%" style="display: inline-block; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                                            🔒 Reset Password
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 30px 0 0 0; font-size: 14px;">
+                                Or copy and paste this link into your browser:<br>
+                                <a href="%LINK%" style="color: #ef4444; word-break: break-all;">%LINK%</a>
+                            </p>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 20px 0 0 0; font-size: 14px;">
+                                This link will expire in 1 hour for security reasons.
+                            </p>
+                            <!-- Security Notice -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+                                <tr>
+                                    <td style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 6px;">
+                                        <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.5;">
+                                            <strong>⚠️ Security Notice:</strong> If you didn't request a password reset, please ignore this email or contact support if you have concerns about your account security.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 14px;">
+                                Need help? Contact us at support@trackly.com
+                            </p>
+                            <p style="color: #9ca3af; margin: 0; font-size: 12px;">
+                                © 2026 Trackly. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+                </div>
+            </div>
+            
+            <!-- Email Change Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <div>
+                        <span class="tag">Email Change</span>
+                        <h3 class="template-title">Verify New Email</h3>
+                    </div>
+                    <button class="copy-btn" onclick="copyTemplate('emailchange')">📋 Copy HTML</button>
+                </div>
+                <div class="preview">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 2rem;">📧 Trackly</h1>
+                        </div>
+                        <div style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin-bottom: 20px;">Verify Your New Email</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin-bottom: 30px;">
+                                You've requested to change your email address. Please verify your new email to complete the change.
+                            </p>
+                            <a href="#" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                Verify New Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block" id="emailchange-code">
+<!-- Paste this into Firebase Email Change Template -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">📧 Trackly</h1>
+                            <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">Email Address Change</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;">Verify Your New Email 📬</h2>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 20px 0; font-size: 16px;">
+                                Hi %DISPLAY_NAME%,
+                            </p>
+                            <p style="color: #6b7280; line-height: 1.6; margin: 0 0 30px 0; font-size: 16px;">
+                                You've requested to change your email address for your Trackly account. To complete this change, please verify your new email address by clicking the button below.
+                            </p>
+                            <!-- Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <a href="%LINK%" style="display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                                            ✓ Verify New Email
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 30px 0 0 0; font-size: 14px;">
+                                Or copy and paste this link into your browser:<br>
+                                <a href="%LINK%" style="color: #3b82f6; word-break: break-all;">%LINK%</a>
+                            </p>
+                            <p style="color: #9ca3af; line-height: 1.6; margin: 20px 0 0 0; font-size: 14px;">
+                                This link will expire in 24 hours for security reasons.
+                            </p>
+                            <!-- Security Notice -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 30px;">
+                                <tr>
+                                    <td style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 6px;">
+                                        <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.5;">
+                                            <strong>ℹ️ Important:</strong> If you didn't request this email change, please contact support immediately to secure your account.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 14px;">
+                                Need help? Contact us at support@trackly.com
+                            </p>
+                            <p style="color: #9ca3af; margin: 0; font-size: 12px;">
+                                © 2026 Trackly. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="success-message" id="successMessage">
+        ✓ Copied to clipboard!
+    </div>
+    
+    <script>
+        function copyTemplate(type) {
+            const codeBlock = document.getElementById(type + '-code');
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.style.display = 'block';
+                
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>
