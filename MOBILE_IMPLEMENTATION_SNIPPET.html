@@ -1,0 +1,204 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBILE DASHBOARD - QUICK IMPLEMENTATION
+     Copy and paste these snippets into your trackly_dashboard.html
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- 1. ADD THIS TO YOUR <head> SECTION (after existing styles) -->
+<link rel="stylesheet" href="dashboard-modern-ui-upgrade.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- 2. REPLACE YOUR TOPBAR WITH THIS -->
+<div class="topbar">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <!-- Mobile Menu Button -->
+    <button class="menu-btn" id="menu-btn" aria-label="Toggle menu">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+    
+    <h1 class="page-title" id="page-title">Dashboard</h1>
+  </div>
+  
+  <div class="topbar-right">
+    <button class="btn-add" id="add-transaction-btn">
+      <span>+</span> Add Transaction
+    </button>
+    <button class="notif-btn" id="notif-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- 3. ADD THIS RIGHT AFTER YOUR SIDEBAR CLOSING TAG -->
+</div> <!-- sidebar end -->
+
+<!-- Mobile Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- 4. ADD THIS BEFORE CLOSING </body> TAG -->
+<script src="mobile-dashboard.js"></script>
+
+<!-- OR paste this inline JavaScript: -->
+<script>
+(function() {
+  'use strict';
+  
+  // Mobile Menu Toggle
+  function initMobileMenu() {
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    
+    if (!menuBtn || !sidebar) return;
+    
+    menuBtn.addEventListener('click', () => {
+      const isOpen = sidebar.classList.toggle('open');
+      sidebarOverlay?.classList.toggle('active', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+    
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 900) closeSidebar();
+      });
+    });
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeSidebar();
+      }
+    });
+    
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      sidebarOverlay?.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Resize Handler
+  function initResizeHandler() {
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (window.innerWidth > 900) {
+          document.getElementById('sidebar')?.classList.remove('open');
+          document.getElementById('sidebar-overlay')?.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }, 250);
+    });
+  }
+  
+  // Swipe Gestures
+  function initSwipeGestures() {
+    let touchStartX = 0, touchEndX = 0;
+    
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      if (!sidebar || window.innerWidth > 900) return;
+      
+      const swipeThreshold = 50;
+      
+      if (touchStartX < 50 && touchEndX - touchStartX > swipeThreshold) {
+        sidebar.classList.add('open');
+        sidebarOverlay?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      if (sidebar.classList.contains('open') && touchStartX - touchEndX > swipeThreshold) {
+        sidebar.classList.remove('open');
+        sidebarOverlay?.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+  }
+  
+  // Viewport Height Fix
+  function fixViewportHeight() {
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setVH();
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+  }
+  
+  // Initialize
+  function init() {
+    console.log('📱 Initializing mobile functionality...');
+    initMobileMenu();
+    initResizeHandler();
+    initSwipeGestures();
+    fixViewportHeight();
+    console.log('✅ Mobile functionality ready');
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     OPTIONAL: MOBILE BOTTOM NAVIGATION
+     Add this before closing </body> if you want bottom nav
+     ═══════════════════════════════════════════════════════════════ -->
+
+<nav class="mobile-nav">
+  <div class="mobile-nav-items">
+    <a href="#" class="mobile-nav-item active" data-page="dashboard">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+      <span>Home</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="transactions">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <span>Transactions</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="insights">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+      <span>Insights</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="profile">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+      <span>Profile</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TESTING
+     Open Chrome DevTools → Toggle device toolbar (Ctrl+Shift+M)
+     Test on different screen sizes and orientations
+     ═══════════════════════════════════════════════════════════════ -->

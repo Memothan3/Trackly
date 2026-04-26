@@ -1,0 +1,184 @@
+<!-- ============================================
+     MOBILE BOTTOM NAVIGATION
+     Add this before the closing </body> tag
+     ============================================ -->
+
+<!-- Mobile Bottom Navigation (Shows only on mobile) -->
+<nav class="mobile-bottom-nav">
+  <div class="mobile-nav-items">
+    <a href="#" class="mobile-nav-item active" data-page="overview" onclick="switchPage('overview'); return false;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+      <span>Home</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="transactions" onclick="switchPage('transactions'); return false;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <span>Activity</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item mobile-nav-add" onclick="openAddModal(); return false;">
+      <div style="
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary), var(--accent-foreground));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        margin-top: -28px;
+      ">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" style="width: 28px; height: 28px;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+        </svg>
+      </div>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="insights" onclick="switchPage('insights'); return false;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+      <span>Insights</span>
+    </a>
+    
+    <a href="#" class="mobile-nav-item" data-page="profile" onclick="document.getElementById('profile-modal').classList.add('open'); return false;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+      <span>Profile</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Mobile Overlay (for sidebar) -->
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
+
+<!-- Mobile Menu Button (Add to topbar) -->
+<!-- Add this inside your .topbar element, before .page-title -->
+<button class="menu-btn" id="menu-btn" onclick="toggleMobileSidebar()">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
+
+<script>
+// Mobile Navigation Functions
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+  
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+  
+  // Prevent body scroll when sidebar is open
+  if (sidebar.classList.contains('open')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobile-overlay');
+  
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Update mobile nav active state
+function updateMobileNav(pageName) {
+  const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+  mobileNavItems.forEach(item => {
+    if (item.dataset.page === pageName) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+}
+
+// Close sidebar when clicking nav item on mobile
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      closeMobileSidebar();
+    }
+  });
+});
+
+// Handle window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (window.innerWidth > 768) {
+      closeMobileSidebar();
+    }
+  }, 250);
+});
+
+// Prevent scroll on touch move when sidebar is open (iOS fix)
+document.addEventListener('touchmove', (e) => {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) {
+    e.preventDefault();
+  }
+}, { passive: false });
+</script>
+
+<style>
+/* Additional mobile-specific styles */
+.mobile-nav-add {
+  position: relative;
+}
+
+.mobile-nav-add span {
+  display: none;
+}
+
+/* Smooth transitions */
+.sidebar {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-overlay {
+  transition: opacity 0.2s ease-out;
+}
+
+/* iOS safe area */
+@supports (padding: max(0px)) {
+  .mobile-bottom-nav {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Prevent text selection on mobile nav */
+.mobile-nav-item {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Active state animation */
+.mobile-nav-item.active {
+  animation: bounceIn 0.3s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>

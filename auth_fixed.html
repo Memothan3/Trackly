@@ -445,33 +445,35 @@ async function handleResetPassword(actionCode, verifyPasswordResetCode, confirmP
     
     // Show password reset form
     showView("reset");
-    el("reset-email").style.display = "none"; // Hide email input
+    
+    // Update title for password reset (not request)
+    el("auth-title").textContent = "Create New Password";
+    el("auth-sub").textContent = "Enter your new password below";
     
     // Store action code for later use
     window.resetActionCode = actionCode;
     
-    // Update the reset form to handle new password
-    const resetBtn = el("reset-btn");
+    // Get the reset form container
     const resetForm = el("reset-form");
     
-    // Clear existing form and create new password inputs
+    // Replace the form content with password reset fields
     resetForm.innerHTML = `
-      <h2 class="form-title">Reset Your Password</h2>
-      <p class="form-subtitle">Enter your new password below</p>
-      <div class="msg-box" id="msg-box"></div>
-      
-      <div class="input-group">
-        <label>New Password</label>
-        <input type="password" id="new-password" placeholder="Enter new password" minlength="6" required>
+      <div class="form">
+        <div class="msg-box" id="msg-box"></div>
+        
+        <div class="field">
+          <label for="new-password">New Password</label>
+          <input type="password" id="new-password" placeholder="Enter new password (min 6 characters)" minlength="6" required autocomplete="new-password">
+        </div>
+        
+        <div class="field">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" placeholder="Confirm new password" minlength="6" required autocomplete="new-password">
+        </div>
+        
+        <button type="button" id="confirm-reset-btn" class="btn-primary">Reset Password</button>
+        <button type="button" onclick="showView('signin')" class="btn-ghost">← Back to Sign In</button>
       </div>
-      
-      <div class="input-group">
-        <label>Confirm Password</label>
-        <input type="password" id="confirm-password" placeholder="Confirm new password" minlength="6" required>
-      </div>
-      
-      <button type="button" id="confirm-reset-btn" class="btn-primary">Reset Password</button>
-      <button type="button" onclick="showView('signin')" class="btn-text">Back to Sign In</button>
     `;
     
     // Handle password reset confirmation
