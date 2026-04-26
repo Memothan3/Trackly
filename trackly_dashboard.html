@@ -1952,6 +1952,167 @@ body::after {
         <button class="btn-submit" id="export-snapshot-json" style="margin-top:10px">Download Snapshot JSON</button>
       </div>
     </div>
+
+    <!-- PROFILE PAGE (Mobile Navigation) -->
+    <div id="page-profile" style="display:none">
+      <!-- Profile Header -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <div class="panel-title" style="margin-bottom: 20px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Profile & Settings
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+          <div class="avatar" style="width: 64px; height: 64px; font-size: 1.5rem;" id="profile-avatar">M</div>
+          <div>
+            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;" id="profile-name">Loading...</div>
+            <div style="font-size: 0.65rem; color: var(--muted2);" id="profile-email">—</div>
+            <div class="mode-badge" style="margin-top: 8px;">
+              <div class="mode-dot"></div>
+              <span id="profile-mode-label">Personal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <div class="panel-title" style="margin-bottom: 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"></path>
+          </svg>
+          Quick Actions
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <button class="btn-submit" onclick="switchPage('accounts')" style="font-size: 0.6rem; padding: 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+            Manage Accounts
+          </button>
+          
+          <button class="btn-submit" onclick="switchPage('budgets')" style="font-size: 0.6rem; padding: 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Set Budgets
+          </button>
+          
+          <button class="btn-submit" onclick="switchPage('scheduled')" style="font-size: 0.6rem; padding: 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Scheduled Items
+          </button>
+          
+          <button class="btn-submit" onclick="switchPage('export')" style="font-size: 0.6rem; padding: 12px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export Data
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <div class="panel-title" style="margin-bottom: 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          Navigation
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="#" class="nav-item" onclick="switchPage('dashboard')" style="margin-bottom: 0;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <rect x="1" y="1" width="6" height="6" rx="1.5"></rect>
+              <rect x="9" y="1" width="6" height="6" rx="1.5"></rect>
+              <rect x="1" y="9" width="6" height="6" rx="1.5"></rect>
+              <rect x="9" y="9" width="6" height="6" rx="1.5"></rect>
+            </svg>
+            Dashboard
+          </a>
+          
+          <a href="#" class="nav-item" onclick="switchPage('transactions')" style="margin-bottom: 0;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 5h12M2 8h8M2 11h5"></path>
+            </svg>
+            Transactions
+          </a>
+          
+          <a href="#" class="nav-item" onclick="switchPage('receipts')" style="margin-bottom: 0;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <rect x="3" y="1" width="10" height="14" rx="1.5"></rect>
+              <path d="M5 5h6M5 8h4M5 11h3"></path>
+            </svg>
+            Receipts
+          </a>
+          
+          <a href="#" class="nav-item" onclick="switchPage('projects')" style="margin-bottom: 0;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <rect x="1" y="3" width="14" height="10" rx="1.5"></rect>
+              <path d="M5 6h6M5 9h4"></path>
+            </svg>
+            Projects
+          </a>
+          
+          <a href="#" class="nav-item" onclick="switchPage('ai')" style="margin-bottom: 0;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="8" cy="8" r="3"></circle>
+              <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"></path>
+            </svg>
+            AI Assistant
+          </a>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="panel" style="margin-bottom: 20px;">
+        <div class="panel-title" style="margin-bottom: 16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button class="theme-btn" id="profile-theme-btn" style="width: 100%; margin-top: 0;">Switch to Light</button>
+          
+          <button class="btn-ghost" onclick="openProfileSettings()" style="width: 100%; margin-top: 0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Edit Profile
+          </button>
+          
+          <button class="btn-ghost" onclick="signOut()" style="width: 100%; margin-top: 0; color: var(--expense); border-color: color-mix(in oklab, var(--expense) 35%, var(--border));">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   
   <!-- FAQ Chat Section -->
@@ -2007,84 +2168,6 @@ body::after {
     </div>
   </div>
   
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <a href="index.html" class="footer-logo">Track<span>ly</span></a>
-        <p class="footer-tagline">
-          Take control of your finances with smart tracking, AI-powered insights, and beautiful visualizations.
-        </p>
-        <div class="footer-social">
-          <a href="#" class="footer-social-link" aria-label="Twitter">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
-            </svg>
-          </a>
-          <a href="#" class="footer-social-link" aria-label="GitHub">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-          </a>
-          <a href="#" class="footer-social-link" aria-label="LinkedIn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Product</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Features</a>
-          <a href="#" class="footer-link">Pricing</a>
-          <a href="#" class="footer-link">API</a>
-          <a href="#" class="footer-link">Integrations</a>
-          <a href="#" class="footer-link">Mobile App</a>
-        </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Company</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">About</a>
-          <a href="#" class="footer-link">Blog</a>
-          <a href="#" class="footer-link">Careers</a>
-          <a href="#" class="footer-link">Press</a>
-          <a href="#" class="footer-link">Contact</a>
-        </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Resources</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Help Center</a>
-          <a href="#" class="footer-link">Documentation</a>
-          <a href="#" class="footer-link">Tutorials</a>
-          <a href="#" class="footer-link">Community</a>
-          <a href="#" class="footer-link">Status</a>
-        </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Legal</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Privacy Policy</a>
-          <a href="#" class="footer-link">Terms of Service</a>
-          <a href="#" class="footer-link">Cookie Policy</a>
-          <a href="#" class="footer-link">Security</a>
-          <a href="#" class="footer-link">Compliance</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="footer-bottom">
-      <p class="footer-copyright">
-        © 2026 Trackly. All rights reserved. Made with ❤️ for better financial management.
-      </p>
-    </div>
-  </footer>
 </main>
 
 <!-- ADD TRANSACTION MODAL -->
@@ -2556,6 +2639,7 @@ function switchPage(p) {
   if (p === "insights") renderInsightsPage();
   if (p === "ai") renderAIPage();
   if (p === "settings") renderSettingsPage();
+  if (p === "profile") renderProfilePage();
   if (p === "fileviewer") {
     // File viewer page loaded - initialize if needed
     console.log("📁 File Viewer page loaded");
@@ -4588,6 +4672,45 @@ function renderSettingsPage() {
   geminiInput.value = localStorage.getItem("trackly-gemini-key") || "";
 }
 
+function renderProfilePage() {
+  // Update profile information
+  const profileName = document.getElementById("profile-name");
+  const profileEmail = document.getElementById("profile-email");
+  const profileAvatar = document.getElementById("profile-avatar");
+  const profileModeLabel = document.getElementById("profile-mode-label");
+  const profileThemeBtn = document.getElementById("profile-theme-btn");
+  
+  if (profileName) {
+    profileName.textContent = userProfile?.full_name || currentUser?.email?.split("@")[0] || "User";
+  }
+  
+  if (profileEmail) {
+    profileEmail.textContent = currentUser?.email || "—";
+  }
+  
+  if (profileAvatar) {
+    const name = userProfile?.full_name || currentUser?.email?.split("@")[0] || "U";
+    profileAvatar.textContent = name.charAt(0).toUpperCase();
+  }
+  
+  if (profileModeLabel) {
+    profileModeLabel.textContent = isAdminMode ? "Admin" : "Personal";
+  }
+  
+  if (profileThemeBtn) {
+    profileThemeBtn.textContent = document.documentElement.classList.contains("dark") ? "Switch to Light" : "Switch to Dark";
+    
+    // Add click handler for theme toggle
+    profileThemeBtn.onclick = () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      const newTheme = isDark ? "light" : "dark";
+      localStorage.setItem("trackly-theme", newTheme);
+      applyTheme(newTheme);
+      profileThemeBtn.textContent = newTheme === "dark" ? "Switch to Light" : "Switch to Dark";
+    };
+  }
+}
+
 function buildAiContext() {
   const cur = getUserDefaultCurrency();
   const now = new Date();
@@ -6199,21 +6322,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── MOBILE TAB BAR FUNCTIONALITY ──
   const mobileTabBar = document.getElementById('mobile-tab-bar');
   const mobileTabs = document.querySelectorAll('.mobile-tab');
+  const mobileAddBtn = document.getElementById('mobile-add-btn');
+  
+  // Handle mobile add button click
+  if (mobileAddBtn) {
+    mobileAddBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('📱 Mobile add button clicked');
+      openAddTransaction();
+    });
+  }
   
   // Handle mobile tab clicks
   mobileTabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
       e.preventDefault();
-      const action = tab.getAttribute('data-action');
       const page = tab.getAttribute('data-page');
       
-      console.log('📱 Mobile tab clicked:', action || page);
-      
-      // Handle special actions
-      if (action === 'add-transaction') {
-        openAddTransaction();
-        return;
-      }
+      console.log('📱 Mobile tab clicked:', page);
       
       // Handle page navigation
       if (page) {
@@ -7277,20 +7403,23 @@ window.testFileViewer = function() {
     
     <a href="#" class="mobile-tab" data-page="transactions">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="1" x2="12" y2="23"></line>
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
       </svg>
       <span class="mobile-tab-label">Activity</span>
     </a>
     
-    <a href="#" class="mobile-tab center" data-action="add-transaction">
-      <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="16"></line>
-        <line x1="8" y1="12" x2="16" y2="12"></line>
+    <button class="mobile-tab center" id="mobile-add-btn" type="button">
+      <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
       <span class="mobile-tab-label">Add</span>
-    </a>
+    </button>
     
     <a href="#" class="mobile-tab" data-page="insights">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -7299,12 +7428,12 @@ window.testFileViewer = function() {
       <span class="mobile-tab-label">Insights</span>
     </a>
     
-    <a href="#" class="mobile-tab" data-page="profile">
+    <a href="#" class="mobile-tab" data-page="accounts">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
       </svg>
-      <span class="mobile-tab-label">Profile</span>
+      <span class="mobile-tab-label">Accounts</span>
     </a>
   </div>
 </div>
