@@ -1055,7 +1055,10 @@ body::after {
   /* Tablet mode - show bottom tab bar instead of sidebar */
   .sidebar { display: none; }
   .mobile-tab-bar { display: block; }
-  .main { margin-left: 0; padding-bottom: 80px; }
+  
+  /* Hide topbar on mobile for app-like experience */
+  .topbar { display: none !important; }
+  .main { padding-top: 0; margin-left: 0; padding-bottom: 80px; }
   
   /* FAQ chat responsive */
   .chat-bubble { max-width: 85%; }
@@ -7428,12 +7431,12 @@ window.testFileViewer = function() {
       <span class="mobile-tab-label">Insights</span>
     </a>
     
-    <a href="#" class="mobile-tab" data-page="accounts">
+    <a href="#" class="mobile-tab" data-page="profile">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-        <line x1="1" y1="10" x2="23" y2="10"></line>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
       </svg>
-      <span class="mobile-tab-label">Accounts</span>
+      <span class="mobile-tab-label">Profile</span>
     </a>
   </div>
 </div>
