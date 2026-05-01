@@ -604,15 +604,70 @@ body::after {
 .footer-copyright { font-size: 0.58rem; color: var(--muted2); }
 
 /* ── MOBILE BOTTOM TAB BAR ── */
-.mobile-tab-bar { position: fixed; bottom: 0; left: 0; right: 0; background: color-mix(in oklab, var(--s1) 95%, transparent); backdrop-filter: blur(20px); border-top: 1px solid var(--border); padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); z-index: 60; display: none; }
+.mobile-tab-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: color-mix(in oklab, var(--s1) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+  border-radius: 999px;
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+  z-index: 60;
+  display: none;
+  box-shadow: 0 10px 40px color-mix(in oklab, #000 20%, transparent);
+  max-width: 90vw;
+  width: fit-content;
+}
 .mobile-tab-bar.show { display: block; }
-.mobile-tabs { display: flex; justify-content: space-around; align-items: center; max-width: 500px; margin: 0 auto; }
-.mobile-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 12px; cursor: pointer; transition: all 0.2s; text-decoration: none; color: var(--muted2); min-width: 60px; }
-.mobile-tab.active { color: var(--gold); background: color-mix(in oklab, var(--gold) 8%, transparent); }
-.mobile-tab-icon { width: 20px; height: 20px; }
-.mobile-tab-label { font-size: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; }
-.mobile-tab.center { background: var(--gold); color: #000; transform: translateY(-8px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.mobile-tab.center .mobile-tab-icon { width: 24px; height: 24px; }
+.mobile-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.mobile-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: var(--muted2);
+  min-width: 52px;
+  border: 1px solid transparent;
+}
+.mobile-tab:hover {
+  background: color-mix(in oklab, var(--gold) 10%, transparent);
+  color: var(--gold);
+}
+.mobile-tab.active {
+  color: var(--gold);
+  background: color-mix(in oklab, var(--gold) 15%, transparent);
+  border-color: color-mix(in oklab, var(--gold) 30%, transparent);
+}
+.mobile-tab-icon { width: 20px; height: 20px; transition: transform 0.2s; }
+.mobile-tab:hover .mobile-tab-icon { transform: scale(1.1); }
+.mobile-tab-label { font-size: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.mobile-tab.center {
+  background: linear-gradient(135deg, var(--gold) 0%, color-mix(in oklab, var(--gold) 80%, var(--accent-foreground)) 100%);
+  color: #000;
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px color-mix(in oklab, var(--gold) 50%, transparent);
+  border: none;
+  padding: 12px;
+  margin: 0 4px;
+}
+.mobile-tab.center:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 24px color-mix(in oklab, var(--gold) 60%, transparent);
+}
+.mobile-tab.center .mobile-tab-icon { width: 22px; height: 22px; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -862,6 +917,7 @@ body::after {
   }
 }
 @keyframes fadeInDown {
+  
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -1058,7 +1114,7 @@ body::after {
   
   /* Hide topbar on mobile for app-like experience */
   .topbar { display: none !important; }
-  .main { padding-top: 0; margin-left: 0; padding-bottom: 80px; }
+  .main { padding-top: 0; margin-left: 0; padding-bottom: 100px; }
   
   /* FAQ chat responsive */
   .chat-bubble { max-width: 85%; }
