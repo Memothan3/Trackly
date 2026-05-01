@@ -632,15 +632,17 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 10px 14px;
-  border-radius: 999px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   color: var(--muted2);
-  min-width: 52px;
   border: 1px solid transparent;
+  flex-shrink: 0;
 }
 .mobile-tab:hover {
   background: color-mix(in oklab, var(--gold) 10%, transparent);
@@ -657,17 +659,19 @@ body::after {
 .mobile-tab.center {
   background: linear-gradient(135deg, var(--gold) 0%, color-mix(in oklab, var(--gold) 80%, var(--accent-foreground)) 100%);
   color: #000;
-  transform: scale(1.1);
+  transform: scale(1.05);
   box-shadow: 0 4px 20px color-mix(in oklab, var(--gold) 50%, transparent);
   border: none;
-  padding: 12px;
+  width: 64px;
+  height: 64px;
   margin: 0 4px;
 }
 .mobile-tab.center:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
   box-shadow: 0 6px 24px color-mix(in oklab, var(--gold) 60%, transparent);
 }
-.mobile-tab.center .mobile-tab-icon { width: 22px; height: 22px; }
+.mobile-tab.center .mobile-tab-icon { width: 28px; height: 28px; }
+.mobile-tab.center .mobile-tab-label { font-size: 0.55rem; font-weight: 700; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -6392,8 +6396,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // Handle mobile tab clicks
+  // Handle mobile tab clicks (exclude center add button)
   mobileTabs.forEach(tab => {
+    // Skip the center add button - it has its own handler
+    if (tab.classList.contains('center')) return;
+    
     tab.addEventListener('click', (e) => {
       e.preventDefault();
       const page = tab.getAttribute('data-page');
@@ -6860,6 +6867,13 @@ document.getElementById("settings-save-btn").addEventListener("click", async () 
 
 function openAI() { switchPage("ai"); }
 function openAddAccount() { switchPage("accounts"); }
+function openAddTransaction() {
+  document.getElementById("txn-modal").classList.add("open");
+  populateAccountSelect();
+  // Set date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("txn-date").value = today;
+}
 
 // ── PROFILE POPUP ──
 document.getElementById("user-row").addEventListener("click", () => {
