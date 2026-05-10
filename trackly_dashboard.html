@@ -87,64 +87,54 @@
 :root {
   /* Turquoise Color Palette */
   --turquoise-50: #f0fdfa;
-  --turquoise-100: #cafdf3;
-  --turquoise-200: #96f9e8;
-  --turquoise-300: #61f0dd;
-  --turquoise-400: #27dac8;
-  --turquoise-500: #0ebeaf;
-  --turquoise-600: #089990;
-  --turquoise-700: #0b7a74;
-  --turquoise-800: #0e615e;
-  --turquoise-900: #11504d;
-  --turquoise-950: #023131;
-  
   /* Theme Colors */
-  --background: oklch(1.0000 0 0);
-  --foreground: oklch(0.2686 0 0);
-  --card: oklch(1.0000 0 0);
-  --primary: #0ebeaf;
-  --secondary: oklch(0.9670 0.0029 264.5419);
-  --muted: oklch(0.9846 0.0017 247.8389);
-  --muted-foreground: oklch(0.5510 0.0234 264.3637);
-  --accent: oklch(0.9869 0.0214 95.2774);
-  --accent-foreground: #0b7a74;
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --border: oklch(0.885 0.01 264.5313);
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --primary: #3b82f6;
+  --secondary: #f1f5f9;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #1e293b;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
   --bg: var(--background);
-  --s1: color-mix(in oklab, var(--card) 92%, var(--muted));
-  --s2: color-mix(in oklab, var(--muted) 84%, var(--card));
-  --border2: color-mix(in oklab, var(--border) 70%, var(--foreground));
-  --gold: var(--primary); --text: var(--foreground);
-  --muted2: oklch(0.44 0.02 264.36);
-  --error: var(--destructive);
-  --success: oklch(0.74 0.14 151);
-  --income: oklch(0.62 0.16 151);
-  --expense: var(--destructive);
+  --s1: #f8fafc;
+  --s2: #f1f5f9;
+  --border2: #cbd5e1;
+  --gold: #f59e0b;
+  --text: var(--foreground);
+  --muted2: #64748b;
+  --error: #ef4444;
+  --success: #22c55e;
+  --income: #22c55e;
+  --expense: #ef4444;
   --sidebar-w: 240px;
 }
 .dark {
-  --background: oklch(0.2046 0 0);
-  --foreground: oklch(0.9219 0 0);
-  --card: oklch(0.2686 0 0);
-  --primary: #0ebeaf;
-  --secondary: oklch(0.2686 0 0);
-  --muted: oklch(0.2393 0 0);
-  --muted-foreground: oklch(0.7155 0 0);
-  --accent: #0b7a74;
-  --accent-foreground: #61f0dd;
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --border: oklch(0.3715 0 0);
-  --s1: var(--card);
-  --s2: var(--muted);
-  --muted2: var(--muted-foreground);
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --primary: #3b82f6;
+  --secondary: #334155;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #334155;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --border: #334155;
+  --s1: #1e293b;
+  --s2: #334155;
+  --muted2: #94a3b8;
 }
 html { height: 100%; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-weight: 300;
   background:
-    radial-gradient(1200px 500px at 100% 0%, color-mix(in oklab, var(--primary) 9%, transparent), transparent 60%),
-    radial-gradient(900px 400px at 0% 100%, color-mix(in oklab, var(--accent-foreground) 8%, transparent), transparent 60%),
+    radial-gradient(1200px 500px at 100% 0%, rgba(59, 130, 246, 0.08), transparent 60%),
+    radial-gradient(900px 400px at 0% 100%, rgba(59, 130, 246, 0.05), transparent 60%),
     var(--bg);
   color: var(--text);
   min-height: 100vh; display: flex; overflow-x: hidden; overflow-y: auto;
@@ -157,8 +147,8 @@ body::after {
 .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .orb { position: absolute; border-radius: 999px; filter: blur(40px); opacity: 0.2; animation: floatOrb 14s ease-in-out infinite; }
 .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -80px; left: -70px; }
-.orb-2 { width: 360px; height: 360px; background: var(--accent-foreground); bottom: -120px; right: -100px; animation-delay: 2s; }
-.orb-3 { width: 240px; height: 240px; background: color-mix(in oklab, var(--gold) 55%, transparent); top: 25%; right: 28%; animation-delay: 4s; opacity: 0.16; }
+.orb-2 { width: 360px; height: 360px; background: #2563eb; bottom: -120px; right: -100px; animation-delay: 2s; }
+.orb-3 { width: 240px; height: 240px; background: var(--gold); top: 25%; right: 28%; animation-delay: 4s; opacity: 0.16; }
 @keyframes floatOrb { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(0,-16px) scale(1.05);} }
 
 /* ── SIDEBAR ── */
@@ -5505,6 +5495,8 @@ function calculateSmartInsights() {
 }
 
 function localAiFallback(questionText) {
+  const currency = getUserDefaultCurrency();
+  const currencyPrefix = toCurrencyPrefix(currency);
   const q = (questionText || "").toLowerCase().trim();
   const insights = calculateSmartInsights();
   const { current, previous, change, topCategories, dailyAverage, projectedMonthly, savingsRate, totalBalance } = insights;
@@ -5991,6 +5983,41 @@ document.getElementById("add-txn-btn").addEventListener("click", () => {
   document.querySelectorAll(".type-tab").forEach(t => t.classList.toggle("active", t.dataset.type === "expense"));
   const tw = document.getElementById("transfer-to-wrap");
   if (tw) tw.style.display = "none";
+  
+  // Time-based category suggestions
+  setTimeout(() => {
+    const suggestedCategory = suggestCategoryByTime();
+    let selectedCategory = null;
+    
+    if (suggestedCategory) {
+      selectedCategory = categories.find(c => 
+        c.name.toLowerCase().includes(suggestedCategory.toLowerCase())
+      );
+      console.log(`⏰ Time-based suggestion: ${suggestedCategory}`);
+    }
+    
+    // If no time-based suggestion, default to Purchase/Groceries
+    if (!selectedCategory && currentType === 'expense') {
+      selectedCategory = categories.find(c => 
+        c.name.toLowerCase().includes('purchase') || 
+        c.name.toLowerCase().includes('groceries')
+      );
+    }
+    
+    if (selectedCategory) {
+      const categorySelect = document.getElementById("txn-category");
+      categorySelect.value = selectedCategory.id;
+      
+      // Show shopping list if it's a shopping category
+      const categoryName = selectedCategory.name.toLowerCase();
+      if (categoryName.includes('purchase') || 
+          categoryName.includes('groceries') ||
+          categoryName.includes('shopping')) {
+        const shoppingListSection = document.getElementById("shopping-list-section");
+        if (shoppingListSection) shoppingListSection.style.display = "block";
+      }
+    }
+  }, 100);
 });
 document.getElementById("txn-cancel-btn").addEventListener("click", () => {
   clearTransactionModal();
@@ -6277,44 +6304,6 @@ document.addEventListener("change", (e) => {
       hideShoppingList();
     }
   }
-});
-
-// Show shopping list by default when opening transaction modal for expense
-// Also apply time-based category suggestions
-document.getElementById("add-txn-btn").addEventListener("click", () => {
-  setTimeout(() => {
-    // First, try time-based suggestion
-    const suggestedCategory = suggestCategoryByTime();
-    let selectedCategory = null;
-    
-    if (suggestedCategory) {
-      selectedCategory = categories.find(c => 
-        c.name.toLowerCase().includes(suggestedCategory.toLowerCase())
-      );
-      console.log(`⏰ Time-based suggestion: ${suggestedCategory}`);
-    }
-    
-    // If no time-based suggestion, default to Purchase/Groceries
-    if (!selectedCategory && currentType === 'expense') {
-      selectedCategory = categories.find(c => 
-        c.name.toLowerCase().includes('purchase') || 
-        c.name.toLowerCase().includes('groceries')
-      );
-    }
-    
-    if (selectedCategory) {
-      const categorySelect = document.getElementById("txn-category");
-      categorySelect.value = selectedCategory.id;
-      
-      // Show shopping list if it's a shopping category
-      const categoryName = selectedCategory.name.toLowerCase();
-      if (categoryName.includes('purchase') || 
-          categoryName.includes('shopping') || 
-          categoryName.includes('groceries')) {
-        showShoppingList();
-      }
-    }
-  }, 100);
 });
 
 // Clear shopping list when modal is closed
