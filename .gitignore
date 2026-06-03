@@ -20,6 +20,7 @@ yarn-error.log*
 
 # Build outputs
 dist/
+output/
 !trackly-ui/dist/
 build/
 *.tgz
