@@ -1,0 +1,399 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./trackly-desktop.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/raleway";
+@import "@fontsource-variable/nunito-sans";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: 'Nunito Sans Variable', sans-serif;
+    --font-sans: 'Raleway Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.555 0.163 48.998);
+    --primary-foreground: oklch(0.987 0.022 95.277);
+    --secondary: oklch(0.967 0.001 286.375);
+    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.808 0.114 19.571);
+    --chart-2: oklch(0.637 0.237 25.331);
+    --chart-3: oklch(0.577 0.245 27.325);
+    --chart-4: oklch(0.505 0.213 27.518);
+    --chart-5: oklch(0.444 0.177 26.899);
+    --radius: 0.875rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.666 0.179 58.318);
+    --sidebar-primary-foreground: oklch(0.987 0.022 95.277);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.473 0.137 46.201);
+    --primary-foreground: oklch(0.987 0.022 95.277);
+    --secondary: oklch(0.274 0.006 286.033);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.808 0.114 19.571);
+    --chart-2: oklch(0.637 0.237 25.331);
+    --chart-3: oklch(0.577 0.245 27.325);
+    --chart-4: oklch(0.505 0.213 27.518);
+    --chart-5: oklch(0.444 0.177 26.899);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.769 0.188 70.08);
+    --sidebar-primary-foreground: oklch(0.279 0.077 45.635);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply relative min-h-dvh antialiased bg-transparent text-foreground;
+    }
+  #root {
+    @apply relative isolate z-0 min-h-dvh bg-transparent;
+    }
+  html {
+    @apply font-sans;
+    }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary,
+  [data-slot="button"],
+  [data-slot="dropdown-menu-item"],
+  [data-slot="select-item"] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  .trackly-glass {
+    @apply border border-white/10 bg-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150;
+  }
+  .dark .trackly-glass {
+    @apply border-white/12 bg-white/[0.055];
+  }
+}
+
+/* ── Dashboard animated background ── */
+@keyframes trackly-mesh-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(2%, -1.5%) scale(1.03);
+  }
+}
+
+@keyframes trackly-aurora-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trackly-aurora-float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate(-3%, 2%) rotate(8deg);
+    opacity: 0.75;
+  }
+}
+
+@keyframes trackly-orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(14px, -22px) scale(1.1);
+  }
+}
+
+.trackly-bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, oklch(0.12 0 0) 0%, var(--background) 42%, oklch(0.1 0 0) 100%);
+}
+
+.light .trackly-bg-canvas {
+  background:
+    linear-gradient(180deg, oklch(0.98 0 0) 0%, var(--background) 50%, oklch(0.96 0 0) 100%);
+}
+
+.trackly-bg-orbs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.trackly-bg-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(72px);
+  opacity: 0.28;
+  animation: trackly-orb-float 18s ease-in-out infinite;
+}
+
+.trackly-bg-orb--1 {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -100px;
+  background: var(--primary);
+}
+
+.trackly-bg-orb--2 {
+  width: 480px;
+  height: 480px;
+  bottom: -160px;
+  right: -120px;
+  background: oklch(0.769 0.188 70.08);
+  animation-delay: 2.5s;
+}
+
+.trackly-bg-orb--3 {
+  width: 320px;
+  height: 320px;
+  top: 40%;
+  right: 20%;
+  background: oklch(0.473 0.137 46.201);
+  opacity: 0.18;
+  animation-delay: 5s;
+}
+
+.trackly-bg-mesh {
+  position: absolute;
+  inset: -22%;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% -10%,
+      oklch(0.769 0.188 70.08 / 22%) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 100% 30%,
+      oklch(0.555 0.163 48.998 / 11%) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 50% 45% at 0% 70%,
+      oklch(0.473 0.137 46.201 / 9%) 0%,
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse 90% 60% at 50% 100%,
+      oklch(1 0 0 / 5%) 0%,
+      transparent 45%
+    );
+  animation: trackly-mesh-drift 22s ease-in-out infinite alternate;
+}
+
+.trackly-bg-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(
+    ellipse 72% 62% at 50% 38%,
+    black 18%,
+    transparent 76%
+  );
+}
+
+.trackly-bg-aurora {
+  position: absolute;
+  width: 150%;
+  height: 65%;
+  left: -25%;
+  top: 5%;
+  background: conic-gradient(
+    from 200deg at 50% 50%,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.05) 55deg,
+    transparent 115deg,
+    oklch(0.666 0.179 58.318 / 10%) 195deg,
+    transparent 275deg
+  );
+  filter: blur(64px);
+  opacity: 0.65;
+  animation: trackly-aurora-spin 42s linear infinite;
+}
+
+.trackly-bg-aurora--slow {
+  top: 35%;
+  left: -10%;
+  width: 120%;
+  height: 50%;
+  opacity: 0.4;
+  filter: blur(80px);
+  animation: trackly-aurora-float 28s ease-in-out infinite;
+  background: conic-gradient(
+    from 120deg at 40% 60%,
+    transparent 0deg,
+    oklch(0.808 0.114 19.571 / 12%) 100deg,
+    transparent 200deg,
+    oklch(0.473 0.137 46.201 / 8%) 280deg,
+    transparent 360deg
+  );
+}
+
+.trackly-bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+.trackly-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 85% at 50% 45%,
+    transparent 42%,
+    color-mix(in oklab, var(--background) 55%, transparent) 100%
+  );
+}
+
+.light .trackly-bg-mesh {
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% -10%,
+      oklch(0.666 0.179 58.318 / 20%) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 100% 20%,
+      oklch(0.555 0.163 48.998 / 14%) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse 50% 45% at 0% 80%,
+      oklch(0.967 0.001 286.375 / 45%) 0%,
+      transparent 48%
+    );
+}
+
+.light .trackly-bg-grid {
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+}
+
+.light .trackly-bg-grain {
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+}
+
+.trackly-app-shell [data-slot="sidebar-inner"] {
+  border-color: oklch(1 0 0 / 12%);
+  background: color-mix(in oklab, var(--sidebar) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+.light .trackly-app-shell [data-slot="sidebar-inner"] {
+  background: color-mix(in oklab, var(--sidebar) 78%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trackly-bg-mesh,
+  .trackly-bg-aurora,
+  .trackly-bg-orb {
+    animation: none;
+  }
+}

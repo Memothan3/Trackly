@@ -2,11 +2,11 @@
   "name": "Trackly - Finance Tracker",
   "short_name": "Trackly",
   "description": "Track your finances with ease - expenses, income, budgets, and projects",
-  "start_url": "./trackly_dashboard.html",
-  "scope": "./",
+  "start_url": "/app/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f0f0f",
-  "theme_color": "#f59e0b",
+  "background_color": "#252525",
+  "theme_color": "#252525",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -29,14 +29,14 @@
       "name": "Add Transaction",
       "short_name": "Add",
       "description": "Quickly add a new transaction",
-      "url": "./trackly_dashboard.html?action=add",
+      "url": "/app/",
       "icons": [{ "src": "./logo-icon.png", "sizes": "96x96" }]
     },
     {
       "name": "View Receipts",
       "short_name": "Receipts",
       "description": "View and manage receipts",
-      "url": "./trackly_dashboard.html?page=receipts",
+      "url": "/app/#/receipts",
       "icons": [{ "src": "./logo-icon.png", "sizes": "96x96" }]
     }
   ]

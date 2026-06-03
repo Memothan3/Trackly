@@ -1,1134 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trackly - Your Financial OS</title>
-
-<!-- Favicon and App Icons -->
-<link rel="icon" type="image/png" href="logo-icon.png">
-<link rel="apple-touch-icon" href="logo-icon.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --background: oklch(1.0000 0 0);
-  --foreground: oklch(0.2686 0 0);
-  --card: oklch(1.0000 0 0);
-  --card-foreground: oklch(0.2686 0 0);
-  --popover: oklch(1.0000 0 0);
-  --popover-foreground: oklch(0.2686 0 0);
-  --primary: oklch(0.7686 0.1647 70.0804);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.9670 0.0029 264.5419);
-  --secondary-foreground: oklch(0.4461 0.0263 256.8018);
-  --muted: oklch(0.9846 0.0017 247.8389);
-  --muted-foreground: oklch(0.5510 0.0234 264.3637);
-  --accent: oklch(0.9869 0.0214 95.2774);
-  --accent-foreground: oklch(0.4732 0.1247 46.2007);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.9276 0.0058 264.5313);
-  --input: oklch(0.9276 0.0058 264.5313);
-  --ring: oklch(0.7686 0.1647 70.0804);
-  --chart-1: oklch(0.7686 0.1647 70.0804);
-  --chart-2: oklch(0.6658 0.1574 58.3183);
-  --chart-3: oklch(0.5553 0.1455 48.9975);
-  --chart-4: oklch(0.4732 0.1247 46.2007);
-  --chart-5: oklch(0.4137 0.1054 45.9038);
-  --sidebar: oklch(0.9846 0.0017 247.8389);
-  --sidebar-foreground: oklch(0.2686 0 0);
-  --sidebar-primary: oklch(0.7686 0.1647 70.0804);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
-  --sidebar-accent: oklch(0.9869 0.0214 95.2774);
-  --sidebar-accent-foreground: oklch(0.4732 0.1247 46.2007);
-  --sidebar-border: oklch(0.9276 0.0058 264.5313);
-  --sidebar-ring: oklch(0.7686 0.1647 70.0804);
-  --radius: 0.375rem;
-  --font-sans: Open Sans, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Source Serif 4, serif;
-  --font-mono: JetBrains Mono, monospace;
-  --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
-  --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
-  --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
-
-  /* Backward-compatible aliases used by existing styles */
-  --bg: var(--background);
-  --s1: var(--card);
-  --s2: var(--muted);
-  --border2: color-mix(in oklab, var(--border) 70%, var(--foreground));
-  --gold: var(--primary);
-  --gold2: var(--accent-foreground);
-  --amber: var(--accent-foreground);
-  --text: var(--foreground);
-  --muted2: var(--muted-foreground);
-}
-
-.dark {
-  --background: oklch(0.2046 0 0);
-  --foreground: oklch(0.9219 0 0);
-  --card: oklch(0.2686 0 0);
-  --card-foreground: oklch(0.9219 0 0);
-  --popover: oklch(0.2686 0 0);
-  --popover-foreground: oklch(0.9219 0 0);
-  --primary: oklch(0.7686 0.1647 70.0804);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.2686 0 0);
-  --secondary-foreground: oklch(0.9219 0 0);
-  --muted: oklch(0.2393 0 0);
-  --muted-foreground: oklch(0.7155 0 0);
-  --accent: oklch(0.4732 0.1247 46.2007);
-  --accent-foreground: oklch(0.9243 0.1151 95.7459);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.3715 0 0);
-  --input: oklch(0.3715 0 0);
-  --ring: oklch(0.7686 0.1647 70.0804);
-  --chart-1: oklch(0.8369 0.1644 84.4286);
-  --chart-2: oklch(0.6658 0.1574 58.3183);
-  --chart-3: oklch(0.4732 0.1247 46.2007);
-  --chart-4: oklch(0.5553 0.1455 48.9975);
-  --chart-5: oklch(0.4732 0.1247 46.2007);
-  --sidebar: oklch(0.1684 0 0);
-  --sidebar-foreground: oklch(0.9219 0 0);
-  --sidebar-primary: oklch(0.7686 0.1647 70.0804);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
-  --sidebar-accent: oklch(0.4732 0.1247 46.2007);
-  --sidebar-accent-foreground: oklch(0.9243 0.1151 95.7459);
-  --sidebar-border: oklch(0.3715 0 0);
-  --sidebar-ring: oklch(0.7686 0.1647 70.0804);
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-mono);
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 9998; opacity: 0.5;
-}
-
-.bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.orb {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(40px);
-  opacity: 0.22;
-  animation: floatOrb 14s ease-in-out infinite;
-}
-.orb-1 { width: 320px; height: 320px; background: var(--primary); top: -60px; left: -80px; }
-.orb-2 { width: 380px; height: 380px; background: var(--accent-foreground); bottom: -120px; right: -100px; animation-delay: 2s; }
-.orb-3 { width: 260px; height: 260px; background: var(--ring); top: 35%; right: 22%; animation-delay: 4s; }
-
-@keyframes floatOrb {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(0, -18px) scale(1.06); }
-}
-
-nav {
-  position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  width: min(980px, calc(100% - 24px));
-  padding: 12px 16px 12px 18px;
-  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
-  border-radius: 999px;
-  transition: all 0.35s ease;
-  background: color-mix(in oklab, var(--background) 70%, transparent);
-  backdrop-filter: blur(18px) saturate(130%);
-  z-index: 20;
-  box-shadow: 0 10px 30px color-mix(in oklab, var(--background) 50%, transparent);
-}
-
-nav.scrolled {
-  border-color: color-mix(in oklab, var(--border) 88%, var(--foreground));
-  background: color-mix(in oklab, var(--background) 62%, transparent);
-  box-shadow: 0 14px 34px color-mix(in oklab, var(--background) 45%, transparent);
-}
-
-.nav-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--text);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-}
-
-.nav-logo span { color: var(--gold); font-style: italic; }
-
-.nav-links { display: flex; align-items: center; gap: 32px; }
-.nav-actions { display: flex; align-items: center; gap: 10px; }
-.nav-actions > * { flex-shrink: 0; }
-
-.nav-links a {
-  font-size: 0.62rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--text); }
-
-.nav-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gold) !important;
-  color: #000 !important;
-  min-height: 34px;
-  padding: 8px 18px !important;
-  border-radius: 999px;
-  font-weight: 400 !important;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.58rem;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: opacity 0.2s !important;
-}
-.nav-cta:hover { opacity: 0.85 !important; }
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  background: var(--s1);
-  color: var(--text);
-  border-radius: 999px;
-  min-height: 34px;
-  padding: 8px 12px;
-  font-size: 0.58rem;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.theme-toggle:hover {
-  border-color: var(--ring);
-}
-
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 120px 24px 80px;
-  position: relative;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-
-/* Floating Product Screenshots */
-.hero-screenshots {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-.hero-screenshot {
-  position: absolute;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
-  background: var(--s1);
-  overflow: hidden;
-  animation: floatScreenshot 8s ease-in-out infinite;
-}
-.hero-screenshot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.hero-screenshot-1 {
-  width: 320px;
-  height: 200px;
-  top: 15%;
-  left: 8%;
-  transform: rotate(-8deg);
-  animation-delay: 0s;
-}
-.hero-screenshot-2 {
-  width: 280px;
-  height: 180px;
-  top: 20%;
-  right: 10%;
-  transform: rotate(6deg);
-  animation-delay: 1s;
-}
-.hero-screenshot-3 {
-  width: 300px;
-  height: 190px;
-  bottom: 15%;
-  left: 12%;
-  transform: rotate(4deg);
-  animation-delay: 2s;
-}
-.hero-screenshot-4 {
-  width: 260px;
-  height: 170px;
-  bottom: 20%;
-  right: 8%;
-  transform: rotate(-5deg);
-  animation-delay: 1.5s;
-}
-@keyframes floatScreenshot {
-  0%, 100% {
-    transform: translateY(0) rotate(var(--rotate, 0deg));
-  }
-  50% {
-    transform: translateY(-20px) rotate(var(--rotate, 0deg));
-  }
-}
-
-.hero-glow {
-  position: absolute;
-  bottom: -100px; left: 50%; transform: translateX(-50%);
-  width: 900px; height: 500px;
-  background: radial-gradient(ellipse at center bottom,
-    rgba(232,115,74,0.18) 0%,
-    rgba(201,151,74,0.12) 30%,
-    rgba(232,184,126,0.05) 60%,
-    transparent 80%);
-  pointer-events: none;
-  animation: pulse 6s ease-in-out infinite;
-}
-
-.hero-glow2 {
-  position: absolute;
-  top: 10%; left: 15%;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(201,151,74,0.06) 0%, transparent 70%);
-  pointer-events: none;
-  animation: pulse 8s ease-in-out infinite reverse;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-  50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
-}
-
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--s1);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: 0.58rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 36px;
-  animation: fadeUp 0.8s ease both;
-}
-
-.badge-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--amber);
-  animation: blink 2s ease infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
-}
-
-.hero-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 9vw, 8rem);
-  font-weight: 300;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  margin-bottom: 28px;
-  animation: fadeUp 0.8s ease 0.1s both;
-}
-
-.hero-title .line2 {
-  font-style: italic;
-  color: var(--gold);
-  display: block;
-}
-
-.hero-sub {
-  max-width: 520px;
-  font-size: 0.72rem;
-  line-height: 1.8;
-  color: var(--muted-foreground);
-  margin-bottom: 48px;
-  animation: fadeUp 0.8s ease 0.2s both;
-}
-
-.hero-actions {
-  display: flex; align-items: center; gap: 14px;
-  animation: fadeUp 0.8s ease 0.3s both;
-}
-
-.btn-primary {
-  background: var(--gold);
-  color: #000;
-  border: none; border-radius: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 14px 32px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s;
-  position: relative; overflow: hidden;
-}
-
-.btn-primary::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,151,74,0.3); }
-
-.btn-secondary {
-  color: var(--muted-foreground);
-  text-decoration: none;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-  display: flex; align-items: center; gap: 6px;
-}
-.btn-secondary:hover { color: var(--text); }
-.btn-secondary::after { content: '→'; transition: transform 0.2s; }
-.btn-secondary:hover::after { transform: translateX(4px); }
-
-.scroll-hint {
-  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--muted2);
-  animation: fadeUp 0.8s ease 0.6s both;
-}
-
-.scroll-line {
-  width: 1px; height: 40px;
-  background: linear-gradient(to bottom, var(--muted2), transparent);
-  animation: scrollAnim 2s ease infinite;
-}
-
-@keyframes scrollAnim {
-  0% { transform: scaleY(0); transform-origin: top; }
-  50% { transform: scaleY(1); transform-origin: top; }
-  51% { transform: scaleY(1); transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
-}
-
-.features {
-  padding: 120px 48px;
-  max-width: 1100px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-.section-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
-  display: flex; align-items: center; gap: 10px;
-}
-
-.section-label::before {
-  content: '';
-  width: 20px; height: 1px;
-  background: var(--gold);
-}
-
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 64px;
-}
-
-.section-title em { font-style: italic; color: var(--gold); }
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  overflow: visible;
-}
-
-.feature {
-  background: color-mix(in oklab, var(--card) 90%, var(--background));
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px 24px;
-  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
-  position: relative;
-  overflow: hidden;
-  animation: floatCard 7s ease-in-out infinite;
-}
-.feature::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(120deg, color-mix(in oklab, var(--primary) 40%, transparent), transparent 45%, color-mix(in oklab, var(--accent-foreground) 35%, transparent));
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-}
-.feature:hover {
-  background: color-mix(in oklab, var(--card) 82%, var(--background));
-  border-color: color-mix(in oklab, var(--primary) 60%, var(--border));
-  box-shadow: 0 16px 30px color-mix(in oklab, var(--background) 58%, transparent);
-  transform: translateY(-8px);
-}
-.feature:hover::before { opacity: 1; }
-
-.feature:nth-child(2n) { animation-delay: 0.6s; }
-.feature:nth-child(3n) { animation-delay: 1.2s; }
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-}
-
-.feature-icon {
-  font-size: 1.6rem;
-  margin-bottom: 14px;
-  display: block;
-  filter: drop-shadow(0 6px 10px color-mix(in oklab, var(--background) 55%, transparent));
-}
-
-.feature-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.28rem;
-  font-weight: 400;
-  margin-bottom: 8px;
-}
-
-.feature-desc {
-  font-size: 0.65rem;
-  line-height: 1.8;
-  color: var(--muted-foreground);
-}
-
-.how {
-  padding: 120px 48px;
-  max-width: 1100px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
-  margin-top: 64px;
-}
-
-.step { position: relative; }
-
-.step-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 4rem;
-  font-weight: 300;
-  color: var(--border2);
-  line-height: 1;
-  margin-bottom: 16px;
-}
-
-.step-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-}
-
-.step-desc {
-  font-size: 0.65rem;
-  line-height: 1.8;
-  color: var(--muted-foreground);
-}
-
-.step::after {
-  content: '→';
-  position: absolute;
-  top: 16px; right: -24px;
-  color: var(--border2);
-  font-size: 1.2rem;
-}
-.step:last-child::after { display: none; }
-
-.cta-section {
-  margin: 0 48px 120px;
-  background: var(--s1);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 80px 48px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.cta-glow {
-  position: absolute;
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 600px; height: 300px;
-  background: radial-gradient(ellipse, rgba(201,151,74,0.1) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.cta-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.cta-title em { font-style: italic; color: var(--gold); }
-
-.cta-sub {
-  font-size: 0.68rem;
-  color: var(--muted);
-  margin-bottom: 40px;
-  position: relative;
-}
-
-.footer-wrap {
-  border-top: 1px solid var(--border);
-  margin-top: 12px;
-  background: color-mix(in oklab, var(--card) 94%, var(--background));
-}
-
-.footer { 
-  background: var(--s2); 
-  border-top: 1px solid var(--border); 
-  padding: 48px 32px 24px; 
-  margin-top: 60px; 
-}
-.footer-content { 
-  max-width: 1200px; 
-  margin: 0 auto; 
-  display: grid; 
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr; 
-  gap: 40px; 
-}
-.footer-brand { }
-.footer-logo { 
-  font-family: 'Cormorant Garamond', serif; 
-  font-size: 1.5rem; 
-  font-weight: 400; 
-  color: var(--text); 
-  text-decoration: none; 
-  margin-bottom: 12px; 
-  display: block; 
-}
-.footer-logo span { 
-  color: var(--gold); 
-  font-style: italic; 
-}
-.footer-tagline { 
-  font-size: 0.62rem; 
-  color: var(--muted-foreground); 
-  line-height: 1.6; 
-  margin-bottom: 20px; 
-  max-width: 280px; 
-}
-.footer-social { 
-  display: flex; 
-  gap: 12px; 
-}
-.footer-social-link { 
-  width: 32px; 
-  height: 32px; 
-  border-radius: 8px; 
-  background: var(--s1); 
-  border: 1px solid var(--border); 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  color: var(--muted-foreground); 
-  text-decoration: none; 
-  transition: all 0.2s; 
-}
-.footer-social-link:hover { 
-  border-color: var(--gold); 
-  color: var(--gold); 
-}
-.footer-section { }
-.footer-section-title { 
-  font-size: 0.6rem; 
-  letter-spacing: 0.15em; 
-  text-transform: uppercase; 
-  color: var(--text); 
-  margin-bottom: 16px; 
-  font-weight: 600; 
-}
-.footer-links { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 8px; 
-}
-.footer-link { 
-  font-size: 0.62rem; 
-  color: var(--muted-foreground); 
-  text-decoration: none; 
-  transition: color 0.2s; 
-}
-.footer-link:hover { 
-  color: var(--gold); 
-}
-.footer-bottom { 
-  border-top: 1px solid var(--border); 
-  margin-top: 32px; 
-  padding-top: 20px; 
-  text-align: center; 
-}
-.footer-copyright { 
-  font-size: 0.58rem; 
-  color: var(--muted-foreground); 
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── FAQ CHAT SECTION ── */
-.faq-chat { 
-  max-width: 600px; 
-  margin: 80px auto; 
-  padding: 20px; 
-}
-.faq-title { 
-  font-family: 'Cormorant Garamond', serif; 
-  font-size: 1.8rem; 
-  font-weight: 300; 
-  text-align: center; 
-  margin-bottom: 32px; 
-  color: var(--text); 
-}
-.faq-title em { 
-  color: var(--gold); 
-  font-style: italic; 
-}
-.chat-message { 
-  display: flex; 
-  align-items: flex-start; 
-  gap: 12px; 
-  margin-bottom: 20px; 
-  animation: fadeInUp 0.6s ease; 
-}
-.chat-message.question { 
-  flex-direction: row-reverse; 
-}
-.chat-bubble { 
-  max-width: 70%; 
-  padding: 12px 16px; 
-  border-radius: 16px; 
-  font-size: 0.65rem; 
-  line-height: 1.6; 
-}
-.chat-bubble.question { 
-  background: var(--gold); 
-  color: #000; 
-  border-bottom-right-radius: 4px; 
-}
-.chat-bubble.answer { 
-  background: var(--s1); 
-  border: 1px solid var(--border); 
-  color: var(--text); 
-  border-bottom-left-radius: 4px; 
-}
-.chat-avatar { 
-  width: 32px; 
-  height: 32px; 
-  border-radius: 50%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 0.8rem; 
-  flex-shrink: 0; 
-}
-.chat-avatar.user { 
-  background: color-mix(in oklab, var(--gold) 20%, var(--s2)); 
-  border: 1px solid color-mix(in oklab, var(--gold) 40%, var(--border)); 
-}
-.chat-avatar.ai { 
-  background: var(--s2); 
-  border: 1px solid var(--border); 
-}
-@keyframes fadeInUp { 
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
-  } 
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  } 
-}
-
-.reveal {
-  opacity: 0; transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.visible { opacity: 1; transform: none; }
-
-@media (max-width: 768px) {
-  nav {
-    top: 10px;
-    width: calc(100% - 16px);
-    padding: 10px 12px 10px 14px;
-  }
-  .nav-links { display: none; }
-  .nav-actions { gap: 8px; }
-  .nav-actions .nav-cta { min-height: 32px; padding: 7px 12px !important; font-size: 0.55rem; }
-  .theme-toggle { min-height: 32px; padding: 7px 10px; font-size: 0.55rem; }
-  .features, .how { padding: 80px 24px; }
-  .features-grid, .steps { grid-template-columns: 1fr; }
-  .step::after { display: none; }
-  .cta-section { margin: 0 24px 80px; padding: 60px 24px; }
-  
-  /* Hero screenshots hide on mobile */
-  .hero-screenshots { display: none; }
-  
-  /* Footer responsive */
-  .footer-content { grid-template-columns: 1fr 1fr; gap: 32px; }
-  .footer-brand { grid-column: 1 / -1; }
-  .footer { padding: 32px 24px 20px; }
-  
-  footer { flex-direction: column; gap: 12px; text-align: center; }
-  .footer-links { flex-wrap: wrap; justify-content: center; }
-}
-
-@media (max-width: 600px) {
-  .footer-content { grid-template-columns: 1fr; gap: 24px; text-align: center; }
-  .footer-social { justify-content: center; }
-  .faq-chat { padding: 20px 16px; }
-  .chat-bubble { max-width: 85%; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#252525">
+  <title>Trackly — Your Financial OS</title>
+  <meta name="description" content="Track accounts, budgets, transactions, receipts, and AI insights in one calm, powerful place.">
+  <link rel="icon" type="image/png" href="logo-icon.png">
+  <link rel="apple-touch-icon" href="logo-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Nunito+Sans:ital,opsz,wght@0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,500&family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="trackly-brand.css">
+  <link rel="stylesheet" href="trackly-index.css">
 </head>
 <body>
-<div class="bg-orbs">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
-
-<nav id="navbar">
-  <a href="index.html" class="nav-logo">Track<span>ly</span></a>
-  <div class="nav-links" aria-label="Main navigation">
-    <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="file-viewer.html">File Viewer</a>
-  </div>
-  <div class="nav-actions">
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme">Light</button>
-    <a href="auth_fixed.html" class="nav-cta">Get Started</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="hero-glow"></div>
-  <div class="hero-glow2"></div>
-
-  <div class="hero-badge">
-    <span class="badge-dot"></span>
-    Your financial intelligence OS
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-mesh"></div>
+    <div class="bg-aurora"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-vignette"></div>
   </div>
 
-  <h1 class="hero-title">
-    Every dollar,<br>
-    <span class="line2">fully understood.</span>
-  </h1>
+  <nav class="trackly-nav glass" id="navbar" data-trackly-nav>
+    <a href="index.html" class="nav-logo font-brand">Track<span>ly</span></a>
+    <div class="nav-links" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-actions">
+      <a href="auth_fixed.html" class="btn-secondary">Sign in</a>
+      <button type="button" class="theme-toggle glass" data-theme-toggle data-theme-label aria-label="Toggle theme">Light</button>
+      <a href="auth_fixed.html" class="btn-primary nav-cta">Get started</a>
+    </div>
+  </nav>
 
-  <p class="hero-sub">
-    Trackly brings your accounts, budgets, transactions, receipts, and AI insights into one calm, powerful place.
-  </p>
-
-  <div class="hero-actions">
-    <a href="auth_fixed.html" class="btn-primary">Start for free</a>
-    <a href="#features" class="btn-secondary">See what's inside</a>
-  </div>
-
-  <!-- Floating Product Screenshots -->
-  <div class="hero-screenshots">
-    <div class="hero-screenshot hero-screenshot-1">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjU5ZTBiO3N0b3Atb3BhY2l0eTowLjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZWY0NDQ0O3N0b3Atb3BhY2l0eTowLjA1IiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZDEpIi8+PHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMjgwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4wNSIgcng9IjgiLz48dGV4dCB4PSI1MCUiIHk9IjQwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZjU5ZTBiIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+RGFzaGJvYXJkPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5UcmFjayBhbGwgYWNjb3VudHMgJiBiYWxhbmNlczwvdGV4dD48L3N2Zz4=" alt="Dashboard Overview">
-    </div>
-    <div class="hero-screenshot hero-screenshot-2">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQyIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMTA5OGY3O3N0b3Atb3BhY2l0eTowLjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjU5ZTBiO3N0b3Atb3BhY2l0eTowLjA1IiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZDIpIi8+PHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4wNSIgcng9IjgiLz48dGV4dCB4PSI1MCUiIHk9IjQwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMTA5OGY3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VHJhbnNhY3Rpb25zPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TbWFydCBleHBlbnNlIHRyYWNraW5nPC90ZXh0Pjwvc3ZnPg==" alt="Transaction Management">
-    </div>
-    <div class="hero-screenshot hero-screenshot-3">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE5MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQzIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMTBiOTgxO3N0b3Atb3BhY2l0eTowLjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjU5ZTBiO3N0b3Atb3BhY2l0eTowLjA1IiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZDMpIi8+PHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMjYwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4wNSIgcng9IjgiLz48dGV4dCB4PSI1MCUiIHk9IjQwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMTBiOTgxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+QnVkZ2V0czwvdGV4dD48dGV4dCB4PSI1MCUiIHk9IjYwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U2V0IGxpbWl0cyAmIHRyYWNrIHByb2dyZXNzPC90ZXh0Pjwvc3ZnPg==" alt="Budget Management">
-    </div>
-    <div class="hero-screenshot hero-screenshot-4">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjYwIiBoZWlnaHQ9IjE3MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQ0IiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOGI1Y2Y2O3N0b3Atb3BhY2l0eTowLjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZjU5ZTBiO3N0b3Atb3BhY2l0eTowLjA1IiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZDQpIi8+PHJlY3QgeD0iMjAiIHk9IjIwIiB3aWR0aD0iMjIwIiBoZWlnaHQ9IjEzMCIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iMC4wNSIgcng9IjgiLz48dGV4dCB4PSI1MCUiIHk9IjQwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOGI1Y2Y2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW5zaWdodHM8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFJLXBvd2VyZWQgYW5hbHl0aWNzPC90ZXh0Pjwvc3ZnPg==" alt="AI Insights">
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
-</section>
-
-<section class="features" id="features">
-  <div class="section-label reveal">What's inside</div>
-  <h2 class="section-title reveal">Everything your money needs,<br><em>nothing you don't.</em></h2>
-
-  <div class="features-grid reveal">
-    <div class="feature">
-      <span class="feature-icon">🏦</span>
-      <div class="feature-title">Accounts Dashboard</div>
-      <p class="feature-desc">Track all bank, wallet, and cash balances in one place with a live total capital overview.</p>
-    </div>
-    <div class="feature">
-      <span class="feature-icon">💸</span>
-      <div class="feature-title">Smart Transactions</div>
-      <p class="feature-desc">Capture income, expenses, and transfers with required reasons and clean structured records.</p>
-    </div>
-    <div class="feature">
-      <span class="feature-icon">🧾</span>
-      <div class="feature-title">Receipt Intelligence</div>
-      <p class="feature-desc">Upload receipts and extract key fields into reusable structured data with one AI pass.</p>
-    </div>
-    <div class="feature">
-      <span class="feature-icon">📅</span>
-      <div class="feature-title">Scheduled Flows</div>
-      <p class="feature-desc">Plan recurring income and bills so your month runs proactively with less manual effort.</p>
-    </div>
-    <div class="feature">
-      <span class="feature-icon">🤖</span>
-      <div class="feature-title">AI Assistant</div>
-      <p class="feature-desc">Ask plain-language questions and get fast financial summaries powered by Gemini Flash.</p>
-    </div>
-    <div class="feature">
-      <span class="feature-icon">📊</span>
-      <div class="feature-title">Clear Insights</div>
-      <p class="feature-desc">See where money goes over time and make better decisions with simple trend visibility.</p>
-    </div>
-  </div>
-</section>
-
-<section class="how" id="how">
-  <div class="section-label reveal">How it works</div>
-  <h2 class="section-title reveal">Up and running<br><em>in minutes.</em></h2>
-
-  <div class="steps">
-    <div class="step reveal">
-      <div class="step-num">01</div>
-      <div class="step-title">Create your account</div>
-      <p class="step-desc">Sign up and configure your profile preferences, currency, and region in a few steps.</p>
-    </div>
-    <div class="step reveal" style="transition-delay:0.1s">
-      <div class="step-num">02</div>
-      <div class="step-title">Add accounts and transactions</div>
-      <p class="step-desc">Connect your financial world by logging accounts and money movement with full context.</p>
-    </div>
-    <div class="step reveal" style="transition-delay:0.2s">
-      <div class="step-num">03</div>
-      <div class="step-title">Use receipts and insights</div>
-      <p class="step-desc">Upload receipts, extract fields with AI, and review dashboards to keep spending intentional.</p>
-    </div>
-  </div>
-</section>
-
-<section class="cta-section reveal">
-  <div class="cta-glow"></div>
-  <h2 class="cta-title">Take control of your <em>money</em><br>starting today.</h2>
-  <p class="cta-sub">Free to start. Built to scale with you.</p>
-  <a href="auth_fixed.html" class="btn-primary">Create your Trackly →</a>
-</section>
-
-<!-- FAQ Chat Section -->
-<section class="faq-chat reveal">
-  <h2 class="faq-title">Frequently Asked <em>Questions</em></h2>
-  
-  <div class="chat-message question">
-    <div class="chat-bubble question">How do I add my first transaction?</div>
-    <div class="chat-avatar user">👤</div>
-  </div>
-  
-  <div class="chat-message answer">
-    <div class="chat-avatar ai">🤖</div>
-    <div class="chat-bubble answer">
-      Great question! Click the golden "Get Started" button to create your account, then use the "Add Transaction" feature to log income, expenses, or transfers between accounts.
-    </div>
-  </div>
-  
-  <div class="chat-message question">
-    <div class="chat-bubble question">Can I upload receipts for automatic data extraction?</div>
-    <div class="chat-avatar user">👤</div>
-  </div>
-  
-  <div class="chat-message answer">
-    <div class="chat-avatar ai">🤖</div>
-    <div class="chat-bubble answer">
-      Absolutely! When adding a transaction, you can upload receipt images, PDFs, or documents. Our AI will automatically extract the amount, merchant, and category information for you.
-    </div>
-  </div>
-  
-  <div class="chat-message question">
-    <div class="chat-bubble question">How do I set up budgets and track my spending?</div>
-    <div class="chat-avatar user">👤</div>
-  </div>
-  
-  <div class="chat-message answer">
-    <div class="chat-avatar ai">🤖</div>
-    <div class="chat-bubble answer">
-      Navigate to the "Budgets" section in your dashboard. You can create category-based budgets and track your progress with visual indicators. The system will alert you when you're approaching your limits.
-    </div>
-  </div>
-  
-  <div class="chat-message question">
-    <div class="chat-bubble question">Is my financial data secure?</div>
-    <div class="chat-avatar user">👤</div>
-  </div>
-  
-  <div class="chat-message answer">
-    <div class="chat-avatar ai">🤖</div>
-    <div class="chat-bubble answer">
-      Yes! We use bank-level encryption and secure authentication. Your data is stored securely and never shared with third parties. You can also enable two-factor authentication for extra security.
-    </div>
-  </div>
-</section>
-
-<div class="footer-wrap">
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <a href="index.html" class="footer-logo">Track<span>ly</span></a>
-        <p class="footer-tagline">Your financial OS for modern life.</p>
-        <div class="footer-social">
-          <a href="#" class="footer-social-link" aria-label="Twitter">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-          <a href="#" class="footer-social-link" aria-label="GitHub">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-          </a>
-          <a href="#" class="footer-social-link" aria-label="LinkedIn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-        </div>
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="hero-badge label glass">
+        <span class="badge-dot" aria-hidden="true"></span>
+        Financial intelligence OS
       </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Product</h3>
-        <div class="footer-links">
-          <a href="#features" class="footer-link">Features</a>
-          <a href="#how" class="footer-link">How It Works</a>
-          <a href="auth_fixed.html" class="footer-link">Pricing</a>
-          <a href="#" class="footer-link">Security</a>
-          <a href="file-viewer.html" class="footer-link">File Viewer</a>
-        </div>
+
+      <h1 class="hero-title display font-brand">
+        Every dollar,
+        <span class="accent">fully understood.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Accounts, budgets, transactions, receipts, and AI insights — one calm glass workspace that stays sharp on your phone and desktop.
+      </p>
+
+      <div class="hero-actions">
+        <a href="auth_fixed.html" class="btn-primary">Start for free</a>
+        <a href="#features" class="btn-secondary glass">Explore features</a>
+        <a href="/app/" class="btn-secondary" data-app-preview>Live dashboard</a>
       </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Company</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">About Us</a>
-          <a href="#" class="footer-link">Blog</a>
-          <a href="#" class="footer-link">Careers</a>
-          <a href="#" class="footer-link">Press</a>
-          <a href="#" class="footer-link">Contact</a>
+
+      <div class="hero-stats">
+        <div class="hero-stat glass">
+          <strong>1 place</strong>
+          <span>All accounts</span>
         </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Resources</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Help Center</a>
-          <a href="#" class="footer-link">API Docs</a>
-          <a href="#" class="footer-link">Tutorials</a>
-          <a href="#" class="footer-link">Community</a>
-          <a href="#" class="footer-link">Status</a>
+        <div class="hero-stat glass">
+          <strong>AI</strong>
+          <span>Receipt extraction</span>
         </div>
-      </div>
-      
-      <div class="footer-section">
-        <h3 class="footer-section-title">Legal</h3>
-        <div class="footer-links">
-          <a href="#" class="footer-link">Privacy Policy</a>
-          <a href="#" class="footer-link">Terms of Service</a>
-          <a href="#" class="footer-link">Cookie Policy</a>
-          <a href="#" class="footer-link">GDPR</a>
-          <a href="#" class="footer-link">Licenses</a>
+        <div class="hero-stat glass">
+          <strong>Real-time</strong>
+          <span>Supabase sync</span>
         </div>
       </div>
     </div>
-    
-    <div class="footer-bottom">
-      <p class="footer-copyright">© 2026 Trackly. All rights reserved. Financial Intelligence OS.</p>
+
+    <div class="hero-visual">
+      <div class="preview-card glass-strong" aria-hidden="true">
+        <div class="preview-top">
+          <span>Trackly · Overview</span>
+          <span class="label">Live</span>
+        </div>
+        <p class="preview-capital display">$24,580.<span>42</span></p>
+        <p class="preview-meta">Total capital · 4 active accounts</p>
+        <div class="preview-grid">
+          <div class="preview-tile glass">
+            <div class="k">Income (30d)</div>
+            <div class="v up">+$8,240</div>
+          </div>
+          <div class="preview-tile glass">
+            <div class="k">Expenses (30d)</div>
+            <div class="v down">−$3,120</div>
+          </div>
+          <div class="preview-tile glass">
+            <div class="k">Savings rate</div>
+            <div class="v up">62%</div>
+          </div>
+          <div class="preview-tile glass">
+            <div class="k">Budgets</div>
+            <div class="v">On track</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </footer>
-</div>
 
-<script>
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
-});
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  <section class="section" id="features">
+    <div class="section-label label reveal">What's inside</div>
+    <h2 class="section-title display reveal">Everything your money needs, <em>nothing you don't.</em></h2>
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    <div class="features-bento reveal">
+      <article class="feature glass span-4">
+        <span class="feature-icon" aria-hidden="true">🏦</span>
+        <h3 class="feature-title display">Unified capital view</h3>
+        <p class="feature-desc">See total balance across banks, wallets, and cash — with live updates when you log transactions.</p>
+      </article>
+      <article class="feature glass">
+        <span class="feature-icon" aria-hidden="true">💸</span>
+        <h3 class="feature-title display">Smart transactions</h3>
+        <p class="feature-desc">Income, expenses, and transfers with required reasons and automatic balance updates.</p>
+      </article>
+      <article class="feature glass">
+        <span class="feature-icon" aria-hidden="true">🧾</span>
+        <h3 class="feature-title display">Receipt intelligence</h3>
+        <p class="feature-desc">Upload receipts and extract merchant, totals, and categories with Gemini.</p>
+      </article>
+      <article class="feature glass span-3">
+        <span class="feature-icon" aria-hidden="true">📅</span>
+        <h3 class="feature-title display">Scheduled flows</h3>
+        <p class="feature-desc">Plan recurring income and bills so your month runs proactively.</p>
+      </article>
+      <article class="feature glass span-3">
+        <span class="feature-icon" aria-hidden="true">🤖</span>
+        <h3 class="feature-title display">AI assistant</h3>
+        <p class="feature-desc">Ask plain-language questions and get instant summaries of your finances.</p>
+      </article>
+    </div>
+  </section>
 
-function applyTheme(theme) {
-  const isDark = theme !== "light";
-  document.documentElement.classList.toggle("dark", isDark);
-  const btn = document.getElementById("theme-toggle");
-  if (btn) btn.textContent = isDark ? "Light" : "Dark";
-}
+  <section class="section" id="how">
+    <div class="section-label label reveal">How it works</div>
+    <h2 class="section-title display reveal">Up and running <em>in minutes.</em></h2>
 
-const pageThemeToggle = document.getElementById("theme-toggle");
-const storedTheme = localStorage.getItem("trackly-theme") || "dark";
-applyTheme(storedTheme);
-if (pageThemeToggle) {
-  pageThemeToggle.addEventListener("click", () => {
-    const nextTheme = document.documentElement.classList.contains("dark") ? "light" : "dark";
-    localStorage.setItem("trackly-theme", nextTheme);
-    applyTheme(nextTheme);
-  });
-}
-</script>
+    <div class="steps">
+      <div class="step glass reveal">
+        <div class="step-num display">01</div>
+        <h3 class="step-title display">Create your account</h3>
+        <p class="step-desc">Sign up with email or Google. Set currency, region, and username in a guided flow.</p>
+      </div>
+      <div class="step glass reveal" style="transition-delay:0.08s">
+        <div class="step-num display">02</div>
+        <h3 class="step-title display">Add accounts & activity</h3>
+        <p class="step-desc">Log balances and every money movement with full context — synced to Supabase.</p>
+      </div>
+      <div class="step glass reveal" style="transition-delay:0.16s">
+        <div class="step-num display">03</div>
+        <h3 class="step-title display">Review & optimize</h3>
+        <p class="step-desc">Use budgets, charts, and AI to see where money goes and stay intentional.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section glass-strong reveal">
+    <h2 class="cta-title display">Take control of your <em>money</em> today.</h2>
+    <p class="cta-sub">Free to start. Built to scale with you.</p>
+    <a href="auth_fixed.html" class="btn-primary">Create your Trackly →</a>
+  </section>
+
+  <section class="faq-chat" id="faq">
+    <h2 class="faq-title display reveal">Frequently asked <em>questions</em></h2>
+
+    <div class="chat-message question reveal">
+      <div class="chat-bubble question">How do I add my first transaction?</div>
+      <div class="chat-avatar user" aria-hidden="true">👤</div>
+    </div>
+    <div class="chat-message answer reveal">
+      <div class="chat-avatar ai" aria-hidden="true">✦</div>
+      <div class="chat-bubble answer glass">Sign in, open the dashboard, and use <strong>Add transaction</strong> — income, expense, or transfer. Balances update automatically.</div>
+    </div>
+
+    <div class="chat-message question reveal">
+      <div class="chat-bubble question">Can I upload receipts?</div>
+      <div class="chat-avatar user" aria-hidden="true">👤</div>
+    </div>
+    <div class="chat-message answer reveal">
+      <div class="chat-avatar ai" aria-hidden="true">✦</div>
+      <div class="chat-bubble answer glass">Yes. Attach images or PDFs when logging expenses. AI extracts amount, merchant, and category in the classic dashboard.</div>
+    </div>
+
+    <div class="chat-message question reveal">
+      <div class="chat-bubble question">Is my data secure?</div>
+      <div class="chat-avatar user" aria-hidden="true">👤</div>
+    </div>
+    <div class="chat-message answer reveal">
+      <div class="chat-avatar ai" aria-hidden="true">✦</div>
+      <div class="chat-bubble answer glass">Firebase authentication plus Supabase storage. Your data stays in your project — never sold to third parties.</div>
+    </div>
+  </section>
+
+  <div class="footer-wrap glass">
+    <footer class="footer">
+      <div class="footer-content">
+        <div>
+          <a href="index.html" class="footer-logo font-brand">Track<span>ly</span></a>
+          <p class="footer-tagline">Your financial OS for modern life.</p>
+        </div>
+        <div>
+          <h3 class="footer-section-title">Product</h3>
+          <div class="footer-links">
+            <a href="#features" class="footer-link">Features</a>
+            <a href="#how" class="footer-link">How it works</a>
+            <a href="auth_fixed.html" class="footer-link">Sign in</a>
+            <a href="auth_fixed.html?tab=signup" class="footer-link">Sign up</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="footer-section-title">App</h3>
+          <div class="footer-links">
+            <a href="/app/" class="footer-link" data-app-preview>Dashboard</a>
+            <a href="trackly_dashboard.html?classic=1" class="footer-link">Classic UI</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="footer-section-title">Legal</h3>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Trackly. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="trackly-brand.js?v=6"></script>
 </body>
 </html>

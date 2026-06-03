@@ -1,0 +1,162 @@
+/* Desktop dashboard HTML layout (901px+) — mobile styles untouched */
+
+@media (min-width: 901px) {
+  .trackly-dash-desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 1440px;
+  }
+
+  .trackly-dash-alert {
+    border-radius: 0.75rem;
+    border: 1px solid color-mix(in oklab, var(--destructive) 50%, transparent);
+    background: color-mix(in oklab, var(--destructive) 12%, transparent);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--destructive);
+  }
+
+  .trackly-dash-intro {
+    display: grid;
+    grid-template-columns: 1fr minmax(280px, 360px);
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .trackly-dash-greeting {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+    background: color-mix(in oklab, var(--card) 88%, transparent);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  .trackly-dash-greeting-title {
+    font-size: 1.65rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .trackly-dash-greeting-title em {
+    color: var(--primary);
+    font-style: italic;
+  }
+
+  .trackly-dash-greeting-sub {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+  }
+
+  .trackly-dash-capital {
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in oklab, var(--primary) 25%, var(--border));
+    background: linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--primary) 14%, var(--card)),
+      color-mix(in oklab, var(--card) 95%, transparent)
+    );
+    box-shadow: 0 12px 40px color-mix(in oklab, var(--primary) 12%, transparent);
+  }
+
+  .trackly-dash-capital-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .trackly-dash-capital-amount {
+    margin-top: 0.35rem;
+    font-size: 2rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .trackly-dash-capital-meta {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+
+  .trackly-dash-capital-link {
+    display: inline-block;
+    margin-top: 0.85rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .trackly-dash-capital-link:hover {
+    text-decoration: underline;
+  }
+
+  .trackly-dash-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .trackly-dash-bento {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .trackly-dash-bento-stats {
+    display: contents;
+  }
+
+  .trackly-dash-bento-stats > * {
+    min-width: 0;
+  }
+
+  .trackly-dash-slot {
+    min-width: 0;
+  }
+
+  .trackly-dash-slot--wide {
+    grid-column: span 4;
+  }
+
+  .trackly-dash-slot--half {
+    grid-column: span 2;
+  }
+
+  .trackly-dash-slot .rounded-xl.border,
+  .trackly-dash-slot [data-slot="card"] {
+    height: 100%;
+  }
+
+  .trackly-dash-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .trackly-dash-split--balanced {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .trackly-dash-panel {
+    min-width: 0;
+  }
+
+  .trackly-dash-panel [data-slot="card"] {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1100px) {
+  .trackly-dash-bento {
+    gap: 1.125rem;
+  }
+}
