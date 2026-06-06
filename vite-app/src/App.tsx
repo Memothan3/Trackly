@@ -64,17 +64,24 @@ function hasAppAccess(user: ReturnType<typeof useTrackly>["user"]) {
 	return user.emailVerified || isAdminEmail(user.email);
 }
 
+function canEnterDashboard(
+	user: ReturnType<typeof useTrackly>["user"],
+	profile: ReturnType<typeof useTrackly>["profile"]
+) {
+	return Boolean(user && hasAppAccess(user) && profile);
+}
+
 function TracklyApp() {
 	const { route } = useAppRoute();
-	const { user, loading } = useTrackly();
+	const { user, profile, loading, oauthBootstrapping } = useTrackly();
 
 	return (
 		<AppChrome>
-			{loading ? (
+			{loading || oauthBootstrapping ? (
 				<div className="p-6">
 					<DashboardSkeleton />
 				</div>
-			) : !hasAppAccess(user) ? (
+			) : !canEnterDashboard(user, profile) ? (
 				<AuthGate />
 			) : (
 				<AppShell route={route}>

@@ -25,12 +25,11 @@ import {
 } from "@/lib/auth-email-actions"
 import {
 	completeOAuthProfile,
-	consumeOAuthRedirectResult,
+	completeOAuthSignIn,
 	finalizeAuthenticatedUser,
 	formatAuthError,
 	hasPendingOAuthRedirect,
 	isUsernameAvailable,
-	profileExists,
 	requestPasswordReset,
 	requiresEmailVerification,
 	resendVerificationEmail,
@@ -56,9 +55,22 @@ type AuthView =
 
 type AuthPageProps = {
 	pendingUser?: User | null
+	profileSetupUser?: User | null
 }
 
-export function AuthPage({ pendingUser = null }: AuthPageProps) {
+function seedProfileFromUser(user: User) {
+	return {
+		email: user.email ?? "",
+		fullName: user.displayName ?? "",
+		username:
+			user.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9_]/g, "") ?? "",
+	}
+}
+
+export function AuthPage({
+	pendingUser = null,
+	profileSetupUser = null,
+}: AuthPageProps) {
 	const [view, setView] = useState<AuthView>(
 		pendingUser ? "verify-pending" : "signin"
 	)
@@ -93,38 +105,15 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 	}, [pendingUser])
 
 	useEffect(() => {
-		let active = true
-
-		void (async () => {
-			try {
-				const user = await consumeOAuthRedirectResult()
-				if (!active || !user) return
-
-				setError(null)
-				const exists = await profileExists(user.uid)
-				if (!exists) {
-					setOauthUser(user)
-					setEmail(user.email ?? "")
-					setFullName(user.displayName ?? "")
-					setUsername(
-						user.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9_]/g, "") ??
-							""
-					)
-					setView("complete-profile")
-					return
-				}
-				await finalizeAuthenticatedUser(user)
-			} catch (err) {
-				if (!active) return
-				setError(formatAuthError(err))
-				setView("signin")
-			}
-		})()
-
-		return () => {
-			active = false
-		}
-	}, [])
+		if (!profileSetupUser) return
+		const seeded = seedProfileFromUser(profileSetupUser)
+		setOauthUser(profileSetupUser)
+		setEmail(seeded.email)
+		setFullName(seeded.fullName)
+		setUsername(seeded.username)
+		setView("complete-profile")
+		setError(null)
+	}, [profileSetupUser])
 
 	useEffect(() => {
 		if (hasPendingOAuthRedirect()) return
@@ -182,19 +171,16 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 	}, [])
 
 	async function handleOAuth(user: User) {
-		const exists = await profileExists(user.uid)
-		if (!exists) {
-			setOauthUser(user)
-			setEmail(user.email ?? "")
-			setFullName(user.displayName ?? "")
-			setUsername(
-				user.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9_]/g, "") ??
-					""
-			)
+		const result = await completeOAuthSignIn(user)
+		if (result.needsProfile) {
+			const seeded = seedProfileFromUser(result.user)
+			setOauthUser(result.user)
+			setEmail(seeded.email)
+			setFullName(seeded.fullName)
+			setUsername(seeded.username)
 			setView("complete-profile")
 			return
 		}
-		await finalizeAuthenticatedUser(user)
 	}
 
 	async function handleGoogle() {

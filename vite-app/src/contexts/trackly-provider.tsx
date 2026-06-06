@@ -14,7 +14,11 @@ import {
 	signOut as firebaseSignOut,
 	type User,
 } from "firebase/auth"
-import { syncUserProfile } from "@/lib/auth-service"
+import {
+	completeOAuthSignIn,
+	consumeOAuthRedirectResult,
+	syncUserProfile,
+} from "@/lib/auth-service"
 import { tracklyConfig } from "@/lib/config"
 import { firebaseAuth } from "@/lib/firebase"
 import {
@@ -58,6 +62,7 @@ import type {
 type TracklyContextValue = {
 	user: User | null
 	profile: TracklyProfile | null
+	oauthBootstrapping: boolean
 	accounts: TracklyAccount[]
 	transactions: TracklyTransaction[]
 	categories: TracklyCategory[]
@@ -131,6 +136,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	const [receipts, setReceipts] = useState<TracklyReceipt[]>([])
 	const [projects, setProjects] = useState<TracklyProject[]>([])
 	const [loading, setLoading] = useState(true)
+	const [oauthBootstrapping, setOauthBootstrapping] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 	const [addTransactionOpen, setAddTransactionOpenState] = useState(false)
 	const [transactionDraft, setTransactionDraft] = useState<{
@@ -176,6 +182,28 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			setError(err instanceof Error ? err.message : "Failed to load Trackly data")
 		}
 	}, [user, applyBundle])
+
+	useEffect(() => {
+		let active = true
+
+		void (async () => {
+			try {
+				const redirectUser = await consumeOAuthRedirectResult()
+				if (!active) return
+				if (redirectUser) {
+					await completeOAuthSignIn(redirectUser)
+				}
+			} catch {
+				// AuthPage surfaces OAuth errors when profile setup is required.
+			} finally {
+				if (active) setOauthBootstrapping(false)
+			}
+		})()
+
+		return () => {
+			active = false
+		}
+	}, [])
 
 	useEffect(() => {
 		const unsubscribe = onIdTokenChanged(firebaseAuth, async (firebaseUser) => {
@@ -425,6 +453,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		() => ({
 			user,
 			profile,
+			oauthBootstrapping,
 			accounts,
 			transactions,
 			categories,
@@ -470,6 +499,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		[
 			user,
 			profile,
+			oauthBootstrapping,
 			accounts,
 			transactions,
 			categories,

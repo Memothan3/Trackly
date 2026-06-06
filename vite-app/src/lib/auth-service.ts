@@ -20,6 +20,7 @@ import {
 import { authSupabase } from "@/lib/auth-supabase"
 import { tracklyConfig } from "@/lib/config"
 import { firebaseAuth } from "@/lib/firebase"
+import { supabase } from "@/lib/supabase"
 
 export type ProfileSyncInput = {
 	username?: string
@@ -339,21 +340,38 @@ export async function signInWithApple() {
 	return signInWithProvider(provider, { preferRedirect: true })
 }
 
+let oauthRedirectResultPromise: Promise<User | null> | null = null
+
 export async function consumeOAuthRedirectResult() {
-	const result = await getRedirectResult(firebaseAuth)
-	if (typeof window !== "undefined") {
-		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
-		if (result?.user) {
-			const { origin, pathname, hash } = window.location
-			const cleanedHash = hash.split("?")[0] || ""
-			window.history.replaceState(
-				{},
-				document.title,
-				`${origin}${pathname}${cleanedHash}`
-			)
-		}
+	if (!oauthRedirectResultPromise) {
+		oauthRedirectResultPromise = (async () => {
+			const result = await getRedirectResult(firebaseAuth)
+			if (typeof window !== "undefined") {
+				sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
+				if (result?.user) {
+					const { origin, pathname, hash } = window.location
+					const cleanedHash = hash.split("?")[0] || ""
+					window.history.replaceState(
+						{},
+						document.title,
+						`${origin}${pathname}${cleanedHash}`
+					)
+				}
+			}
+			return result?.user ?? null
+		})()
 	}
-	return result?.user ?? null
+	return oauthRedirectResultPromise
+}
+
+export async function completeOAuthSignIn(user: User) {
+	await user.getIdToken(true)
+	const exists = await profileExists(user.uid)
+	if (!exists) {
+		return { needsProfile: true as const, user }
+	}
+	await finalizeAuthenticatedUser(user)
+	return { needsProfile: false as const, user }
 }
 
 export function hasPendingOAuthRedirect() {
@@ -395,6 +413,14 @@ export async function resendVerificationEmail(user: User) {
 }
 
 export async function profileExists(userId: string) {
+	const { data: authedData, error: authedError } = await supabase
+		.from("profiles")
+		.select("id")
+		.eq("id", userId)
+		.maybeSingle()
+
+	if (!authedError && authedData) return true
+
 	const { data, error } = await authSupabase
 		.from("profiles")
 		.select("id")

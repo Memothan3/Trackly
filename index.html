@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&family=Raleway:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="trackly-brand.css">
   <link rel="stylesheet" href="trackly-landing.css">
 </head>
@@ -29,60 +29,48 @@
     </a>
     <div class="nav-links" aria-label="Main navigation">
       <a href="#product">Product</a>
-      <a href="#features">Features</a>
-      <a href="#flow">How it works</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#start">Get started</a>
     </div>
     <div class="nav-actions">
       <a href="/app/" class="btn-secondary">Sign in</a>
       <button type="button" class="theme-toggle glass" data-theme-toggle data-theme-label aria-label="Toggle theme">Light</button>
-      <a href="/app/" class="btn-primary nav-cta">Open Trackly</a>
+      <a href="/app/" class="btn-primary nav-cta">Open app</a>
     </div>
   </nav>
 
   <header class="landing-hero">
     <div class="landing-hero-copy reveal">
-      <p class="landing-eyebrow">
-        <span class="badge-dot" aria-hidden="true"></span>
-        Built for clarity, not clutter
-      </p>
+      <p class="landing-kicker">Personal finance workspace</p>
       <h1 class="landing-title display">
-        Your money deserves
-        <em>a command center.</em>
+        See every account.
+        <span>Act with confidence.</span>
       </h1>
       <p class="landing-lead">
-        Trackly unifies accounts, spending, budgets, receipts, and AI insights in one polished app — fast on mobile, powerful on desktop.
+        Trackly brings balances, spending, budgets, receipts, and AI insights into one focused dashboard. Sign in with Google and land straight in your workspace.
       </p>
       <div class="landing-cta-row">
-        <a href="/app/" class="btn-primary landing-cta-primary">Start in the app</a>
-        <a href="#product" class="btn-secondary glass">See the product</a>
+        <a href="/app/" class="btn-primary landing-cta-primary">Continue with Google in app</a>
+        <a href="#product" class="btn-secondary">Preview the UI</a>
       </div>
-      <dl class="landing-metrics">
-        <div>
-          <dt>One workspace</dt>
-          <dd>Accounts &amp; cashflow</dd>
-        </div>
-        <div>
-          <dt>AI receipts</dt>
-          <dd>Extract &amp; categorize</dd>
-        </div>
-        <div>
-          <dt>Live sync</dt>
-          <dd>Supabase + Firebase</dd>
-        </div>
-      </dl>
+      <ul class="landing-proof" aria-label="Highlights">
+        <li>Accounts and cashflow in one view</li>
+        <li>Receipt scan with Gemini</li>
+        <li>Secure sync via Firebase and Supabase</li>
+      </ul>
     </div>
 
     <div class="landing-hero-visual reveal" id="product">
-      <div class="product-frame glass">
+      <div class="product-frame">
         <div class="product-chrome">
           <span class="product-dot" aria-hidden="true"></span>
           <span class="product-dot" aria-hidden="true"></span>
           <span class="product-dot" aria-hidden="true"></span>
-          <span class="product-url">trackly.app/dashboard</span>
+          <span class="product-url">trackly-neon.vercel.app/app</span>
         </div>
         <div class="product-body">
           <aside class="product-sidebar" aria-hidden="true">
-            <div class="product-logo-mark"></div>
+            <img src="logo-icon.png" alt="" class="product-logo-mark" width="28" height="28" decoding="async" />
             <div class="product-nav-item active"></div>
             <div class="product-nav-item"></div>
             <div class="product-nav-item"></div>
@@ -94,17 +82,17 @@
               <span class="product-pill muted">This month</span>
             </div>
             <div class="product-stat-grid">
-              <article class="product-stat glass">
+              <article class="product-stat">
                 <p>Total balance</p>
                 <strong>$24,580</strong>
                 <span class="up">+8.2%</span>
               </article>
-              <article class="product-stat glass">
+              <article class="product-stat">
                 <p>Spent</p>
                 <strong>$3,120</strong>
                 <span>30 days</span>
               </article>
-              <article class="product-stat glass wide">
+              <article class="product-stat wide">
                 <p>Cashflow</p>
                 <div class="product-chart" aria-hidden="true">
                   <span style="--h:42%"></span>
@@ -125,76 +113,63 @@
           </div>
         </div>
       </div>
-      <p class="landing-visual-caption">Live product UI — sign in with Google, Apple, or email inside the app.</p>
+      <p class="landing-visual-caption">The React app at <code>/app/</code> is the only sign-in surface.</p>
     </div>
   </header>
 
-  <section class="landing-strip glass reveal" aria-label="Highlights">
+  <section class="landing-strip reveal" aria-label="Product areas">
     <p>Accounts · Transactions · Budgets · Receipts · Scheduled · AI · Export</p>
   </section>
 
-  <section class="landing-section" id="features">
+  <section class="landing-section" id="capabilities">
     <div class="landing-section-head reveal">
-      <p class="landing-eyebrow">Capabilities</p>
-      <h2 class="display">Everything you need.<br><em>Nothing you don't.</em></h2>
+      <h2 class="display">Built for daily money decisions</h2>
+      <p class="landing-section-lead">Each module connects to the same ledger, so totals, charts, and budgets stay honest without duplicate entry.</p>
     </div>
-    <div class="landing-bento">
-      <article class="landing-card glass reveal">
-        <span class="landing-card-icon" aria-hidden="true">◎</span>
+    <div class="landing-cap-grid">
+      <article class="landing-cap reveal">
         <h3>Unified accounts</h3>
-        <p>See total capital across banks, wallets, and cash with balances that update as you log activity.</p>
+        <p>Track banks, wallets, and cash with balances that move when you log activity.</p>
       </article>
-      <article class="landing-card glass reveal">
-        <span class="landing-card-icon" aria-hidden="true">↗</span>
-        <h3>Smart transactions</h3>
-        <p>Income, expenses, and transfers with context — every movement tied to an account and category.</p>
+      <article class="landing-cap reveal">
+        <h3>Transaction context</h3>
+        <p>Tag income, expenses, and transfers with categories tied to real accounts.</p>
       </article>
-      <article class="landing-card glass landing-card-wide reveal">
-        <span class="landing-card-icon" aria-hidden="true">✦</span>
+      <article class="landing-cap reveal">
         <h3>Receipt intelligence</h3>
-        <p>Upload receipts and let AI extract merchant, totals, and categories so data entry stays effortless.</p>
+        <p>Upload a photo and let AI pull merchant, totals, and categories into your ledger.</p>
       </article>
-      <article class="landing-card glass reveal">
-        <span class="landing-card-icon" aria-hidden="true">◷</span>
-        <h3>Scheduled flows</h3>
-        <p>Plan recurring income and bills so your month runs proactively, not reactively.</p>
-      </article>
-      <article class="landing-card glass reveal">
-        <span class="landing-card-icon" aria-hidden="true">▣</span>
-        <h3>Budgets &amp; insights</h3>
-        <p>Track limits, spot trends, and understand where money goes with charts built for decisions.</p>
+      <article class="landing-cap reveal">
+        <h3>Budgets and insights</h3>
+        <p>Set limits, read trends, and spot drift before the month ends.</p>
       </article>
     </div>
   </section>
 
-  <section class="landing-section landing-flow" id="flow">
-    <div class="landing-section-head reveal">
-      <p class="landing-eyebrow">How it works</p>
-      <h2 class="display">Up and running<br><em>in minutes.</em></h2>
+  <section class="landing-section landing-start" id="start">
+    <div class="landing-start-panel reveal">
+      <div>
+        <h2 class="display">Three steps to a live dashboard</h2>
+        <ol class="landing-start-list">
+          <li>
+            <strong>Open the app</strong>
+            <span>Sign in with Google, Apple, or email at <code>/app/</code>.</span>
+          </li>
+          <li>
+            <strong>Add accounts and activity</strong>
+            <span>Log balances and transactions. Data syncs to your Supabase project.</span>
+          </li>
+          <li>
+            <strong>Review and adjust</strong>
+            <span>Use budgets, charts, and AI to keep spending intentional.</span>
+          </li>
+        </ol>
+      </div>
+      <div class="landing-start-cta">
+        <p>Free to start. Designed for phone and desktop.</p>
+        <a href="/app/" class="btn-primary">Open Trackly app</a>
+      </div>
     </div>
-    <ol class="landing-steps">
-      <li class="landing-step glass reveal">
-        <span class="landing-step-num">01</span>
-        <h3>Open the app</h3>
-        <p>Sign in with Google, Apple, or email. Setup stays inside <code>/app/</code> — one flow, no detours.</p>
-      </li>
-      <li class="landing-step glass reveal">
-        <span class="landing-step-num">02</span>
-        <h3>Add accounts &amp; activity</h3>
-        <p>Log balances and every money movement. Data syncs securely to your Supabase project.</p>
-      </li>
-      <li class="landing-step glass reveal">
-        <span class="landing-step-num">03</span>
-        <h3>Review &amp; optimize</h3>
-        <p>Use budgets, charts, and AI to stay intentional — on phone or desktop.</p>
-      </li>
-    </ol>
-  </section>
-
-  <section class="landing-cta-band glass reveal">
-    <h2 class="display">Take control of your <em>money</em> today.</h2>
-    <p>Free to start. Designed to scale with you.</p>
-    <a href="/app/" class="btn-primary">Open Trackly app →</a>
   </section>
 
   <footer class="landing-footer">
@@ -204,12 +179,12 @@
     <p class="footer-tagline">Personal finance, fully understood.</p>
     <nav class="footer-links" aria-label="Footer">
       <a href="/app/">App</a>
-      <a href="#features">Features</a>
-      <a href="#flow">How it works</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#start">Get started</a>
     </nav>
     <p class="footer-copy">© 2026 Trackly. All rights reserved.</p>
   </footer>
 
-  <script src="trackly-brand.js?v=7"></script>
+  <script src="trackly-brand.js?v=8"></script>
 </body>
 </html>
