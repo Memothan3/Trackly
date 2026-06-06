@@ -3,6 +3,7 @@
   "version": 2,
   "name": "trackly",
   "buildCommand": "node scripts/vercel-build.mjs",
+  "installCommand": "echo \"Root install skipped — vite-app installs in build script\"",
   "outputDirectory": "output",
   "framework": null,
   "rewrites": [

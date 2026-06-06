@@ -2,6 +2,9 @@
   "name": "trackly",
   "private": true,
   "description": "Trackly monorepo — run all dev servers with: npm run netrooo",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "netrooo": "node scripts/netrooo.mjs",
     "netrooo:raw": "concurrently -k -n MAIN,UI -c yellow,cyan \"npm run dev --prefix vite-app\" \"npm run dev:ui\"",

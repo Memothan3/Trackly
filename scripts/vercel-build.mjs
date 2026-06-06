@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const viteApp = path.join(root, "vite-app")
 const out = path.join(root, "output")
 
-const staticRootFiles = [
+const staticRootFiles = new Set([
 	"index.html",
 	"auth_fixed.html",
 	"trackly_dashboard.html",
@@ -23,7 +23,22 @@ const staticRootFiles = [
 	"trackly-dashboard-brand.css",
 	"logo-icon.png",
 	"service-worker.js",
-]
+])
+
+const staticExtensions = new Set([
+	".html",
+	".css",
+	".js",
+	".json",
+	".png",
+	".jpg",
+	".jpeg",
+	".svg",
+	".ico",
+	".webp",
+	".woff2",
+	".txt",
+])
 
 function rm(dir) {
 	if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true })
@@ -85,6 +100,17 @@ mkdirp(out)
 for (const file of staticRootFiles) {
 	const src = path.join(root, file)
 	if (fs.existsSync(src)) copyFile(src, path.join(out, file))
+}
+
+for (const name of fs.readdirSync(root)) {
+	if (name.startsWith(".") || name === "vite-app" || name === "trackly-ui" || name === "output") {
+		continue
+	}
+	const src = path.join(root, name)
+	if (!fs.statSync(src).isFile()) continue
+	const ext = path.extname(name).toLowerCase()
+	if (!staticExtensions.has(ext)) continue
+	copyFile(src, path.join(out, name))
 }
 
 copyDir(viteDist, path.join(out, "app"))
