@@ -94,10 +94,6 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 
 	useEffect(() => {
 		let active = true
-		if (hasPendingOAuthRedirect()) {
-			setSubmitting(true)
-			setView("action-loading")
-		}
 
 		void (async () => {
 			try {
@@ -122,8 +118,6 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 				if (!active) return
 				setError(formatAuthError(err))
 				setView("signin")
-			} finally {
-				if (active) setSubmitting(false)
 			}
 		})()
 
@@ -399,8 +393,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 		<AuthLayout>
 			{view === "action-loading" ? (
 				<>
-					{renderHeader("Processing link", "Finishing the action from your email…")}
-					<p className="text-muted-foreground text-sm">One moment.</p>
+					{renderHeader("One moment", "Confirming your email request…")}
 				</>
 			) : null}
 
@@ -666,8 +659,36 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 				<>
 					{renderHeader(
 						"Welcome back",
-						`Sign in to ${tracklyConfig.appName} with email or username.`
+						`Sign in to ${tracklyConfig.appName} with Google or your email.`
 					)}
+
+					<div className="flex flex-col gap-2">
+						<Button
+							className="w-full"
+							disabled={submitting}
+							onClick={() => {
+								void handleGoogle()
+							}}
+							type="button"
+						>
+							<GoogleIcon data-icon="inline-start" />
+							Continue with Google
+						</Button>
+						<Button
+							className="w-full"
+							disabled={submitting}
+							onClick={() => {
+								void handleApple()
+							}}
+							type="button"
+							variant="outline"
+						>
+							<AppleIcon data-icon="inline-start" />
+							Continue with Apple
+						</Button>
+					</div>
+
+					<AuthDivider>or sign in with email</AuthDivider>
 
 					<form className="flex flex-col gap-2" onSubmit={handleSignIn}>
 						<InputGroup>
@@ -721,35 +742,6 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 					>
 						Create an account
 					</Button>
-
-					<AuthDivider>or continue with</AuthDivider>
-
-					<div className="flex flex-col gap-2">
-						<Button
-							className="w-full"
-							disabled={submitting}
-							onClick={() => {
-								void handleApple()
-							}}
-							type="button"
-						>
-							<AppleIcon data-icon="inline-start" />
-							Continue with Apple
-						</Button>
-						<Button
-							className="w-full"
-							disabled={submitting}
-							onClick={() => {
-								void handleGoogle()
-							}}
-							type="button"
-							variant="outline"
-						>
-							<GoogleIcon data-icon="inline-start" />
-							Continue with Google
-						</Button>
-					</div>
-
 				</>
 			) : null}
 		</AuthLayout>

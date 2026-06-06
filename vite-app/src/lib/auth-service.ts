@@ -343,6 +343,15 @@ export async function consumeOAuthRedirectResult() {
 	const result = await getRedirectResult(firebaseAuth)
 	if (typeof window !== "undefined") {
 		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
+		if (result?.user) {
+			const { origin, pathname, hash } = window.location
+			const cleanedHash = hash.split("?")[0] || ""
+			window.history.replaceState(
+				{},
+				document.title,
+				`${origin}${pathname}${cleanedHash}`
+			)
+		}
 	}
 	return result?.user ?? null
 }
