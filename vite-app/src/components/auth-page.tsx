@@ -14,6 +14,7 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "@/components/ui/input-group"
+import { useTrackly } from "@/contexts/trackly-provider"
 import { tracklyConfig } from "@/lib/config"
 import {
 	clearFirebaseActionParams,
@@ -71,6 +72,7 @@ export function AuthPage({
 	pendingUser = null,
 	profileSetupUser = null,
 }: AuthPageProps) {
+	const { refresh } = useTrackly()
 	const [view, setView] = useState<AuthView>(
 		pendingUser ? "verify-pending" : "signin"
 	)
@@ -181,6 +183,7 @@ export function AuthPage({
 			setView("complete-profile")
 			return
 		}
+		await refresh()
 	}
 
 	async function handleGoogle() {
@@ -225,6 +228,7 @@ export function AuthPage({
 				return
 			}
 			await finalizeAuthenticatedUser(user)
+			await refresh()
 		} catch (err) {
 			setError(formatAuthError(err))
 		} finally {
@@ -322,6 +326,7 @@ export function AuthPage({
 			})
 			await finalizeAuthenticatedUser(oauthUser)
 			setOauthUser(null)
+			await refresh()
 		} catch (err) {
 			setError(formatAuthError(err))
 		} finally {

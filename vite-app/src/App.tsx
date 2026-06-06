@@ -17,7 +17,7 @@ import { TransactionsPage } from "@/components/transactions-page";
 import { AddAccountSheet } from "@/components/add-account-sheet";
 import { AddTransactionSheet } from "@/components/add-transaction-sheet";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { isAdminEmail } from "@/lib/auth-config";
+import { hasAppAccess } from "@/lib/auth-config";
 import { useTrackly } from "@/contexts/trackly-provider";
 import { useAppRoute, type AppRoute } from "@/hooks/use-app-route";
 
@@ -57,11 +57,6 @@ function AppChrome({ children }: { children: React.ReactNode }) {
 			<div className="relative min-h-dvh">{children}</div>
 		</>
 	);
-}
-
-function hasAppAccess(user: ReturnType<typeof useTrackly>["user"]) {
-	if (!user) return false;
-	return user.emailVerified || isAdminEmail(user.email);
 }
 
 function canEnterDashboard(

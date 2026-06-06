@@ -1,3 +1,4 @@
+import type { User } from "firebase/auth"
 import { tracklyConfig } from "@/lib/config"
 
 /**
@@ -27,6 +28,19 @@ export function isAdminEmail(email: string | null | undefined) {
 	return (
 		email?.toLowerCase() === tracklyConfig.adminEmail.toLowerCase()
 	)
+}
+
+export function isOAuthUser(user: User) {
+	return user.providerData.some(
+		(provider) =>
+			provider.providerId === "google.com" ||
+			provider.providerId === "apple.com"
+	)
+}
+
+export function hasAppAccess(user: User | null | undefined) {
+	if (!user) return false
+	return user.emailVerified || isAdminEmail(user.email) || isOAuthUser(user)
 }
 
 export const USERNAME_PATTERN = /^[a-z0-9_]+$/

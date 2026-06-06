@@ -13,6 +13,7 @@ import {
 } from "firebase/auth"
 import {
 	getAuthContinueUrl,
+	hasAppAccess,
 	isAdminEmail,
 	normalizeUsername,
 	validateUsername,
@@ -432,7 +433,7 @@ export async function profileExists(userId: string) {
 }
 
 export function requiresEmailVerification(user: User) {
-	return !user.emailVerified && !isAdminEmail(user.email)
+	return !hasAppAccess(user)
 }
 
 export async function finalizeAuthenticatedUser(user: User) {

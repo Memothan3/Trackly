@@ -185,52 +185,37 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		let active = true
+		let redirectConsumed = false
+		let expectingRedirectUser = false
+		let pendingAuthUser: User | null | undefined
 
-		void (async () => {
-			try {
-				const redirectUser = await consumeOAuthRedirectResult()
-				if (!active) return
-				if (redirectUser) {
-					await completeOAuthSignIn(redirectUser)
-				}
-			} catch {
-				// AuthPage surfaces OAuth errors when profile setup is required.
-			} finally {
-				if (active) setOauthBootstrapping(false)
-			}
-		})()
-
-		return () => {
-			active = false
+		const clearSession = () => {
+			if (!active) return
+			setUser(null)
+			setProfile(null)
+			setAccounts([])
+			setTransactions([])
+			setCategories([])
+			setBudgets([])
+			setScheduled([])
+			setReceipts([])
+			setProjects([])
+			setLoading(false)
+			setOauthBootstrapping(false)
 		}
-	}, [])
 
-	useEffect(() => {
-		const unsubscribe = onIdTokenChanged(firebaseAuth, async (firebaseUser) => {
-			if (!firebaseUser) {
-				setUser(null)
-				setProfile(null)
-				setAccounts([])
-				setTransactions([])
-				setCategories([])
-				setBudgets([])
-				setScheduled([])
-				setReceipts([])
-				setProjects([])
-				setLoading(false)
-				return
-			}
-
+		const hydrateUser = async (firebaseUser: User) => {
+			if (!active) return
 			setUser(firebaseUser)
 			setLoading(true)
 			setError(null)
 
 			try {
-				// Fresh token so Supabase sees role:authenticated (Firebase custom claim)
+				await firebaseUser.reload()
 				await firebaseUser.getIdToken(true)
 				let data = await loadTracklyBundle(firebaseUser.uid)
 
-				if (firebaseUser.email && !data.profile?.email) {
+				if (!data.profile) {
 					await syncUserProfile(firebaseUser)
 					data = await loadTracklyBundle(firebaseUser.uid)
 				}
@@ -241,11 +226,64 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 					err instanceof Error ? err.message : "Failed to initialize Trackly"
 				)
 			} finally {
-				setLoading(false)
+				if (active) {
+					setLoading(false)
+					setOauthBootstrapping(false)
+				}
 			}
+		}
+
+		const processAuthUser = async (firebaseUser: User | null) => {
+			if (!active || !redirectConsumed) return
+
+			if (!firebaseUser) {
+				if (expectingRedirectUser) return
+				clearSession()
+				return
+			}
+
+			expectingRedirectUser = false
+			await hydrateUser(firebaseUser)
+		}
+
+		const unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
+			if (!redirectConsumed) {
+				pendingAuthUser = firebaseUser
+				return
+			}
+			void processAuthUser(firebaseUser)
 		})
 
-		return unsubscribe
+		void (async () => {
+			try {
+				const redirectUser = await consumeOAuthRedirectResult()
+				if (!active) return
+
+				expectingRedirectUser = Boolean(redirectUser)
+				if (redirectUser) {
+					await completeOAuthSignIn(redirectUser)
+				}
+			} catch {
+				// AuthPage surfaces profile setup and provider errors.
+			} finally {
+				if (!active) return
+				redirectConsumed = true
+
+				if (pendingAuthUser !== undefined) {
+					await processAuthUser(pendingAuthUser)
+					pendingAuthUser = undefined
+				} else if (firebaseAuth.currentUser) {
+					await processAuthUser(firebaseAuth.currentUser)
+				} else if (!expectingRedirectUser) {
+					clearSession()
+				}
+			}
+		})()
+
+		return () => {
+			active = false
+			unsubscribe()
+		}
 	}, [applyBundle])
 
 	const addTransaction = useCallback(

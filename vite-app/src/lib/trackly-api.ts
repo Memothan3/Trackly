@@ -40,7 +40,7 @@ export async function loadTracklyBundle(userId: string) {
 		receiptsResult,
 		projectsResult,
 	] = await Promise.all([
-		supabase.from("profiles").select("*").eq("id", userId).single(),
+		supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
 		supabase
 			.from("accounts")
 			.select("*")
