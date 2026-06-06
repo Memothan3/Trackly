@@ -282,16 +282,65 @@ export async function signUpWithEmail(input: {
 }
 
 const OAUTH_REDIRECT_KEY = "trackly-oauth-redirect"
+const OAUTH_REDIRECT_MAX_AGE_MS = 10 * 60 * 1000
+
+function isOperaBrowser() {
+	if (typeof navigator === "undefined") return false
+	return /OPR\/|Opera/i.test(navigator.userAgent)
+}
+
+function isChromiumBrowser() {
+	if (typeof navigator === "undefined") return false
+	return /Chrome\/|Chromium\/|Edg\//i.test(navigator.userAgent)
+}
 
 function shouldPreferOAuthRedirect() {
 	if (typeof window === "undefined") return false
-	return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)
+	if (/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)) return true
+	// Chrome blocks popup OAuth more aggressively than Opera/Firefox.
+	if (isChromiumBrowser() && !isOperaBrowser()) return true
+	return false
+}
+
+function readOAuthRedirectMarker() {
+	if (typeof window === "undefined") return null
+	const sessionMarker = sessionStorage.getItem(OAUTH_REDIRECT_KEY)
+	if (sessionMarker === "1") return Date.now()
+
+	const storedAt = localStorage.getItem(OAUTH_REDIRECT_KEY)
+	if (!storedAt) return null
+
+	const timestamp = Number(storedAt)
+	if (!Number.isFinite(timestamp)) {
+		localStorage.removeItem(OAUTH_REDIRECT_KEY)
+		return null
+	}
+
+	if (Date.now() - timestamp > OAUTH_REDIRECT_MAX_AGE_MS) {
+		localStorage.removeItem(OAUTH_REDIRECT_KEY)
+		return null
+	}
+
+	return timestamp
 }
 
 function markOAuthRedirectPending() {
 	if (typeof window !== "undefined") {
+		const timestamp = String(Date.now())
 		sessionStorage.setItem(OAUTH_REDIRECT_KEY, "1")
+		localStorage.setItem(OAUTH_REDIRECT_KEY, timestamp)
 	}
+}
+
+function hasOAuthReturnParams() {
+	if (typeof window === "undefined") return false
+	const { search, hash } = window.location
+	return (
+		search.includes("code=") ||
+		search.includes("state=") ||
+		hash.includes("access_token=") ||
+		hash.includes("id_token=")
+	)
 }
 
 async function signInWithProvider(
@@ -318,7 +367,9 @@ async function signInWithProvider(
 		if (
 			code === "auth/popup-blocked" ||
 			code === "auth/cancelled-popup-request" ||
-			code === "auth/operation-not-supported-in-this-environment"
+			code === "auth/operation-not-supported-in-this-environment" ||
+			code === "auth/network-request-failed" ||
+			code === "auth/internal-error"
 		) {
 			markOAuthRedirectPending()
 			await signInWithRedirect(firebaseAuth, provider)
@@ -353,14 +404,22 @@ export function resetOAuthRedirectConsumption() {
 function clearOAuthRedirectMarker() {
 	if (typeof window !== "undefined") {
 		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
+		localStorage.removeItem(OAUTH_REDIRECT_KEY)
 	}
 }
 
 function cleanOAuthReturnUrl() {
 	if (typeof window === "undefined") return
-	const { origin, pathname, hash } = window.location
-	const cleanedHash = hash.split("?")[0] || ""
-	window.history.replaceState({}, document.title, `${origin}${pathname}${cleanedHash}`)
+	const url = new URL(window.location.href)
+	for (const param of ["code", "state", "apiKey", "mode", "lang"]) {
+		url.searchParams.delete(param)
+	}
+	const cleanedHash = url.hash.split("?")[0] || ""
+	window.history.replaceState(
+		{},
+		document.title,
+		`${url.origin}${url.pathname}${cleanedHash}`
+	)
 }
 
 export function hadOAuthRedirectAttempt() {
@@ -368,12 +427,13 @@ export function hadOAuthRedirectAttempt() {
 }
 
 async function resolveOAuthRedirectUser(): Promise<User | null> {
-	const redirectAttempted = hadOAuthRedirectAttempt()
+	const redirectAttempted =
+		hadOAuthRedirectAttempt() || hasOAuthReturnParams()
 	const result = await getRedirectResult(firebaseAuth)
 	let user = result?.user ?? firebaseAuth.currentUser
 
 	if (!user && redirectAttempted) {
-		for (const delay of [400, 800, 1500]) {
+		for (const delay of [400, 800, 1500, 2500, 4000]) {
 			await new Promise((resolve) => window.setTimeout(resolve, delay))
 			user = firebaseAuth.currentUser
 			if (user) break
@@ -400,11 +460,16 @@ async function resolveOAuthRedirectUser(): Promise<User | null> {
 	return null
 }
 
-export async function consumeOAuthRedirectResult() {
+export function primeOAuthRedirectResult() {
+	if (typeof window === "undefined") return
 	if (!oauthRedirectResultPromise) {
 		oauthRedirectResultPromise = resolveOAuthRedirectUser()
 	}
-	return oauthRedirectResultPromise
+}
+
+export async function consumeOAuthRedirectResult() {
+	primeOAuthRedirectResult()
+	return oauthRedirectResultPromise!
 }
 
 export async function completeOAuthSignIn(user: User) {
@@ -418,8 +483,7 @@ export async function completeOAuthSignIn(user: User) {
 }
 
 export function hasPendingOAuthRedirect() {
-	if (typeof window === "undefined") return false
-	return sessionStorage.getItem(OAUTH_REDIRECT_KEY) === "1"
+	return readOAuthRedirectMarker() !== null || hasOAuthReturnParams()
 }
 
 export async function completeOAuthProfile(
