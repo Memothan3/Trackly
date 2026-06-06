@@ -65,7 +65,7 @@ function canEnterDashboard(user: ReturnType<typeof useTrackly>["user"]) {
 
 function TracklyApp() {
 	const { route } = useAppRoute();
-	const { user, loading, oauthBootstrapping, error } = useTrackly();
+	const { user, profile, loading, oauthBootstrapping, error } = useTrackly();
 	const booting = (loading || oauthBootstrapping) && !user;
 
 	return (
@@ -77,7 +77,7 @@ function TracklyApp() {
 						<p className="mt-4 text-center text-destructive text-sm">{error}</p>
 					) : null}
 				</div>
-			) : !canEnterDashboard(user) ? (
+			) : !canEnterDashboard(user) || !profile ? (
 				<AuthGate />
 			) : (
 				<AppShell route={route}>

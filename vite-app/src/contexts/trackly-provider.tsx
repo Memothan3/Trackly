@@ -79,6 +79,7 @@ type TracklyContextValue = {
 	expenseTrend: ReturnType<typeof buildExpenseTrendData>
 	categoryMix: ReturnType<typeof buildCategoryMix>
 	signOut: () => Promise<void>
+	establishSession: (firebaseUser: User) => Promise<void>
 	refresh: () => Promise<void>
 	addTransaction: (input: Omit<NewTransactionInput, "userId">) => Promise<void>
 	removeTransaction: (transactionId: string) => Promise<void>
@@ -175,11 +176,60 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		[]
 	)
 
+	const hydrateUser = useCallback(
+		async (firebaseUser: User) => {
+			if (hydratingRef.current && loadedUidRef.current === firebaseUser.uid) {
+				return
+			}
+
+			hydratingRef.current = true
+			setUser(firebaseUser)
+			loadedUidRef.current = firebaseUser.uid
+			setOauthBootstrapping(false)
+			setLoading(true)
+			setError(null)
+
+			try {
+				await firebaseUser.reload()
+				await firebaseUser.getIdToken(true)
+				let data = await loadTracklyBundle(firebaseUser.uid)
+
+				if (!data.profile) {
+					const sync = await syncUserProfile(firebaseUser)
+					if (sync.success) {
+						data = await loadTracklyBundle(firebaseUser.uid)
+					} else {
+						setError(sync.message)
+					}
+				}
+
+				applyBundle(data)
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "Failed to initialize Trackly"
+				)
+			} finally {
+				hydratingRef.current = false
+				setLoading(false)
+				setOauthBootstrapping(false)
+			}
+		},
+		[applyBundle]
+	)
+
+	const establishSession = useCallback(
+		async (firebaseUser: User) => {
+			await hydrateUser(firebaseUser)
+		},
+		[hydrateUser]
+	)
+
 	const refresh = useCallback(async () => {
-		if (!user) return
+		const activeUser = user ?? firebaseAuth.currentUser
+		if (!activeUser) return
 		setError(null)
 		try {
-			const data = await loadTracklyBundle(user.uid)
+			const data = await loadTracklyBundle(activeUser.uid)
 			applyBundle(data)
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to load Trackly data")
@@ -188,6 +238,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		let active = true
+		let signOutTimer: number | undefined
 
 		const endBootstrap = () => {
 			if (active) setOauthBootstrapping(false)
@@ -207,52 +258,6 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			setProjects([])
 			setLoading(false)
 			endBootstrap()
-		}
-
-		const hydrateUser = async (firebaseUser: User) => {
-			if (!active || hydratingRef.current) return
-			if (loadedUidRef.current === firebaseUser.uid) {
-				setUser(firebaseUser)
-				return
-			}
-
-			hydratingRef.current = true
-			setUser(firebaseUser)
-			setLoading(true)
-			setError(null)
-
-			try {
-				await firebaseUser.reload()
-				await firebaseUser.getIdToken(true)
-				let data = await loadTracklyBundle(firebaseUser.uid)
-
-				if (!data.profile) {
-					const sync = await syncUserProfile(firebaseUser)
-					if (!sync.success) {
-						throw new Error(sync.message)
-					}
-					data = await loadTracklyBundle(firebaseUser.uid)
-				}
-
-				if (!data.profile) {
-					throw new Error(
-						"Signed in, but your Trackly profile could not be loaded. Try refresh, or check Firebase + Supabase auth setup."
-					)
-				}
-
-				applyBundle(data)
-				loadedUidRef.current = firebaseUser.uid
-			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : "Failed to initialize Trackly"
-				)
-			} finally {
-				hydratingRef.current = false
-				if (active) {
-					setLoading(false)
-					endBootstrap()
-				}
-			}
 		}
 
 		const bootstrap = async () => {
@@ -281,11 +286,17 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			if (!active) return
 
 			if (!firebaseUser) {
-				if (loadedUidRef.current) {
-					clearSession()
-				}
+				if (!loadedUidRef.current) return
+				window.clearTimeout(signOutTimer)
+				signOutTimer = window.setTimeout(() => {
+					if (!firebaseAuth.currentUser && loadedUidRef.current) {
+						clearSession()
+					}
+				}, 750)
 				return
 			}
+
+			window.clearTimeout(signOutTimer)
 
 			if (loadedUidRef.current !== firebaseUser.uid) {
 				void hydrateUser(firebaseUser)
@@ -316,9 +327,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		return () => {
 			active = false
 			window.clearTimeout(timeout)
+			window.clearTimeout(signOutTimer)
 			unsubscribe()
 		}
-	}, [applyBundle])
+	}, [hydrateUser])
 
 	const addTransaction = useCallback(
 		async (input: Omit<NewTransactionInput, "userId">) => {
@@ -541,8 +553,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			expenseTrend: buildExpenseTrendData(transactions),
 			categoryMix: buildCategoryMix(transactions),
 			signOut: async () => {
+				loadedUidRef.current = null
 				await firebaseSignOut(firebaseAuth)
 			},
+			establishSession,
 			refresh,
 			addTransaction,
 			removeTransaction,
@@ -582,6 +596,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			currency,
 			loading,
 			error,
+			establishSession,
 			refresh,
 			addTransaction,
 			removeTransaction,

@@ -327,7 +327,8 @@ async function signInWithProvider(
 export async function signInWithGoogle() {
 	const provider = new GoogleAuthProvider()
 	provider.setCustomParameters({ prompt: "select_account" })
-	return signInWithProvider(provider)
+	// Desktop: popup. Mobile: redirect. Popup result must establish app session immediately.
+	return signInWithProvider(provider, { preferRedirect: shouldPreferOAuthRedirect() })
 }
 
 export async function signInWithApple() {

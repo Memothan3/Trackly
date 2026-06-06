@@ -72,7 +72,7 @@ export function AuthPage({
 	pendingUser = null,
 	profileSetupUser = null,
 }: AuthPageProps) {
-	const { refresh } = useTrackly()
+	const { establishSession, refresh } = useTrackly()
 	const [view, setView] = useState<AuthView>(
 		pendingUser ? "verify-pending" : "signin"
 	)
@@ -173,6 +173,7 @@ export function AuthPage({
 	}, [])
 
 	async function handleOAuth(user: User) {
+		await establishSession(user)
 		const result = await completeOAuthSignIn(user)
 		if (result.needsProfile) {
 			const seeded = seedProfileFromUser(result.user)
@@ -227,6 +228,7 @@ export function AuthPage({
 				setView("verify-pending")
 				return
 			}
+			await establishSession(user)
 			await finalizeAuthenticatedUser(user)
 			await refresh()
 		} catch (err) {
@@ -324,6 +326,7 @@ export function AuthPage({
 				fullName,
 				currency,
 			})
+			await establishSession(oauthUser)
 			await finalizeAuthenticatedUser(oauthUser)
 			setOauthUser(null)
 			await refresh()
