@@ -30,12 +30,12 @@ export function isAdminEmail(email: string | null | undefined) {
 	)
 }
 
+const OAUTH_PROVIDER_IDS = new Set(["google.com", "apple.com"])
+
 export function isOAuthUser(user: User) {
 	if (
-		user.providerData.some(
-			(provider) =>
-				provider.providerId === "google.com" ||
-				provider.providerId === "apple.com"
+		user.providerData.some((provider) =>
+			OAUTH_PROVIDER_IDS.has(provider.providerId)
 		)
 	) {
 		return true
@@ -45,6 +45,12 @@ export function isOAuthUser(user: User) {
 	const usesPasswordProvider = user.providerData.some(
 		(provider) => provider.providerId === "password"
 	)
+	if (usesPasswordProvider) return false
+
+	if (user.emailVerified && Boolean(user.email?.includes("@"))) {
+		return true
+	}
+
 	return Boolean(user.email?.includes("@")) && !usesPasswordProvider
 }
 

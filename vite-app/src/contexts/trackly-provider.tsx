@@ -183,15 +183,16 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			}
 
 			hydratingRef.current = true
-			setUser(firebaseUser)
 			loadedUidRef.current = firebaseUser.uid
-			setOauthBootstrapping(false)
 			setLoading(true)
 			setError(null)
 
 			try {
+				// Reload before exposing user to the UI so OAuth provider metadata is ready.
 				await firebaseUser.reload()
 				await firebaseUser.getIdToken(true)
+				setUser(firebaseUser)
+
 				let data = await loadTracklyBundle(firebaseUser.uid)
 
 				if (!data.profile) {
@@ -239,6 +240,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		let active = true
 		let signOutTimer: number | undefined
+		let unsubscribe: (() => void) | undefined
 
 		const endBootstrap = () => {
 			if (active) setOauthBootstrapping(false)
@@ -260,20 +262,66 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			endBootstrap()
 		}
 
+		const startAuthListener = () => {
+			unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
+				if (!active) return
+
+				if (!firebaseUser) {
+					if (!loadedUidRef.current) return
+					window.clearTimeout(signOutTimer)
+					signOutTimer = window.setTimeout(() => {
+						if (!firebaseAuth.currentUser && loadedUidRef.current) {
+							clearSession()
+						}
+					}, 750)
+					return
+				}
+
+				window.clearTimeout(signOutTimer)
+
+				if (
+					hydratingRef.current &&
+					loadedUidRef.current === firebaseUser.uid
+				) {
+					return
+				}
+
+				if (loadedUidRef.current !== firebaseUser.uid) {
+					void hydrateUser(firebaseUser)
+					return
+				}
+
+				setUser(firebaseUser)
+			})
+		}
+
 		const bootstrap = async () => {
 			try {
+				// Firebase requires getRedirectResult before any auth state listener.
 				const redirectUser = await consumeOAuthRedirectResult()
+				if (!active) return
+
+				startAuthListener()
+
 				const sessionUser = redirectUser ?? firebaseAuth.currentUser
-				if (!sessionUser) return
+				if (!sessionUser) {
+					setLoading(false)
+					endBootstrap()
+					return
+				}
 
 				try {
 					await completeOAuthSignIn(sessionUser)
 				} catch {
 					// Profile setup can finish inside the app.
 				}
-				await hydrateUser(sessionUser)
+
+				if (active) {
+					await hydrateUser(sessionUser)
+				}
 			} catch (err) {
 				if (!active) return
+				if (!unsubscribe) startAuthListener()
 				setError(
 					err instanceof Error ? err.message : "Authentication failed"
 				)
@@ -282,53 +330,26 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			}
 		}
 
-		const unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
-			if (!active) return
-
-			if (!firebaseUser) {
-				if (!loadedUidRef.current) return
-				window.clearTimeout(signOutTimer)
-				signOutTimer = window.setTimeout(() => {
-					if (!firebaseAuth.currentUser && loadedUidRef.current) {
-						clearSession()
-					}
-				}, 750)
-				return
-			}
-
-			window.clearTimeout(signOutTimer)
-
-			if (loadedUidRef.current !== firebaseUser.uid) {
-				void hydrateUser(firebaseUser)
-				return
-			}
-
-			setUser(firebaseUser)
-		})
-
-		void bootstrap().finally(() => {
-			if (!active) return
-			if (!firebaseAuth.currentUser) {
-				setLoading(false)
-				endBootstrap()
-			}
-		})
+		void bootstrap()
 
 		const timeout = window.setTimeout(() => {
 			if (!active) return
 			endBootstrap()
-			setLoading(false)
+			if (!firebaseAuth.currentUser) {
+				setLoading(false)
+				return
+			}
 			const current = firebaseAuth.currentUser
 			if (current && loadedUidRef.current !== current.uid) {
 				void hydrateUser(current)
 			}
-		}, 6000)
+		}, 8000)
 
 		return () => {
 			active = false
 			window.clearTimeout(timeout)
 			window.clearTimeout(signOutTimer)
-			unsubscribe()
+			unsubscribe?.()
 		}
 	}, [hydrateUser])
 

@@ -185,9 +185,14 @@ export async function syncUserProfile(
 		return { success: true }
 	}
 
+	const emailPrefix = user.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9_]/g, "")
 	const username =
 		input.username ||
-		normalizeUsername(user.email?.split("@")[0] ?? `user_${user.uid.slice(0, 6)}`)
+		normalizeUsername(
+			emailPrefix && emailPrefix.length >= 3
+				? emailPrefix
+				: `user_${user.uid.slice(0, 8)}`
+		)
 
 	const profileData: Record<string, string | null> = {
 		id: user.uid,
@@ -341,6 +346,10 @@ export async function signInWithApple() {
 
 let oauthRedirectResultPromise: Promise<User | null> | null = null
 
+export function resetOAuthRedirectConsumption() {
+	oauthRedirectResultPromise = null
+}
+
 function clearOAuthRedirectMarker() {
 	if (typeof window !== "undefined") {
 		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
@@ -358,27 +367,42 @@ export function hadOAuthRedirectAttempt() {
 	return hasPendingOAuthRedirect()
 }
 
+async function resolveOAuthRedirectUser(): Promise<User | null> {
+	const redirectAttempted = hadOAuthRedirectAttempt()
+	const result = await getRedirectResult(firebaseAuth)
+	let user = result?.user ?? firebaseAuth.currentUser
+
+	if (!user && redirectAttempted) {
+		for (const delay of [400, 800, 1500]) {
+			await new Promise((resolve) => window.setTimeout(resolve, delay))
+			user = firebaseAuth.currentUser
+			if (user) break
+		}
+	}
+
+	if (user) {
+		try {
+			await user.reload()
+			await user.getIdToken(true)
+		} catch {
+			// Session is still valid; hydration will retry reload.
+		}
+		clearOAuthRedirectMarker()
+		cleanOAuthReturnUrl()
+		return user
+	}
+
+	if (redirectAttempted) {
+		resetOAuthRedirectConsumption()
+	} else {
+		clearOAuthRedirectMarker()
+	}
+	return null
+}
+
 export async function consumeOAuthRedirectResult() {
 	if (!oauthRedirectResultPromise) {
-		oauthRedirectResultPromise = (async () => {
-			const redirectAttempted = hadOAuthRedirectAttempt()
-			const result = await getRedirectResult(firebaseAuth)
-			let user = result?.user ?? firebaseAuth.currentUser
-
-			if (!user && redirectAttempted) {
-				await new Promise((resolve) => window.setTimeout(resolve, 400))
-				user = firebaseAuth.currentUser
-			}
-
-			if (user) {
-				clearOAuthRedirectMarker()
-				cleanOAuthReturnUrl()
-				return user
-			}
-
-			clearOAuthRedirectMarker()
-			return null
-		})()
+		oauthRedirectResultPromise = resolveOAuthRedirectUser()
 	}
 	return oauthRedirectResultPromise
 }
