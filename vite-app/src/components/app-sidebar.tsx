@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo, LogoIcon } from "@/components/logo";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -28,8 +28,7 @@ export function AppSidebar({ route }: { route: AppRoute }) {
 			<SidebarHeader className="h-14 justify-center">
 				<SidebarMenuButton asChild>
 					<a className="gap-2" href={appRouteHref("dashboard")}>
-						<Logo className="h-7 w-auto max-w-[132px] group-data-[collapsible=icon]:hidden" />
-						<LogoIcon className="hidden size-7 group-data-[collapsible=icon]:block" />
+						<Logo className="h-7 w-auto max-w-[132px] group-data-[collapsible=icon]:h-6 group-data-[collapsible=icon]:max-w-[96px]" />
 					</a>
 				</SidebarMenuButton>
 			</SidebarHeader>

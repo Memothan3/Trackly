@@ -278,10 +278,12 @@ body::after {
   white-space: nowrap;
 }
 .sidebar-logo-icon {
-  width: 32px;
-  height: 32px;
+  height: 24px;
+  width: auto;
+  max-width: 96px;
   flex-shrink: 0;
   object-fit: contain;
+  object-position: left center;
   display: block;
 }
 .sidebar-logo-full {
@@ -2381,7 +2383,7 @@ body.sidebar-collapsed .user-row { justify-content: center; padding: 10px; }
   <div class="sidebar-inner">
     <div class="sidebar-header">
       <a href="index.html" class="sidebar-logo" title="Trackly home">
-        <img class="sidebar-logo-icon" src="logo-icon.png" alt="" aria-hidden="true" decoding="async" />
+        <img class="sidebar-logo-icon" src="logo-full.png" alt="Trackly" decoding="async" />
         <img class="sidebar-logo-full sidebar-logo-text" src="logo-full.png" alt="Trackly" decoding="async" />
       </a>
       <button type="button" class="icon-btn sidebar-collapse-btn" id="sidebar-collapse-btn" aria-label="Collapse sidebar" title="Collapse sidebar">

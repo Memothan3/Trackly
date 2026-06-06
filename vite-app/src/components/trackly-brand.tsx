@@ -10,27 +10,18 @@ export function TracklyBrand({
 	iconClassName?: string
 	showName?: boolean
 }) {
-	if (showName) {
-		return (
-			<img
-				alt="Trackly"
-				className={cn(
-					"h-9 w-auto max-w-[180px] object-contain object-left",
-					className
-				)}
-				decoding="async"
-				src={brandAssets.full}
-			/>
-		)
-	}
-
 	return (
 		<img
-			alt=""
-			aria-hidden
-			className={cn("size-8 shrink-0 object-contain", iconClassName, className)}
+			alt="Trackly"
+			className={cn(
+				showName
+					? "h-9 w-auto max-w-[180px] object-contain object-left"
+					: "h-7 w-auto max-w-[120px] shrink-0 object-contain object-left",
+				iconClassName,
+				className
+			)}
 			decoding="async"
-			src={brandAssets.icon}
+			src={brandAssets.full}
 		/>
 	)
 }

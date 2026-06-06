@@ -1,5 +1,5 @@
 // Trackly Service Worker - v2.1.0
-const CACHE_NAME = 'trackly-v2-2-20260606';
+const CACHE_NAME = 'trackly-v2-3-20260606';
 const urlsToCache = [
   './',
   './index.html',

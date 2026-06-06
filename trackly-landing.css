@@ -147,10 +147,11 @@ body {
 }
 
 .product-logo-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  object-fit: cover;
+  width: auto;
+  height: 20px;
+  max-width: 96px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .product-nav-item {

@@ -8,11 +8,13 @@ export function LogoIcon({
 }: React.ComponentProps<"img">) {
 	return (
 		<img
-			alt=""
-			aria-hidden
-			className={cn("size-8 shrink-0 object-contain", className)}
+			alt="Trackly"
+			className={cn(
+				"h-7 w-auto max-w-[120px] shrink-0 object-contain object-left",
+				className
+			)}
 			decoding="async"
-			src={brandAssets.icon}
+			src={brandAssets.full}
 			{...props}
 		/>
 	)
