@@ -10,7 +10,7 @@ import { NavUser } from "@/components/nav-user";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useTrackly } from "@/contexts/trackly-provider";
 import type { AppRoute } from "@/hooks/use-app-route";
-import { PlusIcon } from "lucide-react";
+
 
 export function AppHeader({ route }: { route: AppRoute }) {
 	const { openAddTransaction, isAdmin } = useTrackly();
@@ -19,7 +19,7 @@ export function AppHeader({ route }: { route: AppRoute }) {
 	return (
 		<header
 			className={cn(
-				"sticky top-0 z-20 mb-4 flex items-center justify-between gap-2 rounded-2xl border border-border/60 bg-card/90 px-3 py-2 shadow-sm backdrop-blur-md sm:mb-6 sm:px-4"
+				"trackly-glass sticky top-0 z-20 mb-3 flex items-center justify-between gap-2 rounded-2xl px-3 py-2 sm:mb-5 sm:px-4 min-[901px]:mb-6"
 			)}
 		>
 			<div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -39,16 +39,7 @@ export function AppHeader({ route }: { route: AppRoute }) {
 			</div>
 			<div className="flex shrink-0 items-center gap-1 sm:gap-2">
 				<Button
-					className="sm:hidden"
-					onClick={() => openAddTransaction()}
-					size="icon"
-					variant="outline"
-					aria-label="Add transaction"
-				>
-					<PlusIcon className="size-4" />
-				</Button>
-				<Button
-					className="hidden sm:inline-flex"
+					className="hidden min-[901px]:inline-flex"
 					onClick={() => openAddTransaction()}
 					size="sm"
 				>

@@ -3,6 +3,7 @@ export type TracklyProfile = {
 	full_name?: string | null
 	currency?: string | null
 	username?: string | null
+	email?: string | null
 }
 
 export type TracklyCategory = {
@@ -46,6 +47,7 @@ export type TracklyTransaction = {
 	date: string
 	reason?: string | null
 	note?: string | null
+	shopping_list?: string | null
 	categories?: { name: string } | null
 }
 

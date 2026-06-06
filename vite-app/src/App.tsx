@@ -17,6 +17,7 @@ import { TransactionsPage } from "@/components/transactions-page";
 import { AddAccountSheet } from "@/components/add-account-sheet";
 import { AddTransactionSheet } from "@/components/add-transaction-sheet";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { isAdminEmail } from "@/lib/auth-config";
 import { useTrackly } from "@/contexts/trackly-provider";
 import { useAppRoute, type AppRoute } from "@/hooks/use-app-route";
 
@@ -58,6 +59,11 @@ function AppChrome({ children }: { children: React.ReactNode }) {
 	);
 }
 
+function hasAppAccess(user: ReturnType<typeof useTrackly>["user"]) {
+	if (!user) return false;
+	return user.emailVerified || isAdminEmail(user.email);
+}
+
 function TracklyApp() {
 	const { route } = useAppRoute();
 	const { user, loading } = useTrackly();
@@ -68,7 +74,7 @@ function TracklyApp() {
 				<div className="p-6">
 					<DashboardSkeleton />
 				</div>
-			) : !user ? (
+			) : !hasAppAccess(user) ? (
 				<AuthGate />
 			) : (
 				<AppShell route={route}>

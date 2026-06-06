@@ -9,7 +9,12 @@ import {
 	useState,
 	type ReactNode,
 } from "react"
-import { onAuthStateChanged, signOut as firebaseSignOut, type User } from "firebase/auth"
+import {
+	onIdTokenChanged,
+	signOut as firebaseSignOut,
+	type User,
+} from "firebase/auth"
+import { syncUserProfile } from "@/lib/auth-service"
 import { tracklyConfig } from "@/lib/config"
 import { firebaseAuth } from "@/lib/firebase"
 import {
@@ -173,7 +178,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	}, [user, applyBundle])
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
+		const unsubscribe = onIdTokenChanged(firebaseAuth, async (firebaseUser) => {
 			if (!firebaseUser) {
 				setUser(null)
 				setProfile(null)
@@ -195,7 +200,13 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			try {
 				// Fresh token so Supabase sees role:authenticated (Firebase custom claim)
 				await firebaseUser.getIdToken(true)
-				const data = await loadTracklyBundle(firebaseUser.uid)
+				let data = await loadTracklyBundle(firebaseUser.uid)
+
+				if (firebaseUser.email && !data.profile?.email) {
+					await syncUserProfile(firebaseUser)
+					data = await loadTracklyBundle(firebaseUser.uid)
+				}
+
 				applyBundle(data)
 			} catch (err) {
 				setError(
@@ -212,10 +223,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	const addTransaction = useCallback(
 		async (input: Omit<NewTransactionInput, "userId">) => {
 			if (!user) throw new Error("Not signed in")
-			await createTransaction({ ...input, userId: user.uid }, accounts)
+			await createTransaction({ ...input, userId: user.uid }, accounts, categories)
 			await refresh()
 		},
-		[user, accounts, refresh]
+		[user, accounts, categories, refresh]
 	)
 
 	const removeTransaction = useCallback(
@@ -400,7 +411,11 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	const updateProfile = useCallback(
 		async (input: { fullName?: string; currency?: string }) => {
 			if (!user) throw new Error("Not signed in")
-			await upsertProfile({ userId: user.uid, ...input })
+			await upsertProfile({
+				userId: user.uid,
+				email: user.email ?? undefined,
+				...input,
+			})
 			await refresh()
 		},
 		[user, refresh]

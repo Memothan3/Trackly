@@ -16,6 +16,7 @@ import {
 	ItemTitle,
 } from "@/components/ui/item"
 import { formatDate } from "@/components/formater"
+import { parseShoppingList } from "@/lib/shopping-list"
 import { formatMoney } from "@/lib/trackly-metrics"
 import type { TracklyTransaction } from "@/types/trackly"
 import { cn } from "@/lib/utils"
@@ -62,7 +63,7 @@ export function TransactionList({
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<ItemGroup className="gap-0">
+				<ItemGroup className="gap-2">
 					{rows.map((txn) => (
 						<TransactionRow
 							currency={currency}
@@ -88,19 +89,33 @@ function TransactionRow({
 }) {
 	const isIncome = txn.type === "income"
 	const isExpense = txn.type === "expense"
+	const lineItems = parseShoppingList(txn.shopping_list)
 	const amountLabel = `${isIncome ? "+" : isExpense ? "−" : ""}${formatMoney(Number(txn.amount), txn.currency ?? currency)}`
 
 	return (
-		<Item size="sm">
+		<Item className="trackly-glass-sm" size="sm" variant="outline">
 			<ItemContent>
 				<ItemTitle className="flex items-center gap-2">
 					<span className="truncate">{txn.reason || "Transaction"}</span>
 					<Badge variant="outline">{txn.type}</Badge>
+					{lineItems.length ? (
+						<Badge variant="secondary">{lineItems.length} lines</Badge>
+					) : null}
 				</ItemTitle>
-				<ItemDescription className="line-clamp-2">
+				<ItemDescription className="line-clamp-3">
 					{txn.categories?.name ? `${txn.categories.name} · ` : ""}
 					{formatDate(txn.date.split("T")[0], "full")}
-					{txn.note ? ` · ${txn.note}` : ""}
+					{lineItems.length ? (
+						<span className="mt-1 block text-xs">
+							{lineItems
+								.slice(0, 3)
+								.map((line) => `${line.name} (${line.quantity}×${line.price})`)
+								.join(" · ")}
+							{lineItems.length > 3 ? ` · +${lineItems.length - 3} more` : ""}
+						</span>
+					) : txn.note ? (
+						` · ${txn.note}`
+					) : null}
 				</ItemDescription>
 			</ItemContent>
 			<ItemActions className="flex shrink-0 items-center gap-2">

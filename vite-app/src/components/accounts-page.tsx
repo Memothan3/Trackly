@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import {
 	Card,
@@ -22,15 +23,11 @@ export function AccountsPage() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-wrap items-center justify-between gap-3">
-				<div>
-					<h1 className="font-semibold text-2xl tracking-tight">Accounts</h1>
-					<p className="text-muted-foreground text-sm">
-						Total capital {formatMoney(total, currency)}
-					</p>
-				</div>
-				<Button onClick={() => setAddAccountOpen(true)}>Add account</Button>
-			</div>
+			<PageHeader
+				action={<Button onClick={() => setAddAccountOpen(true)}>Add account</Button>}
+				description={`Total capital ${formatMoney(total, currency)}`}
+				title="Accounts"
+			/>
 			<Card>
 				<CardHeader>
 					<CardTitle>Active accounts</CardTitle>

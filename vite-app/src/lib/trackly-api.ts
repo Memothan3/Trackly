@@ -1,3 +1,4 @@
+import { dedupeCategories } from "@/lib/categories"
 import type { ReceiptExtraction } from "@/lib/gemini"
 import type { ShoppingListItem } from "@/lib/shopping-list"
 import { formatShoppingNote, getValidShoppingItems } from "@/lib/shopping-list"
@@ -96,7 +97,9 @@ export async function loadTracklyBundle(userId: string) {
 		profile: (profileResult.data as TracklyProfile | null) ?? null,
 		accounts: (accountsResult.data as TracklyAccount[] | null) ?? [],
 		transactions,
-		categories: (categoriesResult.data as TracklyCategory[] | null) ?? [],
+		categories: dedupeCategories(
+			(categoriesResult.data as TracklyCategory[] | null) ?? []
+		),
 		budgets: (budgetsResult.data as TracklyBudget[] | null) ?? [],
 		scheduled: (scheduledResult.data as TracklyScheduled[] | null) ?? [],
 		receipts: (receiptsResult.data as TracklyReceipt[] | null) ?? [],
@@ -282,7 +285,8 @@ export async function createTransactionFromReceipt(
 			note: "From receipt",
 			date: extracted.date ?? todayIso(),
 		},
-		accounts
+		accounts,
+		categories
 	)
 
 	if (txn?.id) {
@@ -330,19 +334,24 @@ export async function upsertProfile(input: {
 	userId: string
 	fullName?: string
 	currency?: string
+	email?: string
 }) {
-	const { error } = await supabase.from("profiles").upsert({
+	const row: Record<string, string> = {
 		id: input.userId,
-		full_name: input.fullName,
-		currency: input.currency,
 		updated_at: new Date().toISOString(),
-	})
+	}
+	if (input.fullName) row.full_name = input.fullName
+	if (input.currency) row.currency = input.currency
+	if (input.email) row.email = input.email
+
+	const { error } = await supabase.from("profiles").upsert(row)
 	if (error) throw new Error(error.message)
 }
 
 export async function createTransaction(
 	input: NewTransactionInput,
-	accounts: TracklyAccount[]
+	accounts: TracklyAccount[],
+	categories: TracklyCategory[] = []
 ) {
 	const txnDate = input.date
 		? new Date(`${input.date}T12:00:00`).toISOString()
@@ -354,7 +363,7 @@ export async function createTransaction(
 			: null
 	const shoppingItems = getValidShoppingItems(input.shoppingList ?? [])
 	const shoppingNote = shoppingItems.length
-		? formatShoppingNote(shoppingItems, input.currency)
+		? formatShoppingNote(shoppingItems, input.currency, categories)
 		: null
 	const noteParts = [transferNote, input.note?.trim(), shoppingNote].filter(Boolean)
 	const note = noteParts.length ? noteParts.join("\n\n") : null

@@ -8,6 +8,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select"
+import { PageHeader } from "@/components/page-header"
 import { TransactionList } from "@/components/transaction-list"
 import { useTrackly } from "@/contexts/trackly-provider"
 import type { TracklyTransaction } from "@/types/trackly"
@@ -42,17 +43,17 @@ export function TransactionsPage() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-wrap items-center justify-between gap-3">
-				<div>
-					<h1 className="font-semibold text-2xl tracking-tight">Transactions</h1>
-					<p className="text-muted-foreground text-sm">
-						{filtered.length} of {transactions.length} entries from Supabase.
-					</p>
-				</div>
-				<Button onClick={() => setAddTransactionOpen(true)}>Add transaction</Button>
-			</div>
+			<PageHeader
+				action={
+					<Button onClick={() => setAddTransactionOpen(true)}>
+						Add transaction
+					</Button>
+				}
+				description={`${filtered.length} of ${transactions.length} entries from Supabase.`}
+				title="Transactions"
+			/>
 
-			<div className="flex flex-col gap-2 sm:flex-row">
+			<div className="trackly-glass sticky top-[calc(3.25rem+0.75rem)] z-10 flex flex-col gap-2 rounded-2xl p-3 sm:static sm:flex-row sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
 				<Input
 					className="sm:max-w-sm"
 					onChange={(e) => setQuery(e.target.value)}

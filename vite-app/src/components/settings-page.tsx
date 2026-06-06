@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useTrackly } from "@/contexts/trackly-provider"
+import { dedupeCategories } from "@/lib/categories"
 import { GEMINI_KEY_STORAGE } from "@/lib/gemini"
 import { legacyAuthUrl } from "@/lib/legacy-links"
 import { appRouteHref } from "@/hooks/use-app-route"
@@ -35,9 +36,10 @@ export function SettingsPage() {
 	const [categorySaving, setCategorySaving] = useState(false)
 	const [message, setMessage] = useState<string | null>(null)
 
+	const uniqueCategories = useMemo(() => dedupeCategories(categories), [categories])
 	const customCategories = useMemo(
-		() => categories.filter((c) => !c.is_default),
-		[categories]
+		() => uniqueCategories.filter((c) => !c.is_default),
+		[uniqueCategories]
 	)
 
 	useEffect(() => {
@@ -169,7 +171,7 @@ export function SettingsPage() {
 						</Button>
 					</form>
 					<div className="flex flex-wrap gap-2">
-						{categories.map((c) => (
+						{uniqueCategories.map((c) => (
 							<Badge key={c.id} variant={c.is_default ? "outline" : "secondary"}>
 								{c.name}
 								{c.is_default ? " (default)" : ""}

@@ -15,6 +15,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
+import { PageHeader } from "@/components/page-header"
+import { filterCategoriesByTxnType } from "@/lib/categories"
 import { buildBudgetProgress } from "@/lib/budget-metrics"
 import { useTrackly } from "@/contexts/trackly-provider"
 import { cn } from "@/lib/utils"
@@ -33,7 +35,7 @@ export function BudgetsPage() {
 	const progress = buildBudgetProgress(budgets, transactions, currency)
 
 	const expenseCategories = useMemo(
-		() => categories.filter((c) => c.type !== "income"),
+		() => filterCategoriesByTxnType(categories, "expense"),
 		[categories]
 	)
 
@@ -73,12 +75,10 @@ export function BudgetsPage() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div>
-				<h1 className="font-semibold text-2xl tracking-tight">Budgets</h1>
-				<p className="text-muted-foreground text-sm">
-					Set category limits and track month-to-date spending from Supabase.
-				</p>
-			</div>
+			<PageHeader
+				description="Set category limits and track month-to-date spending from Supabase."
+				title="Budgets"
+			/>
 
 			<Card>
 				<CardHeader>

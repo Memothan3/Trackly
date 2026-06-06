@@ -54,56 +54,78 @@ export function DashboardMobile({
 	onAddTransaction,
 }: DashboardMobileProps) {
 	return (
-		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-5">
 			<DashboardHero />
 			{error ? (
-				<div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+				<div className="trackly-glass rounded-2xl border-destructive/50 px-4 py-3 text-destructive text-sm">
 					<p className="font-medium">Could not load data</p>
 					<p>{error}</p>
 				</div>
 			) : null}
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-				<DashboardStats stats={stats} />
-				<RevenueChart data={incomeChartData} />
-				<RefundReturnRateChart
-					currency={currency}
-					dailyAverage={expenseTrend.dailyAverage}
-					rows={expenseTrend.rows}
-				/>
-				<CategoryRankChart data={categoryMix} />
-			</div>
-			<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-				<div className="lg:col-span-2">
-					<ScheduledPreview currency={currency} scheduled={scheduled} />
+
+			<section className="flex flex-col gap-3">
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+					Overview
+				</h2>
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+					<DashboardStats stats={stats} />
+					<RevenueChart data={incomeChartData} />
+					<RefundReturnRateChart
+						currency={currency}
+						dailyAverage={expenseTrend.dailyAverage}
+						rows={expenseTrend.rows}
+					/>
+					<CategoryRankChart data={categoryMix} />
 				</div>
-				<QuickActions />
-			</div>
-			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-				<AccountsOverview
-					accounts={accounts}
+			</section>
+
+			<section className="flex flex-col gap-3">
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+					Upcoming & actions
+				</h2>
+				<div className="grid grid-cols-1 gap-3">
+					<ScheduledPreview currency={currency} scheduled={scheduled} />
+					<QuickActions />
+				</div>
+			</section>
+
+			<section className="flex flex-col gap-3">
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+					Accounts & budgets
+				</h2>
+				<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+					<AccountsOverview
+						accounts={accounts}
+						currency={currency}
+						onAddAccount={onAddAccount}
+					/>
+					<BudgetOverview
+						budgets={budgets}
+						currency={currency}
+						transactions={transactions}
+					/>
+				</div>
+			</section>
+
+			<section className="flex flex-col gap-3">
+				<div className="flex items-center justify-between gap-2">
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
+						Recent transactions
+					</h2>
+					<button
+						className="text-primary text-xs underline-offset-4 hover:underline"
+						onClick={onAddTransaction}
+						type="button"
+					>
+						Add
+					</button>
+				</div>
+				<TransactionList
 					currency={currency}
-					onAddAccount={onAddAccount}
-				/>
-				<BudgetOverview
-					budgets={budgets}
-					currency={currency}
+					limit={8}
 					transactions={transactions}
 				/>
-			</div>
-			<TransactionList
-				currency={currency}
-				limit={8}
-				transactions={transactions}
-			/>
-			<div className="flex justify-end">
-				<button
-					className="text-primary text-sm underline-offset-4 hover:underline"
-					onClick={onAddTransaction}
-					type="button"
-				>
-					Add transaction
-				</button>
-			</div>
+			</section>
 		</div>
 	);
 }

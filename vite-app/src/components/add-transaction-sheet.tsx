@@ -18,12 +18,14 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet"
-import { ShoppingListEditor } from "@/components/shopping-list-editor"
+import { ExpenseLineItemsEditor } from "@/components/expense-line-items-editor"
+import { filterCategoriesByTxnType } from "@/lib/categories"
 import { useTrackly } from "@/contexts/trackly-provider"
 import {
 	createShoppingRow,
 	getShoppingGrandTotal,
-	isShoppingCategory,
+	getValidShoppingItems,
+	resolvePrimaryCategoryId,
 	type ShoppingListItem,
 } from "@/lib/shopping-list"
 import type { TracklyTransaction } from "@/types/trackly"
@@ -55,27 +57,32 @@ export function AddTransactionSheet() {
 	const [note, setNote] = useState("")
 	const [projectId, setProjectId] = useState("")
 	const [date, setDate] = useState(todayIso())
-	const [shoppingItems, setShoppingItems] = useState<ShoppingListItem[]>([
+	const [lineItems, setLineItems] = useState<ShoppingListItem[]>([
 		createShoppingRow(),
 	])
 	const [submitting, setSubmitting] = useState(false)
 	const [formError, setFormError] = useState<string | null>(null)
 
 	const filteredCategories = useMemo(
-		() =>
-			categories.filter((c) =>
-				type === "income" ? c.type !== "expense" : c.type !== "income"
-			),
+		() => filterCategoriesByTxnType(categories, type),
 		[categories, type]
 	)
 
-	const selectedCategory = useMemo(
-		() => categories.find((c) => c.id === categoryId),
-		[categories, categoryId]
+	const expenseCategories = useMemo(
+		() => filterCategoriesByTxnType(categories, "expense"),
+		[categories]
 	)
 
-	const showShoppingList =
-		type === "expense" && isShoppingCategory(selectedCategory)
+	const showLineItems = type === "expense"
+	const validLineItems = useMemo(
+		() => getValidShoppingItems(lineItems),
+		[lineItems]
+	)
+	const lineItemsTotal = useMemo(
+		() => getShoppingGrandTotal(lineItems),
+		[lineItems]
+	)
+	const amountFromLines = showLineItems && validLineItems.length > 0
 
 	useEffect(() => {
 		if (addTransactionOpen && transactionDraft?.projectId) {
@@ -84,32 +91,23 @@ export function AddTransactionSheet() {
 	}, [addTransactionOpen, transactionDraft])
 
 	useEffect(() => {
-		if (!showShoppingList) return
-		const total = getShoppingGrandTotal(shoppingItems)
-		if (total > 0) {
-			setAmount(String(total))
+		if (!showLineItems) return
+		if (lineItemsTotal > 0) {
+			setAmount(String(lineItemsTotal))
 		}
-	}, [shoppingItems, showShoppingList])
-
-	function resetForm() {
-		setType("expense")
-		setAmount("")
-		setAccountId(accounts[0]?.id ?? "")
-		setToAccountId("")
-		setCategoryId("")
-		setReason("")
-		setNote("")
-		setProjectId("")
-		setDate(todayIso())
-		setShoppingItems([createShoppingRow()])
-		setFormError(null)
-	}
+	}, [lineItemsTotal, showLineItems])
 
 	async function handleSubmit(event: React.FormEvent) {
 		event.preventDefault()
-		const parsedAmount = Number.parseFloat(amount)
+		const parsedAmount = amountFromLines
+			? lineItemsTotal
+			: Number.parseFloat(amount)
 		if (!parsedAmount || parsedAmount <= 0) {
-			setFormError("Enter a valid amount.")
+			setFormError(
+				amountFromLines
+					? "Add at least one line item with a name and amount."
+					: "Enter a valid amount."
+			)
 			return
 		}
 		if (!reason.trim()) {
@@ -133,6 +131,9 @@ export function AddTransactionSheet() {
 
 		const selectedAccount = accounts.find((a) => a.id === accountId)
 		const txnCurrency = (selectedAccount?.currency ?? currency).toUpperCase()
+		const resolvedCategoryId = amountFromLines
+			? resolvePrimaryCategoryId(lineItems)
+			: categoryId || null
 
 		setSubmitting(true)
 		setFormError(null)
@@ -140,7 +141,7 @@ export function AddTransactionSheet() {
 			await addTransaction({
 				accountId,
 				toAccountId: type === "transfer" ? toAccountId : undefined,
-				categoryId: categoryId || null,
+				categoryId: resolvedCategoryId,
 				type,
 				amount: parsedAmount,
 				currency: txnCurrency,
@@ -148,7 +149,7 @@ export function AddTransactionSheet() {
 				note: note.trim() || null,
 				projectId: projectId || null,
 				date,
-				shoppingList: showShoppingList ? shoppingItems : undefined,
+				shoppingList: amountFromLines ? lineItems : undefined,
 			})
 			setAddTransactionOpen(false)
 			resetForm()
@@ -157,6 +158,20 @@ export function AddTransactionSheet() {
 		} finally {
 			setSubmitting(false)
 		}
+	}
+
+	function resetForm() {
+		setType("expense")
+		setAmount("")
+		setAccountId(accounts[0]?.id ?? "")
+		setToAccountId("")
+		setCategoryId("")
+		setReason("")
+		setNote("")
+		setProjectId("")
+		setDate(todayIso())
+		setLineItems([createShoppingRow()])
+		setFormError(null)
 	}
 
 	return (
@@ -172,21 +187,24 @@ export function AddTransactionSheet() {
 			}}
 			open={addTransactionOpen}
 		>
-			<SheetContent className="flex flex-col gap-0 overflow-y-auto sm:max-w-md">
-				<SheetHeader>
+			<SheetContent className="trackly-glass flex w-full flex-col gap-0 overflow-y-auto border-white/12 bg-popover/75 p-0 backdrop-blur-2xl sm:max-w-lg">
+				<SheetHeader className="border-white/10 border-b px-4 py-4 sm:px-6">
 					<SheetTitle>Add transaction</SheetTitle>
 					<SheetDescription>
 						Log income, expense, or transfer. Balances update automatically.
 					</SheetDescription>
 				</SheetHeader>
-				<form className="flex flex-1 flex-col gap-4 px-4 pb-4" onSubmit={handleSubmit}>
+				<form
+					className="flex flex-1 flex-col gap-4 px-4 py-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:px-6 sm:pb-6"
+					onSubmit={handleSubmit}
+				>
 					<div className="flex flex-col gap-2">
 						<span className="font-medium text-sm">Type</span>
 						<Select
 							onValueChange={(v) => setType(v as TracklyTransaction["type"])}
 							value={type}
 						>
-							<SelectTrigger>
+							<SelectTrigger className="w-full">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
@@ -198,11 +216,21 @@ export function AddTransactionSheet() {
 							</SelectContent>
 						</Select>
 					</div>
-					{type !== "transfer" ? (
+
+					{showLineItems ? (
+						<ExpenseLineItemsEditor
+							categories={expenseCategories}
+							currency={currency}
+							items={lineItems}
+							onChange={setLineItems}
+						/>
+					) : null}
+
+					{type !== "transfer" && !showLineItems ? (
 						<div className="flex flex-col gap-2">
 							<span className="font-medium text-sm">Category</span>
 							<Select onValueChange={setCategoryId} value={categoryId}>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Optional category" />
 								</SelectTrigger>
 								<SelectContent>
@@ -215,45 +243,57 @@ export function AddTransactionSheet() {
 							</Select>
 						</div>
 					) : null}
-					{showShoppingList ? (
-						<ShoppingListEditor
-							currency={currency}
-							items={shoppingItems}
-							onChange={setShoppingItems}
-						/>
-					) : null}
+
 					<div className="flex flex-col gap-2">
-						<span className="font-medium text-sm">Amount</span>
+						<span className="font-medium text-sm">
+							{amountFromLines ? "Total (from lines)" : "Amount"}
+						</span>
 						<Input
+							className={amountFromLines ? "bg-muted/40" : undefined}
+							disabled={amountFromLines}
 							min="0"
 							onChange={(e) => setAmount(e.target.value)}
 							placeholder="0.00"
-							required
+							readOnly={amountFromLines}
+							required={!amountFromLines}
 							step="0.01"
 							type="number"
 							value={amount}
 						/>
 					</div>
-					<div className="flex flex-col gap-2">
-						<span className="font-medium text-sm">Account</span>
-						<Select onValueChange={setAccountId} value={accountId}>
-							<SelectTrigger>
-								<SelectValue placeholder="Select account" />
-							</SelectTrigger>
-							<SelectContent>
-								{accounts.map((a) => (
-									<SelectItem key={a.id} value={a.id}>
-										{a.name} ({a.type})
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+
+					<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+						<div className="flex flex-col gap-2">
+							<span className="font-medium text-sm">Account</span>
+							<Select onValueChange={setAccountId} value={accountId}>
+								<SelectTrigger className="w-full">
+									<SelectValue placeholder="Select account" />
+								</SelectTrigger>
+								<SelectContent>
+									{accounts.map((a) => (
+										<SelectItem key={a.id} value={a.id}>
+											{a.name} ({a.type})
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="flex flex-col gap-2">
+							<span className="font-medium text-sm">Date</span>
+							<Input
+								onChange={(e) => setDate(e.target.value)}
+								required
+								type="date"
+								value={date}
+							/>
+						</div>
 					</div>
+
 					{type === "transfer" ? (
 						<div className="flex flex-col gap-2">
 							<span className="font-medium text-sm">To account</span>
 							<Select onValueChange={setToAccountId} value={toAccountId}>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Destination account" />
 								</SelectTrigger>
 								<SelectContent>
@@ -268,6 +308,7 @@ export function AddTransactionSheet() {
 							</Select>
 						</div>
 					) : null}
+
 					<div className="flex flex-col gap-2">
 						<span className="font-medium text-sm">Reason</span>
 						<Input
@@ -277,15 +318,7 @@ export function AddTransactionSheet() {
 							value={reason}
 						/>
 					</div>
-					<div className="flex flex-col gap-2">
-						<span className="font-medium text-sm">Date</span>
-						<Input
-							onChange={(e) => setDate(e.target.value)}
-							required
-							type="date"
-							value={date}
-						/>
-					</div>
+
 					<div className="flex flex-col gap-2">
 						<span className="font-medium text-sm">Note</span>
 						<Input
@@ -294,6 +327,7 @@ export function AddTransactionSheet() {
 							value={note}
 						/>
 					</div>
+
 					{projects.length ? (
 						<div className="flex flex-col gap-2">
 							<span className="font-medium text-sm">Project</span>
@@ -303,7 +337,7 @@ export function AddTransactionSheet() {
 								}
 								value={projectId || "__none__"}
 							>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Optional project" />
 								</SelectTrigger>
 								<SelectContent>
@@ -317,11 +351,17 @@ export function AddTransactionSheet() {
 							</Select>
 						</div>
 					) : null}
+
 					{formError ? (
 						<p className="text-destructive text-sm">{formError}</p>
 					) : null}
-					<SheetFooter className="px-0">
-						<Button disabled={submitting || !accounts.length} type="submit">
+
+					<SheetFooter className="fixed inset-x-0 bottom-0 z-10 border-white/10 border-t bg-popover/90 px-4 py-3 backdrop-blur-xl sm:static sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
+						<Button
+							className="w-full sm:w-auto"
+							disabled={submitting || !accounts.length}
+							type="submit"
+						>
 							{submitting ? "Saving…" : "Save transaction"}
 						</Button>
 					</SheetFooter>

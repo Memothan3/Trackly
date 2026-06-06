@@ -54,21 +54,21 @@
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
+    --card: oklch(1 0 0 / 72%);
     --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
+    --popover: oklch(1 0 0 / 82%);
     --popover-foreground: oklch(0.145 0 0);
     --primary: oklch(0.555 0.163 48.998);
     --primary-foreground: oklch(0.987 0.022 95.277);
     --secondary: oklch(0.967 0.001 286.375);
     --secondary-foreground: oklch(0.21 0.006 285.885);
-    --muted: oklch(0.97 0 0);
+    --muted: oklch(0.97 0 0 / 65%);
     --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
+    --accent: oklch(0.97 0 0 / 70%);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
+    --border: oklch(0 0 0 / 8%);
+    --input: oklch(1 0 0 / 55%);
     --ring: oklch(0.708 0 0);
     --chart-1: oklch(0.808 0.114 19.571);
     --chart-2: oklch(0.637 0.237 25.331);
@@ -76,7 +76,7 @@
     --chart-4: oklch(0.505 0.213 27.518);
     --chart-5: oklch(0.444 0.177 26.899);
     --radius: 0.875rem;
-    --sidebar: oklch(0.985 0 0);
+    --sidebar: oklch(0.985 0 0 / 78%);
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.666 0.179 58.318);
     --sidebar-primary-foreground: oklch(0.987 0.022 95.277);
@@ -89,28 +89,28 @@
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
+    --card: oklch(0.205 0 0 / 58%);
     --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
+    --popover: oklch(0.205 0 0 / 72%);
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.473 0.137 46.201);
     --primary-foreground: oklch(0.987 0.022 95.277);
     --secondary: oklch(0.274 0.006 286.033);
     --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
+    --muted: oklch(0.269 0 0 / 55%);
     --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
+    --accent: oklch(0.269 0 0 / 60%);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
+    --border: oklch(1 0 0 / 12%);
+    --input: oklch(1 0 0 / 8%);
     --ring: oklch(0.556 0 0);
     --chart-1: oklch(0.808 0.114 19.571);
     --chart-2: oklch(0.637 0.237 25.331);
     --chart-3: oklch(0.577 0.245 27.325);
     --chart-4: oklch(0.505 0.213 27.518);
     --chart-5: oklch(0.444 0.177 26.899);
-    --sidebar: oklch(0.205 0 0);
+    --sidebar: oklch(0.205 0 0 / 65%);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.769 0.188 70.08);
     --sidebar-primary-foreground: oklch(0.279 0.077 45.635);
@@ -151,10 +151,33 @@
 
 @layer utilities {
   .trackly-glass {
-    @apply border border-white/10 bg-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150;
+    border: 1px solid oklch(1 0 0 / 14%);
+    background: color-mix(in oklab, var(--card) 88%, transparent);
+    box-shadow:
+      0 8px 32px oklch(0 0 0 / 22%),
+      inset 0 1px 0 oklch(1 0 0 / 16%);
+    backdrop-filter: blur(24px) saturate(160%);
   }
-  .dark .trackly-glass {
-    @apply border-white/12 bg-white/[0.055];
+  .light .trackly-glass,
+  :root:not(.dark) .trackly-glass {
+    border-color: oklch(1 0 0 / 55%);
+    background: color-mix(in oklab, var(--card) 92%, transparent);
+    box-shadow:
+      0 8px 32px oklch(0 0 0 / 8%),
+      inset 0 1px 0 oklch(1 0 0 / 80%);
+  }
+
+  .trackly-glass-sm {
+    border: 1px solid oklch(1 0 0 / 10%);
+    background: color-mix(in oklab, var(--card) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: inset 0 1px 0 oklch(1 0 0 / 10%);
+  }
+
+  .light .trackly-glass-sm,
+  :root:not(.dark) .trackly-glass-sm {
+    border-color: oklch(0 0 0 / 8%);
+    background: color-mix(in oklab, var(--card) 86%, transparent);
   }
 }
 
@@ -380,7 +403,8 @@
   mix-blend-mode: multiply;
 }
 
-.trackly-app-shell [data-slot="sidebar-inner"] {
+.trackly-app-shell [data-slot="sidebar-inner"],
+.trackly-app-shell [data-mobile="true"] {
   border-color: oklch(1 0 0 / 12%);
   background: color-mix(in oklab, var(--sidebar) 72%, transparent);
   backdrop-filter: blur(20px) saturate(140%);
