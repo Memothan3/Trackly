@@ -1,5 +1,4 @@
-import { LogoIcon } from "@/components/logo"
-import { tracklyConfig } from "@/lib/config"
+import { brandAssets } from "@/lib/brand-assets"
 import { cn } from "@/lib/utils"
 
 export function TracklyBrand({
@@ -11,14 +10,27 @@ export function TracklyBrand({
 	iconClassName?: string
 	showName?: boolean
 }) {
+	if (showName) {
+		return (
+			<img
+				alt="Trackly"
+				className={cn(
+					"h-9 w-auto max-w-[180px] object-contain object-left",
+					className
+				)}
+				decoding="async"
+				src={brandAssets.full}
+			/>
+		)
+	}
+
 	return (
-		<div className={cn("flex items-center gap-2 text-foreground", className)}>
-			<LogoIcon className={cn("size-8 shrink-0 text-primary", iconClassName)} />
-			{showName ? (
-				<span className="font-semibold text-lg tracking-tight">
-					{tracklyConfig.appName}
-				</span>
-			) : null}
-		</div>
+		<img
+			alt=""
+			aria-hidden
+			className={cn("size-8 shrink-0 object-contain", iconClassName, className)}
+			decoding="async"
+			src={brandAssets.icon}
+		/>
 	)
 }

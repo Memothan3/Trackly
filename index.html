@@ -8,6 +8,7 @@
   <meta name="description" content="Track accounts, budgets, transactions, receipts, and AI insights in one calm, powerful place.">
   <link rel="icon" type="image/png" href="logo-icon.png">
   <link rel="apple-touch-icon" href="logo-icon.png">
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Nunito+Sans:ital,opsz,wght@0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,500&family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -23,7 +24,9 @@
   </div>
 
   <nav class="trackly-nav glass" id="navbar" data-trackly-nav>
-    <a href="index.html" class="nav-logo font-brand">Track<span>ly</span></a>
+    <a href="index.html" class="nav-logo" aria-label="Trackly home">
+      <img src="logo-full.png" alt="Trackly" width="132" height="32" decoding="async" />
+    </a>
     <div class="nav-links" aria-label="Main navigation">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>

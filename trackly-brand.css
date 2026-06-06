@@ -266,15 +266,21 @@ body::before {
 }
 
 .nav-logo {
-  font-family: var(--font-brand);
-  font-size: 1.25rem;
-  color: var(--text);
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: 0.02em;
   flex-shrink: 0;
+  line-height: 0;
 }
 
-.nav-logo span,
+.nav-logo img {
+  display: block;
+  height: 32px;
+  width: auto;
+  max-width: min(40vw, 160px);
+  object-fit: contain;
+}
+
 .logo span {
   color: var(--accent-foreground);
   font-style: italic;

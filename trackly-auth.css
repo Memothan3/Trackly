@@ -72,17 +72,32 @@ body.auth-page {
 
 .auth-nav-logo {
   justify-self: center;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--text);
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: -0.02em;
+  line-height: 0;
 }
 
-.auth-nav-logo span {
-  color: var(--primary-muted);
-  font-style: italic;
-  font-weight: 500;
+.auth-nav-logo img {
+  display: block;
+  height: 28px;
+  width: auto;
+  max-width: min(42vw, 150px);
+  object-fit: contain;
+}
+
+.auth-story-logo {
+  display: inline-flex;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.auth-story-logo img {
+  display: block;
+  height: 36px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
 }
 
 .auth-nav-actions {

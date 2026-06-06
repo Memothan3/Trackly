@@ -27,9 +27,11 @@ export function AppSidebar({ route }: { route: AppRoute }) {
 		<Sidebar collapsible="icon" variant="floating">
 			<SidebarHeader className="h-14 justify-center">
 				<SidebarMenuButton asChild>
-					<a href={appRouteHref("dashboard")}>
-						<LogoIcon />
-						<span className="font-medium">Trackly</span>
+					<a className="gap-2" href={appRouteHref("dashboard")}>
+						<LogoIcon className="size-7" />
+						<span className="font-medium group-data-[collapsible=icon]:hidden">
+							Trackly
+						</span>
 					</a>
 				</SidebarMenuButton>
 			</SidebarHeader>
