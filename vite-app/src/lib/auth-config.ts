@@ -1,5 +1,15 @@
 import { tracklyConfig } from "@/lib/config"
 
+/**
+ * OAuth redirect URI for Apple Sign In (and other Firebase OAuth providers).
+ * Register this exact URL in Apple Developer → Identifiers → Services ID →
+ * Sign in with Apple → Return URLs.
+ */
+export function getFirebaseOAuthHandlerUrl() {
+	const domain = tracklyConfig.firebase.authDomain.replace(/\/$/, "")
+	return `https://${domain}/__/auth/handler`
+}
+
 export function getAuthContinueUrl() {
 	if (typeof window === "undefined") {
 		return "/app/"
