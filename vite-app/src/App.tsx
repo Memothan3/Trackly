@@ -59,26 +59,25 @@ function AppChrome({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function canEnterDashboard(
-	user: ReturnType<typeof useTrackly>["user"],
-	profile: ReturnType<typeof useTrackly>["profile"]
-) {
-	if (!user || !hasAppAccess(user)) return false
-	// Signed-in OAuth/email users without a loaded profile row see profile setup.
-	return Boolean(profile)
+function canEnterDashboard(user: ReturnType<typeof useTrackly>["user"]) {
+	return Boolean(user && hasAppAccess(user))
 }
 
 function TracklyApp() {
 	const { route } = useAppRoute();
-	const { user, profile, loading, oauthBootstrapping } = useTrackly();
+	const { user, loading, oauthBootstrapping, error } = useTrackly();
+	const booting = (loading || oauthBootstrapping) && !user;
 
 	return (
 		<AppChrome>
-			{loading || oauthBootstrapping ? (
+			{booting ? (
 				<div className="p-6">
 					<DashboardSkeleton />
+					{error ? (
+						<p className="mt-4 text-center text-destructive text-sm">{error}</p>
+					) : null}
 				</div>
-			) : !canEnterDashboard(user, profile) ? (
+			) : !canEnterDashboard(user) ? (
 				<AuthGate />
 			) : (
 				<AppShell route={route}>

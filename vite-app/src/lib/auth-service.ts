@@ -146,12 +146,17 @@ export async function isUsernameAvailable(username: string) {
 	}
 }
 
+function profileDb() {
+	return firebaseAuth.currentUser ? supabase : authSupabase
+}
+
 export async function syncUserProfile(
 	user: User,
 	input: ProfileSyncInput = {}
 ): Promise<ProfileSyncResult> {
 	const email = user.email ?? undefined
-	const { data: existing, error: checkError } = await authSupabase
+	const db = profileDb()
+	const { data: existing, error: checkError } = await db
 		.from("profiles")
 		.select("id, username, email")
 		.eq("id", user.uid)
@@ -172,10 +177,7 @@ export async function syncUserProfile(
 		if (input.fullName) patch.full_name = input.fullName
 		if (input.currency) patch.currency = input.currency
 
-		const { error } = await authSupabase
-			.from("profiles")
-			.update(patch)
-			.eq("id", user.uid)
+		const { error } = await db.from("profiles").update(patch).eq("id", user.uid)
 
 		if (error) {
 			return { success: false, message: error.message }
@@ -203,7 +205,7 @@ export async function syncUserProfile(
 		updated_at: new Date().toISOString(),
 	}
 
-	const { error } = await authSupabase.from("profiles").insert(profileData)
+	const { error } = await db.from("profiles").insert(profileData)
 	if (error) {
 		if (
 			error.message.includes("duplicate") ||
@@ -373,10 +375,7 @@ export async function consumeOAuthRedirectResult() {
 				return user
 			}
 
-			if (!redirectAttempted) {
-				clearOAuthRedirectMarker()
-			}
-
+			clearOAuthRedirectMarker()
 			return null
 		})()
 	}

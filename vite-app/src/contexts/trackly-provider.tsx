@@ -18,7 +18,6 @@ import {
 import {
 	completeOAuthSignIn,
 	consumeOAuthRedirectResult,
-	hadOAuthRedirectAttempt,
 	syncUserProfile,
 } from "@/lib/auth-service"
 import { tracklyConfig } from "@/lib/config"
@@ -189,10 +188,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		let active = true
-		let redirectConsumed = false
-		const redirectWasPending = hadOAuthRedirectAttempt()
-		let expectingRedirectUser = redirectWasPending
-		let pendingAuthUser: User | null | undefined
+
+		const endBootstrap = () => {
+			if (active) setOauthBootstrapping(false)
+		}
 
 		const clearSession = () => {
 			if (!active) return
@@ -207,14 +206,12 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			setReceipts([])
 			setProjects([])
 			setLoading(false)
-			setOauthBootstrapping(false)
+			endBootstrap()
 		}
 
 		const hydrateUser = async (firebaseUser: User) => {
 			if (!active || hydratingRef.current) return
-
-			const isNewSession = loadedUidRef.current !== firebaseUser.uid
-			if (!isNewSession) {
+			if (loadedUidRef.current === firebaseUser.uid) {
 				setUser(firebaseUser)
 				return
 			}
@@ -230,8 +227,17 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				let data = await loadTracklyBundle(firebaseUser.uid)
 
 				if (!data.profile) {
-					await syncUserProfile(firebaseUser)
+					const sync = await syncUserProfile(firebaseUser)
+					if (!sync.success) {
+						throw new Error(sync.message)
+					}
 					data = await loadTracklyBundle(firebaseUser.uid)
+				}
+
+				if (!data.profile) {
+					throw new Error(
+						"Signed in, but your Trackly profile could not be loaded. Try refresh, or check Firebase + Supabase auth setup."
+					)
 				}
 
 				applyBundle(data)
@@ -244,71 +250,72 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				hydratingRef.current = false
 				if (active) {
 					setLoading(false)
-					setOauthBootstrapping(false)
+					endBootstrap()
 				}
 			}
 		}
 
-		const resolveSignedInUser = () => firebaseAuth.currentUser
+		const bootstrap = async () => {
+			try {
+				const redirectUser = await consumeOAuthRedirectResult()
+				const sessionUser = redirectUser ?? firebaseAuth.currentUser
+				if (!sessionUser) return
 
-		const processAuthUser = async (firebaseUser: User | null) => {
-			if (!active || !redirectConsumed) return
-
-			const resolvedUser = firebaseUser ?? resolveSignedInUser()
-			if (!resolvedUser) {
-				if (expectingRedirectUser || redirectWasPending) return
-				clearSession()
-				return
+				try {
+					await completeOAuthSignIn(sessionUser)
+				} catch {
+					// Profile setup can finish inside the app.
+				}
+				await hydrateUser(sessionUser)
+			} catch (err) {
+				if (!active) return
+				setError(
+					err instanceof Error ? err.message : "Authentication failed"
+				)
+				setLoading(false)
+				endBootstrap()
 			}
-
-			expectingRedirectUser = false
-			await hydrateUser(resolvedUser)
 		}
 
 		const unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
-			if (!redirectConsumed) {
-				pendingAuthUser = firebaseUser
-				return
-			}
-			void processAuthUser(firebaseUser)
-		})
+			if (!active) return
 
-		void (async () => {
-			try {
-				const redirectUser = await consumeOAuthRedirectResult()
-				if (!active) return
-
-				const sessionUser = redirectUser ?? resolveSignedInUser()
-				expectingRedirectUser = redirectWasPending || Boolean(redirectUser)
-				if (sessionUser) {
-					await completeOAuthSignIn(sessionUser)
-				}
-			} catch {
-				// AuthPage surfaces profile setup and provider errors.
-			} finally {
-				if (!active) return
-				redirectConsumed = true
-
-				if (pendingAuthUser !== undefined) {
-					await processAuthUser(pendingAuthUser)
-					pendingAuthUser = undefined
-				} else {
-					await processAuthUser(resolveSignedInUser())
-				}
-
-				if (
-					active &&
-					!resolveSignedInUser() &&
-					!expectingRedirectUser &&
-					!redirectWasPending
-				) {
+			if (!firebaseUser) {
+				if (loadedUidRef.current) {
 					clearSession()
 				}
+				return
 			}
-		})()
+
+			if (loadedUidRef.current !== firebaseUser.uid) {
+				void hydrateUser(firebaseUser)
+				return
+			}
+
+			setUser(firebaseUser)
+		})
+
+		void bootstrap().finally(() => {
+			if (!active) return
+			if (!firebaseAuth.currentUser) {
+				setLoading(false)
+				endBootstrap()
+			}
+		})
+
+		const timeout = window.setTimeout(() => {
+			if (!active) return
+			endBootstrap()
+			setLoading(false)
+			const current = firebaseAuth.currentUser
+			if (current && loadedUidRef.current !== current.uid) {
+				void hydrateUser(current)
+			}
+		}, 6000)
 
 		return () => {
 			active = false
+			window.clearTimeout(timeout)
 			unsubscribe()
 		}
 	}, [applyBundle])
