@@ -20,12 +20,15 @@ export function tracklyDashboardUrl(page?: string) {
 	return `${base}#/${encodeURIComponent(page)}`
 }
 
+export function appUrl(page?: string) {
+	return tracklyDashboardUrl(page)
+}
+
+/** @deprecated Use appUrl() — classic HTML dashboards were retired. */
 export function classicDashboardUrl(page?: string) {
-	const origin = getLegacyOrigin()
-	const base = `${origin}/trackly_dashboard.html?classic=1`
-	return page ? `${base}&page=${encodeURIComponent(page)}` : base
+	return tracklyDashboardUrl(page)
 }
 
 export function legacyAuthUrl() {
-	return `${getLegacyOrigin()}/app/`
+	return tracklyDashboardUrl()
 }

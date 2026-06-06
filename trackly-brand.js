@@ -68,8 +68,6 @@
   }
 
   function getDashboardUrl() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("classic") === "1") return "trackly_dashboard.html";
     return window.location.origin + "/app/";
   }
 
@@ -87,10 +85,10 @@
     getDashboardUrl,
     getAppPreviewUrl,
     routes: {
-      home: "index.html",
-      auth: "auth_fixed.html",
-      signIn: "auth_fixed.html",
-      signUp: "auth_fixed.html?tab=signup",
+      home: "/",
+      auth: "/app/",
+      signIn: "/app/",
+      signUp: "/app/",
     },
   };
 

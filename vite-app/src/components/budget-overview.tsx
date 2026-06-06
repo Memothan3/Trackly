@@ -38,8 +38,8 @@ export function BudgetOverview({
 			<CardContent className="flex flex-col gap-4">
 				{!progress.length ? (
 					<p className="text-muted-foreground text-sm">
-						No active budgets. Create budgets in Supabase or the classic dashboard
-						to track limits here.
+						No active budgets yet. Add one from the Budgets page to track limits
+						here.
 					</p>
 				) : (
 					progress.map((row) => (

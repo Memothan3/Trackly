@@ -70,8 +70,8 @@ export function AdminPage() {
 				<div>
 					<h1 className="font-semibold text-2xl tracking-tight">Admin</h1>
 					<p className="text-muted-foreground text-sm">
-						User directory from Supabase. Full admin tools remain on the classic
-						dashboard.
+						User directory from Supabase. Manage profiles and review account
+						activity from here.
 					</p>
 				</div>
 				<Badge variant="destructive">Admin mode</Badge>
@@ -79,9 +79,9 @@ export function AdminPage() {
 
 			<Card>
 				<CardHeader>
-					<CardTitle>Classic admin tools</CardTitle>
+					<CardTitle>Quick links</CardTitle>
 					<CardDescription>
-						Edit users, export all data, and bulk operations
+						Jump back to the main dashboard or export data
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

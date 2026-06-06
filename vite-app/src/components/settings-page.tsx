@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/badge"
 import { useTrackly } from "@/contexts/trackly-provider"
 import { dedupeCategories } from "@/lib/categories"
 import { GEMINI_KEY_STORAGE } from "@/lib/gemini"
-import { legacyAuthUrl } from "@/lib/legacy-links"
 import { appRouteHref } from "@/hooks/use-app-route"
 
 export function SettingsPage() {
@@ -196,9 +195,6 @@ export function SettingsPage() {
 					</Button>
 					<Button onClick={() => void signOut()} variant="outline">
 						Sign out
-					</Button>
-					<Button asChild variant="ghost">
-						<a href={legacyAuthUrl()}>Switch account</a>
 					</Button>
 				</CardContent>
 			</Card>

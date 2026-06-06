@@ -17,29 +17,33 @@ A modern, responsive web application for tracking personal finances with AI-powe
 
 ## 🚀 Quick Start
 
-### Option 1: GitHub Pages (Recommended)
+### Production (Vercel)
 
-1. **Fork this repository**
-2. **Enable GitHub Pages**
-   - Go to Settings → Pages
-   - Source: Deploy from branch `main`
-   - Your app will be live at: `https://yourusername.github.io/trackly/`
+- **Landing:** `/` — marketing site
+- **App:** `/app/` — React dashboard + auth (Google, Apple, email)
+- Live: https://trackly-neon.vercel.app/
 
-### Option 2: Local Development
+### Local development
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/trackly.git
-   cd trackly
-   ```
+```bash
+cd vite-app
+npm install
+npm run dev
+```
 
-2. **Start local server**
-   ```bash
-   python -m http.server 8000
-   ```
+Open http://localhost:5173/app/
 
-3. **Open in browser**
-   - http://localhost:8000/
+Or run the full stack from the repo root: `npm run netrooo`
+
+## 📁 Project layout
+
+| Path | Purpose |
+|------|---------|
+| `vite-app/` | React app (dashboard + auth) served at `/app/` |
+| `index.html` | Marketing landing page at `/` |
+| `legacy/` | Archived classic HTML (not linked in production) |
+| `docs/` | Internal implementation guides |
+| `scripts/` | Vercel build + dev tooling |
 
 ## 🔧 Configuration
 
