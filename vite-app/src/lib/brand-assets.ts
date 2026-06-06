@@ -3,7 +3,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 	: `${import.meta.env.BASE_URL}/`
 
 /** Bump when logo PNGs change so browsers bypass SW/asset cache. */
-export const BRAND_LOGO_VERSION = "20260606-v2"
+export const BRAND_LOGO_VERSION = "20260606-v3"
 
 function brandAsset(path: string) {
 	return `${base}${path}?v=${BRAND_LOGO_VERSION}`
