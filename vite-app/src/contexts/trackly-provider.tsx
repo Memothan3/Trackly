@@ -17,6 +17,7 @@ import {
 import {
 	completeOAuthSignIn,
 	consumeOAuthRedirectResult,
+	hadOAuthRedirectAttempt,
 	syncUserProfile,
 } from "@/lib/auth-service"
 import { tracklyConfig } from "@/lib/config"
@@ -186,7 +187,8 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		let active = true
 		let redirectConsumed = false
-		let expectingRedirectUser = false
+		const redirectWasPending = hadOAuthRedirectAttempt()
+		let expectingRedirectUser = redirectWasPending
 		let pendingAuthUser: User | null | undefined
 
 		const clearSession = () => {
@@ -233,17 +235,20 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			}
 		}
 
+		const resolveSignedInUser = () => firebaseAuth.currentUser
+
 		const processAuthUser = async (firebaseUser: User | null) => {
 			if (!active || !redirectConsumed) return
 
-			if (!firebaseUser) {
-				if (expectingRedirectUser) return
+			const resolvedUser = firebaseUser ?? resolveSignedInUser()
+			if (!resolvedUser) {
+				if (expectingRedirectUser || redirectWasPending) return
 				clearSession()
 				return
 			}
 
 			expectingRedirectUser = false
-			await hydrateUser(firebaseUser)
+			await hydrateUser(resolvedUser)
 		}
 
 		const unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
@@ -259,9 +264,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				const redirectUser = await consumeOAuthRedirectResult()
 				if (!active) return
 
-				expectingRedirectUser = Boolean(redirectUser)
-				if (redirectUser) {
-					await completeOAuthSignIn(redirectUser)
+				const sessionUser = redirectUser ?? resolveSignedInUser()
+				expectingRedirectUser = redirectWasPending || Boolean(redirectUser)
+				if (sessionUser) {
+					await completeOAuthSignIn(sessionUser)
 				}
 			} catch {
 				// AuthPage surfaces profile setup and provider errors.
@@ -272,9 +278,16 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				if (pendingAuthUser !== undefined) {
 					await processAuthUser(pendingAuthUser)
 					pendingAuthUser = undefined
-				} else if (firebaseAuth.currentUser) {
-					await processAuthUser(firebaseAuth.currentUser)
-				} else if (!expectingRedirectUser) {
+				} else {
+					await processAuthUser(resolveSignedInUser())
+				}
+
+				if (
+					active &&
+					!resolveSignedInUser() &&
+					!expectingRedirectUser &&
+					!redirectWasPending
+				) {
 					clearSession()
 				}
 			}

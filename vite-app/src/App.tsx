@@ -63,7 +63,9 @@ function canEnterDashboard(
 	user: ReturnType<typeof useTrackly>["user"],
 	profile: ReturnType<typeof useTrackly>["profile"]
 ) {
-	return Boolean(user && hasAppAccess(user) && profile);
+	if (!user || !hasAppAccess(user)) return false
+	// Signed-in OAuth/email users without a loaded profile row see profile setup.
+	return Boolean(profile)
 }
 
 function TracklyApp() {

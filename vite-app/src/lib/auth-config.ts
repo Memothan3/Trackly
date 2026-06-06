@@ -31,16 +31,30 @@ export function isAdminEmail(email: string | null | undefined) {
 }
 
 export function isOAuthUser(user: User) {
-	return user.providerData.some(
-		(provider) =>
-			provider.providerId === "google.com" ||
-			provider.providerId === "apple.com"
+	if (
+		user.providerData.some(
+			(provider) =>
+				provider.providerId === "google.com" ||
+				provider.providerId === "apple.com"
+		)
+	) {
+		return true
+	}
+
+	// Provider metadata can lag right after redirect sign-in.
+	const usesPasswordProvider = user.providerData.some(
+		(provider) => provider.providerId === "password"
 	)
+	return Boolean(user.email?.includes("@")) && !usesPasswordProvider
 }
 
 export function hasAppAccess(user: User | null | undefined) {
 	if (!user) return false
-	return user.emailVerified || isAdminEmail(user.email) || isOAuthUser(user)
+	return (
+		user.emailVerified ||
+		isAdminEmail(user.email) ||
+		isOAuthUser(user)
+	)
 }
 
 export const USERNAME_PATTERN = /^[a-z0-9_]+$/

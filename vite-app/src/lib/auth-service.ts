@@ -278,12 +278,7 @@ const OAUTH_REDIRECT_KEY = "trackly-oauth-redirect"
 
 function shouldPreferOAuthRedirect() {
 	if (typeof window === "undefined") return false
-	const ua = navigator.userAgent
-	const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(ua)
-	const isSafari =
-		/iPhone|iPad|iPod/i.test(ua) ||
-		(/^((?!chrome|android).)*safari/i.test(ua) && !/CriOS|FxiOS/i.test(ua))
-	return isMobile || isSafari
+	return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)
 }
 
 function markOAuthRedirectPending() {
@@ -343,23 +338,46 @@ export async function signInWithApple() {
 
 let oauthRedirectResultPromise: Promise<User | null> | null = null
 
+function clearOAuthRedirectMarker() {
+	if (typeof window !== "undefined") {
+		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
+	}
+}
+
+function cleanOAuthReturnUrl() {
+	if (typeof window === "undefined") return
+	const { origin, pathname, hash } = window.location
+	const cleanedHash = hash.split("?")[0] || ""
+	window.history.replaceState({}, document.title, `${origin}${pathname}${cleanedHash}`)
+}
+
+export function hadOAuthRedirectAttempt() {
+	return hasPendingOAuthRedirect()
+}
+
 export async function consumeOAuthRedirectResult() {
 	if (!oauthRedirectResultPromise) {
 		oauthRedirectResultPromise = (async () => {
+			const redirectAttempted = hadOAuthRedirectAttempt()
 			const result = await getRedirectResult(firebaseAuth)
-			if (typeof window !== "undefined") {
-				sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
-				if (result?.user) {
-					const { origin, pathname, hash } = window.location
-					const cleanedHash = hash.split("?")[0] || ""
-					window.history.replaceState(
-						{},
-						document.title,
-						`${origin}${pathname}${cleanedHash}`
-					)
-				}
+			let user = result?.user ?? firebaseAuth.currentUser
+
+			if (!user && redirectAttempted) {
+				await new Promise((resolve) => window.setTimeout(resolve, 400))
+				user = firebaseAuth.currentUser
 			}
-			return result?.user ?? null
+
+			if (user) {
+				clearOAuthRedirectMarker()
+				cleanOAuthReturnUrl()
+				return user
+			}
+
+			if (!redirectAttempted) {
+				clearOAuthRedirectMarker()
+			}
+
+			return null
 		})()
 	}
 	return oauthRedirectResultPromise
