@@ -12,19 +12,17 @@ const out = path.join(root, "output")
 
 const staticRootFiles = new Set([
 	"index.html",
-	"auth_fixed.html",
-	"trackly_dashboard.html",
 	"manifest.json",
 	"config.js",
 	"trackly-brand.js",
 	"trackly-brand.css",
-	"trackly-auth.css",
-	"trackly-index.css",
-	"trackly-dashboard-brand.css",
+	"trackly-landing.css",
 	"logo-icon.png",
 	"logo-full.png",
 	"service-worker.js",
 ])
+
+const staticDirs = ["legacy"]
 
 const staticExtensions = new Set([
 	".html",
@@ -103,8 +101,20 @@ for (const file of staticRootFiles) {
 	if (fs.existsSync(src)) copyFile(src, path.join(out, file))
 }
 
+for (const dir of staticDirs) {
+	const src = path.join(root, dir)
+	if (fs.existsSync(src)) copyDir(src, path.join(out, dir))
+}
+
 for (const name of fs.readdirSync(root)) {
-	if (name.startsWith(".") || name === "vite-app" || name === "trackly-ui" || name === "output") {
+	if (
+		name.startsWith(".") ||
+		name === "vite-app" ||
+		name === "trackly-ui" ||
+		name === "output" ||
+		name === "legacy" ||
+		name === "docs"
+	) {
 		continue
 	}
 	const src = path.join(root, name)

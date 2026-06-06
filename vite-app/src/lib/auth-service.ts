@@ -1,11 +1,14 @@
 import {
 	createUserWithEmailAndPassword,
+	getRedirectResult,
 	GoogleAuthProvider,
 	OAuthProvider,
 	sendEmailVerification,
 	sendPasswordResetEmail,
 	signInWithEmailAndPassword,
 	signInWithPopup,
+	signInWithRedirect,
+	type AuthProvider,
 	type User,
 } from "firebase/auth"
 import {
@@ -61,6 +64,16 @@ export function formatAuthError(error: unknown) {
 				return "This link has expired or was already used."
 			case "auth/popup-closed-by-user":
 				return "Sign-in was cancelled."
+			case "auth/popup-blocked":
+				return "Pop-up was blocked. Trying redirect sign-in…"
+			case "auth/cancelled-popup-request":
+				return "Sign-in was interrupted. Please try again."
+			case "auth/operation-not-supported-in-this-environment":
+				return "This browser requires redirect sign-in. Please try again."
+			case "auth/unauthorized-domain":
+				return "This domain is not authorized for sign-in. Add it in Firebase Console → Authentication → Settings → Authorized domains."
+			case "auth/operation-not-allowed":
+				return "This sign-in provider is not enabled in Firebase Authentication."
 			case "auth/account-exists-with-different-credential":
 				return "An account already exists with this email using a different sign-in method."
 			default:
@@ -259,17 +272,84 @@ export async function signUpWithEmail(input: {
 	return user
 }
 
+const OAUTH_REDIRECT_KEY = "trackly-oauth-redirect"
+
+function shouldPreferOAuthRedirect() {
+	if (typeof window === "undefined") return false
+	const ua = navigator.userAgent
+	const isMobile = /iPhone|iPad|iPod|Android|Mobile/i.test(ua)
+	const isSafari =
+		/iPhone|iPad|iPod/i.test(ua) ||
+		(/^((?!chrome|android).)*safari/i.test(ua) && !/CriOS|FxiOS/i.test(ua))
+	return isMobile || isSafari
+}
+
+function markOAuthRedirectPending() {
+	if (typeof window !== "undefined") {
+		sessionStorage.setItem(OAUTH_REDIRECT_KEY, "1")
+	}
+}
+
+async function signInWithProvider(
+	provider: AuthProvider,
+	options: { preferRedirect?: boolean } = {}
+) {
+	const preferRedirect = options.preferRedirect ?? shouldPreferOAuthRedirect()
+
+	if (preferRedirect) {
+		markOAuthRedirectPending()
+		await signInWithRedirect(firebaseAuth, provider)
+		return null
+	}
+
+	try {
+		const result = await signInWithPopup(firebaseAuth, provider)
+		return result.user
+	} catch (error) {
+		const code =
+			error && typeof error === "object" && "code" in error
+				? String((error as { code: string }).code)
+				: ""
+
+		if (
+			code === "auth/popup-blocked" ||
+			code === "auth/cancelled-popup-request" ||
+			code === "auth/operation-not-supported-in-this-environment"
+		) {
+			markOAuthRedirectPending()
+			await signInWithRedirect(firebaseAuth, provider)
+			return null
+		}
+
+		throw error
+	}
+}
+
 export async function signInWithGoogle() {
-	const result = await signInWithPopup(firebaseAuth, new GoogleAuthProvider())
-	return result.user
+	const provider = new GoogleAuthProvider()
+	provider.setCustomParameters({ prompt: "select_account" })
+	return signInWithProvider(provider)
 }
 
 export async function signInWithApple() {
 	const provider = new OAuthProvider("apple.com")
 	provider.addScope("email")
 	provider.addScope("name")
-	const result = await signInWithPopup(firebaseAuth, provider)
-	return result.user
+	provider.setCustomParameters({ locale: "en" })
+	return signInWithProvider(provider, { preferRedirect: true })
+}
+
+export async function consumeOAuthRedirectResult() {
+	const result = await getRedirectResult(firebaseAuth)
+	if (typeof window !== "undefined") {
+		sessionStorage.removeItem(OAUTH_REDIRECT_KEY)
+	}
+	return result?.user ?? null
+}
+
+export function hasPendingOAuthRedirect() {
+	if (typeof window === "undefined") return false
+	return sessionStorage.getItem(OAUTH_REDIRECT_KEY) === "1"
 }
 
 export async function completeOAuthProfile(

@@ -2,12 +2,11 @@
 const CACHE_NAME = 'trackly-v2-2-20260606';
 const urlsToCache = [
   './',
-  './trackly_dashboard.html',
-  './auth_fixed.html', 
   './index.html',
   './logo-icon.png',
   './logo-full.png',
-  './manifest.json'
+  './manifest.json',
+  './app/'
 ];
 
 // Install event - cache resources

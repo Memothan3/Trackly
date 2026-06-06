@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { useTrackly } from "@/contexts/trackly-provider"
 import { listAdminProfiles } from "@/lib/trackly-api"
-import { classicDashboardUrl } from "@/lib/legacy-links"
+
 
 type AdminProfile = {
 	id: string
@@ -86,7 +86,7 @@ export function AdminPage() {
 				</CardHeader>
 				<CardContent>
 					<Button asChild variant="outline">
-						<a href={classicDashboardUrl()}>Open classic dashboard</a>
+						<a href="/app/">Open dashboard</a>
 					</Button>
 				</CardContent>
 			</Card>

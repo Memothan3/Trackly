@@ -6,14 +6,18 @@
   "installCommand": "echo \"Root install skipped — vite-app installs in build script\"",
   "outputDirectory": "output",
   "framework": null,
+  "redirects": [
+    { "source": "/auth", "destination": "/app/", "permanent": false },
+    { "source": "/auth_fixed.html", "destination": "/app/", "permanent": false },
+    { "source": "/dashboard", "destination": "/app/", "permanent": false },
+    { "source": "/trackly_dashboard.html", "destination": "/app/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/app", "destination": "/app/index.html" },
     {
       "source": "/app/:path((?!assets/).*)",
       "destination": "/app/index.html"
-    },
-    { "source": "/dashboard", "destination": "/trackly_dashboard.html" },
-    { "source": "/auth", "destination": "/auth_fixed.html" }
+    }
   ],
   "headers": [
     {

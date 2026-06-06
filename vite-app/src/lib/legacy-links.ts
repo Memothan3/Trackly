@@ -27,5 +27,5 @@ export function classicDashboardUrl(page?: string) {
 }
 
 export function legacyAuthUrl() {
-	return `${getLegacyOrigin()}/auth_fixed.html`
+	return `${getLegacyOrigin()}/app/`
 }

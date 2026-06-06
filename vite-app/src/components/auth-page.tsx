@@ -25,8 +25,10 @@ import {
 } from "@/lib/auth-email-actions"
 import {
 	completeOAuthProfile,
+	consumeOAuthRedirectResult,
 	finalizeAuthenticatedUser,
 	formatAuthError,
+	hasPendingOAuthRedirect,
 	isUsernameAvailable,
 	profileExists,
 	requestPasswordReset,
@@ -38,7 +40,6 @@ import {
 	signUpWithEmail,
 } from "@/lib/auth-service"
 import { firebaseAuth } from "@/lib/firebase"
-import { legacyAuthUrl } from "@/lib/legacy-links"
 import { RiAtLine, RiUserLine } from "@remixicon/react"
 
 type AuthView =
@@ -92,6 +93,48 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 	}, [pendingUser])
 
 	useEffect(() => {
+		let active = true
+		if (hasPendingOAuthRedirect()) {
+			setSubmitting(true)
+			setView("action-loading")
+		}
+
+		void (async () => {
+			try {
+				const user = await consumeOAuthRedirectResult()
+				if (!active || !user) return
+
+				setError(null)
+				const exists = await profileExists(user.uid)
+				if (!exists) {
+					setOauthUser(user)
+					setEmail(user.email ?? "")
+					setFullName(user.displayName ?? "")
+					setUsername(
+						user.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9_]/g, "") ??
+							""
+					)
+					setView("complete-profile")
+					return
+				}
+				await finalizeAuthenticatedUser(user)
+			} catch (err) {
+				if (!active) return
+				setError(formatAuthError(err))
+				setView("signin")
+			} finally {
+				if (active) setSubmitting(false)
+			}
+		})()
+
+		return () => {
+			active = false
+		}
+	}, [])
+
+	useEffect(() => {
+		if (hasPendingOAuthRedirect()) return
+
 		const action = parseFirebaseEmailAction()
 		if (!action) return
 
@@ -165,6 +208,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 		setError(null)
 		try {
 			const user = await signInWithGoogle()
+			if (!user) return
 			await handleOAuth(user)
 		} catch (err) {
 			setError(formatAuthError(err))
@@ -178,6 +222,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 		setError(null)
 		try {
 			const user = await signInWithApple()
+			if (!user) return
 			await handleOAuth(user)
 		} catch (err) {
 			setError(formatAuthError(err))
@@ -347,20 +392,6 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 				{error ? <p className="text-destructive text-sm">{error}</p> : null}
 				{info ? <p className="text-primary text-sm">{info}</p> : null}
 			</>
-		)
-	}
-
-	function renderLegacyLink() {
-		return (
-			<p className="text-muted-foreground text-sm">
-				Prefer the classic flow?{" "}
-				<a
-					className="underline underline-offset-4 hover:text-primary"
-					href={legacyAuthUrl()}
-				>
-					Open classic sign-in
-				</a>
-			</p>
 		)
 	}
 
@@ -719,7 +750,6 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 						</Button>
 					</div>
 
-					{renderLegacyLink()}
 				</>
 			) : null}
 		</AuthLayout>
