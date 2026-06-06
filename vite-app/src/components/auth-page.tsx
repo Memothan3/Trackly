@@ -332,10 +332,10 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 	function renderHeader(title: string, description: string) {
 		return (
 			<>
-				<TracklyBrand className="lg:hidden" />
-				<div className="flex flex-col gap-1">
+				<TracklyBrand className="mb-1 lg:hidden" />
+				<div className="flex flex-col gap-0.5">
 					<h1 className="font-bold text-2xl tracking-wide">{title}</h1>
-					<p className="text-base text-muted-foreground">{description}</p>
+					<p className="text-muted-foreground text-sm">{description}</p>
 				</div>
 			</>
 		)
@@ -444,7 +444,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 			) : null}
 
 			{view === "reset-confirm" ? (
-				<form className="flex flex-col gap-3" onSubmit={handleResetConfirm}>
+				<form className="flex flex-col gap-2" onSubmit={handleResetConfirm}>
 					{renderHeader(
 						"Create new password",
 						"Choose a strong password for your account."
@@ -481,7 +481,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 			) : null}
 
 			{view === "forgot" ? (
-				<form className="flex flex-col gap-3" onSubmit={handleForgot}>
+				<form className="flex flex-col gap-2" onSubmit={handleForgot}>
 					{renderHeader(
 						"Reset password",
 						"Enter your email or username and we'll send a reset link."
@@ -514,7 +514,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 			) : null}
 
 			{view === "complete-profile" ? (
-				<form className="flex flex-col gap-3" onSubmit={handleCompleteProfile}>
+				<form className="flex flex-col gap-2" onSubmit={handleCompleteProfile}>
 					{renderHeader(
 						"Finish your profile",
 						"Pick a username to complete your Trackly account."
@@ -548,7 +548,7 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 			) : null}
 
 			{view === "signup" ? (
-				<form className="flex flex-col gap-3" onSubmit={handleSignUp}>
+				<form className="flex flex-col gap-2" onSubmit={handleSignUp}>
 					{renderHeader(
 						"Create account",
 						`Join ${tracklyConfig.appName} and sync your finances.`
@@ -635,38 +635,10 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 				<>
 					{renderHeader(
 						"Welcome back",
-						`Sign in to ${tracklyConfig.appName} with email, username, or Apple.`
+						`Sign in to ${tracklyConfig.appName} with email or username.`
 					)}
 
-					<div className="flex flex-col gap-2">
-						<Button
-							className="w-full"
-							disabled={submitting}
-							onClick={() => {
-								void handleApple()
-							}}
-							type="button"
-						>
-							<AppleIcon data-icon="inline-start" />
-							Continue with Apple
-						</Button>
-						<Button
-							className="w-full"
-							disabled={submitting}
-							onClick={() => {
-								void handleGoogle()
-							}}
-							type="button"
-							variant="outline"
-						>
-							<GoogleIcon data-icon="inline-start" />
-							Continue with Google
-						</Button>
-					</div>
-
-					<AuthDivider>OR</AuthDivider>
-
-					<form className="flex flex-col gap-3" onSubmit={handleSignIn}>
+					<form className="flex flex-col gap-2" onSubmit={handleSignIn}>
 						<InputGroup>
 							<InputGroupInput
 								autoComplete="username"
@@ -718,6 +690,35 @@ export function AuthPage({ pendingUser = null }: AuthPageProps) {
 					>
 						Create an account
 					</Button>
+
+					<AuthDivider>or continue with</AuthDivider>
+
+					<div className="flex flex-col gap-2">
+						<Button
+							className="w-full"
+							disabled={submitting}
+							onClick={() => {
+								void handleApple()
+							}}
+							type="button"
+						>
+							<AppleIcon data-icon="inline-start" />
+							Continue with Apple
+						</Button>
+						<Button
+							className="w-full"
+							disabled={submitting}
+							onClick={() => {
+								void handleGoogle()
+							}}
+							type="button"
+							variant="outline"
+						>
+							<GoogleIcon data-icon="inline-start" />
+							Continue with Google
+						</Button>
+					</div>
+
 					{renderLegacyLink()}
 				</>
 			) : null}

@@ -31,7 +31,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 				</div>
 			</div>
 
-			<div className="relative flex min-h-screen flex-col justify-center px-6 py-10 sm:px-8">
+			<div className="relative flex min-h-screen flex-col justify-center px-5 py-6 sm:px-6">
 				<div
 					aria-hidden
 					className="absolute inset-0 isolate -z-10 opacity-60 contain-strict"
@@ -48,7 +48,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 					</a>
 				</Button>
 
-				<div className="trackly-glass mx-auto flex w-full max-w-sm flex-col gap-4 rounded-3xl p-6 sm:max-w-md sm:p-8">
+				<div className="mx-auto flex w-full max-w-sm flex-col gap-2 sm:max-w-md">
 					{children}
 				</div>
 			</div>
