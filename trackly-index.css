@@ -433,17 +433,18 @@
 }
 
 .footer-logo {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  color: var(--text);
-  text-decoration: none;
   display: block;
   margin-bottom: 8px;
+  text-decoration: none;
 }
 
-.footer-logo span {
-  font-style: italic;
-  color: var(--accent-foreground);
+.footer-logo img {
+  display: block;
+  height: 28px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .footer-tagline {

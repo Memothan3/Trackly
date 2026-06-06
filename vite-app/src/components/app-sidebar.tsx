@@ -1,6 +1,6 @@
 "use client";
 
-import { LogoIcon } from "@/components/logo";
+import { Logo, LogoIcon } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -28,10 +28,8 @@ export function AppSidebar({ route }: { route: AppRoute }) {
 			<SidebarHeader className="h-14 justify-center">
 				<SidebarMenuButton asChild>
 					<a className="gap-2" href={appRouteHref("dashboard")}>
-						<LogoIcon className="size-7" />
-						<span className="font-medium group-data-[collapsible=icon]:hidden">
-							Trackly
-						</span>
+						<Logo className="h-7 w-auto max-w-[132px] group-data-[collapsible=icon]:hidden" />
+						<LogoIcon className="hidden size-7 group-data-[collapsible=icon]:block" />
 					</a>
 				</SidebarMenuButton>
 			</SidebarHeader>
