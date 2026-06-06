@@ -6,6 +6,7 @@ import {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 	type ReactNode,
 } from "react"
@@ -144,6 +145,8 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		projectId?: string
 	} | null>(null)
 	const [addAccountOpen, setAddAccountOpen] = useState(false)
+	const hydratingRef = useRef(false)
+	const loadedUidRef = useRef<string | null>(null)
 
 	const setAddTransactionOpen = useCallback((open: boolean) => {
 		if (!open) {
@@ -193,6 +196,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 
 		const clearSession = () => {
 			if (!active) return
+			loadedUidRef.current = null
 			setUser(null)
 			setProfile(null)
 			setAccounts([])
@@ -207,7 +211,15 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		}
 
 		const hydrateUser = async (firebaseUser: User) => {
-			if (!active) return
+			if (!active || hydratingRef.current) return
+
+			const isNewSession = loadedUidRef.current !== firebaseUser.uid
+			if (!isNewSession) {
+				setUser(firebaseUser)
+				return
+			}
+
+			hydratingRef.current = true
 			setUser(firebaseUser)
 			setLoading(true)
 			setError(null)
@@ -223,11 +235,13 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				}
 
 				applyBundle(data)
+				loadedUidRef.current = firebaseUser.uid
 			} catch (err) {
 				setError(
 					err instanceof Error ? err.message : "Failed to initialize Trackly"
 				)
 			} finally {
+				hydratingRef.current = false
 				if (active) {
 					setLoading(false)
 					setOauthBootstrapping(false)

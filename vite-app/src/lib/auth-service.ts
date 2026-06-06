@@ -384,7 +384,7 @@ export async function consumeOAuthRedirectResult() {
 }
 
 export async function completeOAuthSignIn(user: User) {
-	await user.getIdToken(true)
+	await user.reload()
 	const exists = await profileExists(user.uid)
 	if (!exists) {
 		return { needsProfile: true as const, user }

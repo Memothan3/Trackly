@@ -21,7 +21,7 @@ export function Dashboard() {
 		setAddAccountOpen,
 	} = useTrackly();
 
-	if (loading) {
+	if (loading && !profile) {
 		return <DashboardSkeleton />;
 	}
 
