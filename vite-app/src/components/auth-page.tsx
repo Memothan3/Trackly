@@ -469,6 +469,8 @@ export function AuthPage({
 					)}
 					<Input
 						autoComplete="new-password"
+						id="trackly-reset-password"
+						name="new-password"
 						onChange={(e) => setPassword(e.target.value)}
 						placeholder="New password"
 						required
@@ -477,6 +479,8 @@ export function AuthPage({
 					/>
 					<Input
 						autoComplete="new-password"
+						id="trackly-reset-password-confirm"
+						name="confirm-password"
 						onChange={(e) => setConfirmPassword(e.target.value)}
 						placeholder="Confirm password"
 						required
@@ -507,6 +511,8 @@ export function AuthPage({
 					<InputGroup>
 						<InputGroupInput
 							autoComplete="username"
+							id="trackly-forgot-identifier"
+							name="username"
 							onChange={(e) => setIdentifier(e.target.value)}
 							placeholder="Email or username"
 							required
@@ -538,19 +544,28 @@ export function AuthPage({
 						"Pick a username to complete your Trackly account."
 					)}
 					<Input
+						autoComplete="name"
+						id="trackly-profile-full-name"
+						name="fullName"
 						onChange={(e) => setFullName(e.target.value)}
 						placeholder="Full name"
 						required
 						value={fullName}
 					/>
 					<Input
+						autoComplete="username"
+						id="trackly-profile-username"
+						name="username"
 						onChange={(e) => setUsername(e.target.value.toLowerCase())}
 						placeholder="username"
 						required
 						value={username}
 					/>
 					<Input
+						autoComplete="off"
+						id="trackly-profile-currency"
 						maxLength={5}
+						name="currency"
 						onChange={(e) => setCurrency(e.target.value.toUpperCase())}
 						placeholder="USD"
 						value={currency}
@@ -572,12 +587,18 @@ export function AuthPage({
 						`Join ${tracklyConfig.appName} and sync your finances.`
 					)}
 					<Input
+						autoComplete="name"
+						id="trackly-signup-full-name"
+						name="fullName"
 						onChange={(e) => setFullName(e.target.value)}
 						placeholder="Full name"
 						required
 						value={fullName}
 					/>
 					<Input
+						autoComplete="username"
+						id="trackly-signup-username"
+						name="username"
 						onChange={(e) => {
 							setUsername(e.target.value.toLowerCase())
 							setUsernameHint(null)
@@ -610,6 +631,8 @@ export function AuthPage({
 					) : null}
 					<Input
 						autoComplete="email"
+						id="trackly-signup-email"
+						name="email"
 						onChange={(e) => setEmail(e.target.value)}
 						placeholder="you@example.com"
 						required
@@ -618,6 +641,8 @@ export function AuthPage({
 					/>
 					<Input
 						autoComplete="new-password"
+						id="trackly-signup-password"
+						name="new-password"
 						onChange={(e) => setPassword(e.target.value)}
 						placeholder="Password (min 6 characters)"
 						required
@@ -625,7 +650,10 @@ export function AuthPage({
 						value={password}
 					/>
 					<Input
+						autoComplete="off"
+						id="trackly-signup-currency"
 						maxLength={5}
+						name="currency"
 						onChange={(e) => setCurrency(e.target.value.toUpperCase())}
 						placeholder="USD"
 						value={currency}
@@ -688,6 +716,8 @@ export function AuthPage({
 						<InputGroup>
 							<InputGroupInput
 								autoComplete="username"
+								id="trackly-signin-identifier"
+								name="username"
 								onChange={(e) => setIdentifier(e.target.value)}
 								placeholder="Email or username"
 								required
@@ -699,6 +729,8 @@ export function AuthPage({
 						</InputGroup>
 						<Input
 							autoComplete="current-password"
+							id="trackly-signin-password"
+							name="password"
 							onChange={(e) => setPassword(e.target.value)}
 							placeholder="Password"
 							required
