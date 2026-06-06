@@ -1,5 +1,5 @@
 // Trackly Service Worker - v2.1.0
-const CACHE_NAME = 'trackly-v2-3-20260606';
+const CACHE_NAME = 'trackly-v2-4-20260606';
 const urlsToCache = [
   './',
   './index.html',
@@ -59,6 +59,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  const isBrandLogo =
+    url.pathname.endsWith('/logo-full.png') ||
+    url.pathname.endsWith('/logo-icon.png');
+
+  // Always fetch fresh brand logos (they change independently of app JS).
+  if (isBrandLogo) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => response)
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   // Network first for HTML files (to get latest updates)
   if (event.request.destination === 'document' || url.pathname.endsWith('.html')) {
     event.respondWith(

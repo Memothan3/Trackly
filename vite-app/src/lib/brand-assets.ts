@@ -2,9 +2,16 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 	? import.meta.env.BASE_URL
 	: `${import.meta.env.BASE_URL}/`
 
+/** Bump when logo PNGs change so browsers bypass SW/asset cache. */
+export const BRAND_LOGO_VERSION = "20260606-v2"
+
+function brandAsset(path: string) {
+	return `${base}${path}?v=${BRAND_LOGO_VERSION}`
+}
+
 /** Primary wordmark used across the app UI. */
 export const brandAssets = {
-	full: `${base}logo-full.png`,
+	full: brandAsset("logo-full.png"),
 	/** Square mark — favicon / PWA only; UI uses `full`. */
-	icon: `${base}logo-icon.png`,
+	icon: brandAsset("logo-icon.png"),
 } as const
