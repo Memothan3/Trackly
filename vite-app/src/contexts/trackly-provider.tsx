@@ -16,6 +16,7 @@ import {
 	type User,
 } from "firebase/auth"
 import {
+	clearOAuthSessionArtifacts,
 	completeOAuthSignIn,
 	consumeOAuthRedirectResult,
 	syncUserProfile,
@@ -176,6 +177,24 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		[]
 	)
 
+	const resetLocalSession = useCallback(() => {
+		hydratingRef.current = false
+		loadedUidRef.current = null
+		clearOAuthSessionArtifacts()
+		setUser(null)
+		setProfile(null)
+		setAccounts([])
+		setTransactions([])
+		setCategories([])
+		setBudgets([])
+		setScheduled([])
+		setReceipts([])
+		setProjects([])
+		setError(null)
+		setLoading(false)
+		setOauthBootstrapping(false)
+	}, [])
+
 	const hydrateUser = useCallback(
 		async (firebaseUser: User) => {
 			if (hydratingRef.current && loadedUidRef.current === firebaseUser.uid) {
@@ -248,18 +267,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 
 		const clearSession = () => {
 			if (!active) return
-			loadedUidRef.current = null
-			setUser(null)
-			setProfile(null)
-			setAccounts([])
-			setTransactions([])
-			setCategories([])
-			setBudgets([])
-			setScheduled([])
-			setReceipts([])
-			setProjects([])
-			setLoading(false)
-			endBootstrap()
+			resetLocalSession()
 		}
 
 		const startAuthListener = () => {
@@ -351,7 +359,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			window.clearTimeout(signOutTimer)
 			unsubscribe?.()
 		}
-	}, [hydrateUser])
+	}, [hydrateUser, resetLocalSession])
 
 	const addTransaction = useCallback(
 		async (input: Omit<NewTransactionInput, "userId">) => {
@@ -574,8 +582,11 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			expenseTrend: buildExpenseTrendData(transactions),
 			categoryMix: buildCategoryMix(transactions),
 			signOut: async () => {
-				loadedUidRef.current = null
-				await firebaseSignOut(firebaseAuth)
+				try {
+					await firebaseSignOut(firebaseAuth)
+				} finally {
+					resetLocalSession()
+				}
 			},
 			establishSession,
 			refresh,
@@ -618,6 +629,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			loading,
 			error,
 			establishSession,
+			resetLocalSession,
 			refresh,
 			addTransaction,
 			removeTransaction,

@@ -1,10 +1,11 @@
 // Trackly Service Worker - v2.1.0
-const CACHE_NAME = 'trackly-v2-7-20260606';
+const CACHE_NAME = 'trackly-v2-8-20260607';
 const urlsToCache = [
   './',
   './index.html',
   './logo-icon.png',
   './logo-full2.png',
+  './black-logo.png',
   './manifest.json'
 ];
 
@@ -60,6 +61,7 @@ self.addEventListener('fetch', (event) => {
   
   const isBrandLogo =
     url.pathname.endsWith('/logo-full2.png') ||
+    url.pathname.endsWith('/black-logo.png') ||
     url.pathname.endsWith('/logo-icon.png');
 
   // Always fetch fresh brand logos (they change independently of app JS).

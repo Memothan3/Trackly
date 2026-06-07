@@ -284,22 +284,14 @@ export async function signUpWithEmail(input: {
 const OAUTH_REDIRECT_KEY = "trackly-oauth-redirect"
 const OAUTH_REDIRECT_MAX_AGE_MS = 10 * 60 * 1000
 
-function isOperaBrowser() {
-	if (typeof navigator === "undefined") return false
-	return /OPR\/|Opera/i.test(navigator.userAgent)
-}
-
-function isChromiumBrowser() {
-	if (typeof navigator === "undefined") return false
-	return /Chrome\/|Chromium\/|Edg\//i.test(navigator.userAgent)
-}
-
 function shouldPreferOAuthRedirect() {
 	if (typeof window === "undefined") return false
-	if (/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)) return true
-	// Chrome blocks popup OAuth more aggressively than Opera/Firefox.
-	if (isChromiumBrowser() && !isOperaBrowser()) return true
-	return false
+	return /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)
+}
+
+export function clearOAuthSessionArtifacts() {
+	resetOAuthRedirectConsumption()
+	clearOAuthRedirectMarker()
 }
 
 function readOAuthRedirectMarker() {

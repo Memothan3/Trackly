@@ -273,12 +273,30 @@ body::before {
   line-height: 0;
 }
 
-.nav-logo img {
+.nav-logo img,
+.footer-logo img,
+.trackly-wordmark {
   display: block;
   height: 44px;
   width: auto;
   max-width: min(52vw, 240px);
   object-fit: contain;
+}
+
+.trackly-wordmark--dark {
+  display: none;
+}
+
+html.dark .trackly-wordmark--dark {
+  display: block;
+}
+
+html.dark .trackly-wordmark--light {
+  display: none;
+}
+
+.trackly-wordmark--light {
+  display: block;
 }
 
 .logo span {

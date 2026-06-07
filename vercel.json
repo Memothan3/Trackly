@@ -48,6 +48,24 @@
       ]
     },
     {
+      "source": "/black-logo.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate, no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/app/black-logo.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate, no-cache"
+        }
+      ]
+    },
+    {
       "source": "/app/logo-icon.png",
       "headers": [
         {
