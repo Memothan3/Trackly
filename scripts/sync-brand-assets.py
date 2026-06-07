@@ -10,7 +10,7 @@ except ImportError as exc:
 
 root = Path(__file__).resolve().parent.parent
 brand = root / "brand"
-pairs = [("logo.jpg", "logo-full.png"), ("icon.jpg", "logo-icon.png")]
+pairs = [("logo.jpg", "logo-full2.png"), ("icon.jpg", "logo-icon.png")]
 targets = [root, root / "vite-app" / "public"]
 
 for filename, name in pairs:

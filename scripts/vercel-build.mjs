@@ -18,7 +18,7 @@ const staticRootFiles = new Set([
 	"trackly-brand.css",
 	"trackly-landing.css",
 	"logo-icon.png",
-	"logo-full.png",
+	"logo-full2.png",
 	"service-worker.js",
 ])
 

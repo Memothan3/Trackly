@@ -21,7 +21,7 @@
   ],
   "headers": [
     {
-      "source": "/logo-full.png",
+      "source": "/logo-full2.png",
       "headers": [
         {
           "key": "Cache-Control",
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "source": "/app/logo-full.png",
+      "source": "/app/logo-full2.png",
       "headers": [
         {
           "key": "Cache-Control",
