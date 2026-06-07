@@ -15,8 +15,8 @@ export function TracklyBrand({
 			alt="Trackly"
 			className={cn(
 				showName
-					? "h-9 w-auto max-w-[180px] object-contain object-left"
-					: "h-7 w-auto max-w-[120px] shrink-0 object-contain object-left",
+					? "h-12 w-auto max-w-[240px] object-contain object-left"
+					: "h-10 w-auto max-w-[200px] shrink-0 object-contain object-left",
 				iconClassName,
 				className
 			)}

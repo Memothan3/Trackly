@@ -1,12 +1,11 @@
 // Trackly Service Worker - v2.1.0
-const CACHE_NAME = 'trackly-v2-6-20260606';
+const CACHE_NAME = 'trackly-v2-7-20260606';
 const urlsToCache = [
   './',
   './index.html',
   './logo-icon.png',
   './logo-full2.png',
-  './manifest.json',
-  './app/'
+  './manifest.json'
 ];
 
 // Install event - cache resources

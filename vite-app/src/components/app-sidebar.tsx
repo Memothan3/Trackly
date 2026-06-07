@@ -28,7 +28,7 @@ export function AppSidebar({ route }: { route: AppRoute }) {
 			<SidebarHeader className="h-14 justify-center">
 				<SidebarMenuButton asChild>
 					<a className="gap-2" href={appRouteHref("dashboard")}>
-						<Logo className="h-7 w-auto max-w-[132px] group-data-[collapsible=icon]:h-6 group-data-[collapsible=icon]:max-w-[96px]" />
+						<Logo className="h-10 w-auto max-w-[200px] group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:max-w-[140px]" />
 					</a>
 				</SidebarMenuButton>
 			</SidebarHeader>
