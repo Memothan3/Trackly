@@ -141,6 +141,10 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	const [loading, setLoading] = useState(true)
 	const [oauthBootstrapping, setOauthBootstrapping] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	// Firebase mutates the current User instance in place (e.g. after
+	// reload()/email verification), so setUser with the same reference does not
+	// re-render. Bump this on token changes to surface fresh auth state.
+	const [authTick, setAuthTick] = useState(0)
 	const [addTransactionOpen, setAddTransactionOpenState] = useState(false)
 	const [transactionDraft, setTransactionDraft] = useState<{
 		projectId?: string
@@ -300,6 +304,7 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				}
 
 				setUser(firebaseUser)
+				setAuthTick((tick) => tick + 1)
 			})
 		}
 
@@ -310,6 +315,12 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 				if (!active) return
 
 				startAuthListener()
+
+				// Wait for Firebase to restore any persisted session before
+				// deciding the user is signed out, otherwise a refresh briefly
+				// flashes the auth page for already-authenticated users.
+				await firebaseAuth.authStateReady()
+				if (!active) return
 
 				const sessionUser = redirectUser ?? firebaseAuth.currentUser
 				if (!sessionUser) {
@@ -562,8 +573,11 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		[user, refresh]
 	)
 
-	const value = useMemo<TracklyContextValue>(
-		() => ({
+	const value = useMemo<TracklyContextValue>(() => {
+		// authTick changes when Firebase mutates the current user in place, so
+		// reading it here re-derives the context (e.g. after email verification).
+		void authTick
+		return {
 			user,
 			profile,
 			oauthBootstrapping,
@@ -613,48 +627,48 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			openAddTransaction,
 			addAccountOpen,
 			setAddAccountOpen,
-		}),
-		[
-			user,
-			profile,
-			oauthBootstrapping,
-			accounts,
-			transactions,
-			categories,
-			budgets,
-			scheduled,
-			receipts,
-			projects,
-			currency,
-			loading,
-			error,
-			establishSession,
-			resetLocalSession,
-			refresh,
-			addTransaction,
-			removeTransaction,
-			addAccount,
-			deactivateAccountFn,
-			addBudget,
-			removeBudget,
-			addScheduled,
-			removeScheduled,
-			uploadReceipt,
-			createExpenseFromReceipt,
-			rescanReceipt,
-			removeReceiptFn,
-			addCategory,
-			addProject,
-			removeProject,
-			updateProfile,
-			isAdmin,
-			transactionDraft,
-			addTransactionOpen,
-			setAddTransactionOpen,
-			openAddTransaction,
-			addAccountOpen,
-		]
-	)
+		}
+	}, [
+		user,
+		authTick,
+		profile,
+		oauthBootstrapping,
+		accounts,
+		transactions,
+		categories,
+		budgets,
+		scheduled,
+		receipts,
+		projects,
+		currency,
+		loading,
+		error,
+		establishSession,
+		resetLocalSession,
+		refresh,
+		addTransaction,
+		removeTransaction,
+		addAccount,
+		deactivateAccountFn,
+		addBudget,
+		removeBudget,
+		addScheduled,
+		removeScheduled,
+		uploadReceipt,
+		createExpenseFromReceipt,
+		rescanReceipt,
+		removeReceiptFn,
+		addCategory,
+		addProject,
+		removeProject,
+		updateProfile,
+		isAdmin,
+		transactionDraft,
+		addTransactionOpen,
+		setAddTransactionOpen,
+		openAddTransaction,
+		addAccountOpen,
+	])
 
 	return <TracklyContext.Provider value={value}>{children}</TracklyContext.Provider>
 }
