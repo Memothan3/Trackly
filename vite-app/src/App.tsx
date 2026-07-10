@@ -23,15 +23,21 @@ function TracklyApp() {
 	}
 
 	return (
-		<AppShell>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<Dashboard />} />
-					<Route path="/transactions" element={<TransactionsPage />} />
-					<Route path="*" element={<Navigate to="/" replace />} />
-				</Routes>
-			</BrowserRouter>
-		</AppShell>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={
+					<AppShell>
+						<Dashboard />
+					</AppShell>
+				} />
+				<Route path="/transactions" element={
+					<AppShell>
+						<TransactionsPage />
+					</AppShell>
+				} />
+				<Route path="*" element={<Navigate to="/" replace />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 

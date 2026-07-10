@@ -1,5 +1,4 @@
 import { CategoryRankChart } from "@/components/category-rank-chart";
-import { DashboardSkeleton } from "@/components/dashboard-skeleton";
 import { QuickActions } from "@/components/quick-actions";
 import { RefundReturnRateChart } from "@/components/refund-return-rate-chart";
 import { RevenueChart } from "@/components/revenue-chart";
@@ -13,13 +12,8 @@ export function Dashboard() {
 		expenseTrend,
 		categoryMix,
 		currency,
-		loading,
 		error,
 	} = useTrackly();
-
-	if (loading) {
-		return <DashboardSkeleton />;
-	}
 
 	return (
 		<div className="flex flex-col gap-4">
