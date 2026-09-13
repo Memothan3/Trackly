@@ -15,8 +15,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTrackly } from "@/contexts/trackly-provider";
-import { tracklyDashboardUrl } from "@/lib/legacy-links";
 import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function NavUser() {
 	const { user, profile, signOut } = useTrackly();
@@ -57,16 +57,16 @@ export function NavUser() {
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuItem asChild>
-						<a href={tracklyDashboardUrl("profile")}>
+						<Link to="/settings">
 							<UserIcon />
 							Profile
-						</a>
+						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						<a href={tracklyDashboardUrl("settings")}>
+						<Link to="/settings">
 							<SettingsIcon />
 							Settings
-						</a>
+						</Link>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />

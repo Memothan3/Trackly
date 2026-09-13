@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useTrackly } from "@/contexts/trackly-provider";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { TransactionsPage } from "@/pages/TransactionsPage";
+import { SettingsPage } from "@/pages/SettingsPage";
 
 function TracklyApp() {
 	const { user, loading } = useTrackly();
@@ -25,16 +26,30 @@ function TracklyApp() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={
-					<AppShell>
-						<Dashboard />
-					</AppShell>
-				} />
-				<Route path="/transactions" element={
-					<AppShell>
-						<TransactionsPage />
-					</AppShell>
-				} />
+				<Route
+					path="/"
+					element={
+						<AppShell>
+							<Dashboard />
+						</AppShell>
+					}
+				/>
+				<Route
+					path="/transactions"
+					element={
+						<AppShell>
+							<TransactionsPage />
+						</AppShell>
+					}
+				/>
+				<Route
+					path="/settings"
+					element={
+						<AppShell>
+							<SettingsPage />
+						</AppShell>
+					}
+				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>
