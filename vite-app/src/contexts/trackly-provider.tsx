@@ -6,10 +6,15 @@ import {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 	type ReactNode,
 } from "react"
-import { onAuthStateChanged, signOut as firebaseSignOut, type User } from "firebase/auth"
+import {
+	onIdTokenChanged,
+	signOut as firebaseSignOut,
+	type User,
+} from "firebase/auth"
 import { tracklyConfig } from "@/lib/config"
 import { firebaseAuth } from "@/lib/firebase"
 import { supabase } from "@/lib/supabase"
@@ -61,10 +66,12 @@ async function loadTracklyData(userId: string) {
 				.limit(500),
 		])
 
-		// Handle transactions with category join failure
 		let transactions = transactionsResult.data as TracklyTransaction[] | null
 		if (transactionsResult.error) {
-			console.warn('Transactions with categories failed, trying fallback:', transactionsResult.error.message)
+			console.warn(
+				"Transactions with categories failed, trying fallback:",
+				transactionsResult.error.message
+			)
 			const fallback = await supabase
 				.from("transactions")
 				.select("*")
@@ -74,17 +81,15 @@ async function loadTracklyData(userId: string) {
 			transactions = fallback.data as TracklyTransaction[] | null
 		}
 
-		// Handle profile loading failure
 		let profile = profileResult.data as TracklyProfile | null
 		if (profileResult.error) {
-			console.warn('Profile loading failed:', profileResult.error.message)
+			console.warn("Profile loading failed:", profileResult.error.message)
 			profile = null
 		}
 
-		// Handle accounts loading failure
 		let accounts = accountsResult.data as TracklyAccount[] | null
 		if (accountsResult.error) {
-			console.warn('Accounts loading failed:', accountsResult.error.message)
+			console.warn("Accounts loading failed:", accountsResult.error.message)
 			accounts = []
 		}
 
@@ -94,8 +99,7 @@ async function loadTracklyData(userId: string) {
 			transactions: transactions ?? [],
 		}
 	} catch (error) {
-		console.error('Critical error loading Trackly data:', error)
-		// Return empty state on critical errors
+		console.error("Critical error loading Trackly data:", error)
 		return {
 			profile: null,
 			accounts: [],
@@ -111,6 +115,59 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 	const [transactions, setTransactions] = useState<TracklyTransaction[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	// Firebase can mutate the current User in place (e.g. after reload()/email
+	// verification). Bump this so context consumers re-render on token changes.
+	const [authTick, setAuthTick] = useState(0)
+	const loadedUidRef = useRef<string | null>(null)
+	const hydratingRef = useRef(false)
+
+	const hydrateUser = useCallback(async (firebaseUser: User) => {
+		if (hydratingRef.current && loadedUidRef.current === firebaseUser.uid) {
+			return
+		}
+
+		hydratingRef.current = true
+		loadedUidRef.current = firebaseUser.uid
+		setUser(firebaseUser)
+		setLoading(true)
+		setError(null)
+
+		try {
+			const idToken = await firebaseUser.getIdToken(true)
+
+			try {
+				const { error: supabaseError } = await supabase.auth.setSession({
+					access_token: idToken,
+					refresh_token: idToken,
+				})
+
+				if (supabaseError) {
+					console.warn(
+						"Supabase session sync failed, continuing with Firebase auth:",
+						supabaseError.message
+					)
+				}
+			} catch (supabaseErr) {
+				console.warn(
+					"Supabase auth error, continuing with Firebase auth:",
+					supabaseErr
+				)
+			}
+
+			const data = await loadTracklyData(firebaseUser.uid)
+			setProfile(data.profile)
+			setAccounts(data.accounts)
+			setTransactions(data.transactions)
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : "Failed to initialize Trackly"
+			setError(errorMessage)
+			console.error("Auth initialization error:", err)
+		} finally {
+			hydratingRef.current = false
+			setLoading(false)
+		}
+	}, [])
 
 	const refresh = useCallback(async () => {
 		if (!user) {
@@ -118,89 +175,103 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 		}
 		setError(null)
 		try {
-			// Refresh Firebase token
 			const idToken = await user.getIdToken(true)
-			
-			// Update Supabase session if possible
+
 			try {
 				await supabase.auth.setSession({
 					access_token: idToken,
 					refresh_token: idToken,
 				})
 			} catch (supabaseErr) {
-				console.warn('Failed to refresh Supabase session:', supabaseErr)
+				console.warn("Failed to refresh Supabase session:", supabaseErr)
 			}
-			
-			// Reload data
+
 			const data = await loadTracklyData(user.uid)
 			setProfile(data.profile)
 			setAccounts(data.accounts)
 			setTransactions(data.transactions)
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Failed to refresh Trackly data")
-			console.error('Refresh error:', err)
+			setError(
+				err instanceof Error ? err.message : "Failed to refresh Trackly data"
+			)
+			console.error("Refresh error:", err)
 		}
 	}, [user])
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
-			if (!firebaseUser) {
-				setUser(null)
-				setProfile(null)
-				setAccounts([])
-				setTransactions([])
-				setLoading(false)
-				// Clear Supabase session on Firebase logout
-				void supabase.auth.signOut()
-				return
-			}
+		let active = true
+		let unsubscribe: (() => void) | undefined
 
-			setUser(firebaseUser)
-			setLoading(true)
-			setError(null)
+		const clearSession = () => {
+			if (!active) return
+			loadedUidRef.current = null
+			hydratingRef.current = false
+			setUser(null)
+			setProfile(null)
+			setAccounts([])
+			setTransactions([])
+			setLoading(false)
+			void supabase.auth.signOut()
+		}
 
+		const bootstrap = async () => {
 			try {
-				// Get Firebase ID token
-				const idToken = await firebaseUser.getIdToken(true)
-				
-				// Try to sync with Supabase using Firebase token as custom auth
-				try {
-					const { error: supabaseError } = await supabase.auth.setSession({
-						access_token: idToken,
-						refresh_token: idToken,
-					})
-					
-					if (supabaseError) {
-						console.warn('Supabase session sync failed, continuing with Firebase auth:', supabaseError.message)
-						// Continue anyway - user is authenticated with Firebase
+				// Wait for Firebase to restore any persisted session before treating
+				// the user as signed out — avoids flashing AuthGate on refresh.
+				await firebaseAuth.authStateReady()
+				if (!active) return
+
+				unsubscribe = onIdTokenChanged(firebaseAuth, (firebaseUser) => {
+					if (!active) return
+
+					if (!firebaseUser) {
+						clearSession()
+						return
 					}
-				} catch (supabaseErr) {
-					console.warn('Supabase auth error, continuing with Firebase auth:', supabaseErr)
-					// Continue anyway - user is authenticated with Firebase
+
+					if (
+						hydratingRef.current &&
+						loadedUidRef.current === firebaseUser.uid
+					) {
+						return
+					}
+
+					if (loadedUidRef.current !== firebaseUser.uid) {
+						void hydrateUser(firebaseUser)
+						return
+					}
+
+					setUser(firebaseUser)
+					setAuthTick((tick) => tick + 1)
+				})
+
+				const sessionUser = firebaseAuth.currentUser
+				if (!sessionUser) {
+					setLoading(false)
+					return
 				}
-				
-				// Load Trackly data with fallback
-				const data = await loadTracklyData(firebaseUser.uid)
-				setProfile(data.profile)
-				setAccounts(data.accounts)
-				setTransactions(data.transactions)
+
+				await hydrateUser(sessionUser)
 			} catch (err) {
-				const errorMessage = err instanceof Error ? err.message : "Failed to initialize Trackly"
-				setError(errorMessage)
-				console.error('Auth initialization error:', err)
-				// Set user even if data loading fails - they're still authenticated
-			} finally {
+				if (!active) return
+				setError(err instanceof Error ? err.message : "Authentication failed")
 				setLoading(false)
 			}
-		})
+		}
 
-		return unsubscribe
-	}, [])
+		void bootstrap()
+
+		return () => {
+			active = false
+			unsubscribe?.()
+		}
+	}, [hydrateUser])
 
 	const currency = (profile?.currency ?? tracklyConfig.defaultCurrency).toUpperCase()
 
-	const value = useMemo<TracklyContextValue>(
-		() => ({
+	const value = useMemo<TracklyContextValue>(() => {
+		void authTick
+		return {
 			user,
 			profile,
 			accounts,
@@ -214,28 +285,26 @@ export function TracklyProvider({ children }: { children: ReactNode }) {
 			categoryMix: buildCategoryMix(transactions),
 			signOut: async () => {
 				try {
-					// Sign out from Firebase
 					await firebaseSignOut(firebaseAuth)
-					// Clear Supabase session
 					await supabase.auth.signOut()
 				} catch (err) {
-					console.error('Sign out error:', err)
+					console.error("Sign out error:", err)
 					throw err
 				}
 			},
 			refresh,
-		}),
-		[
-			user,
-			profile,
-			accounts,
-			transactions,
-			currency,
-			loading,
-			error,
-			refresh,
-		]
-	)
+		}
+	}, [
+		user,
+		authTick,
+		profile,
+		accounts,
+		transactions,
+		currency,
+		loading,
+		error,
+		refresh,
+	])
 
 	return <TracklyContext.Provider value={value}>{children}</TracklyContext.Provider>
 }
